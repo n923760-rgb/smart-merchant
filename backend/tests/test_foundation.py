@@ -26,7 +26,7 @@ def test_authentication_rotation_revocation_and_disabled_membership(client, merc
 
 
 def test_tenant_isolation_roles_audit_and_last_owner(client, merchant):
-    other_email = f"other-{uuid4()}@example.test"
+    other_email = f"other-{uuid4()}@example.com"
     other = client.post(
         "/api/v1/bootstrap",
         headers={"X-Bootstrap-Key": "test-bootstrap-key-for-disposable-test-db-000000"},
@@ -94,7 +94,7 @@ def test_branch_scoping_and_escalation(client, merchant):
     second = client.post(
         "/api/v1/branches", headers=merchant["headers"], json={"name": "Khamis", "code": "KHM01"}
     ).json()["id"]
-    email = f"manager-{uuid4()}@example.test"
+    email = f"manager-{uuid4()}@example.com"
     user = client.post(
         "/api/v1/users",
         headers=merchant["headers"],

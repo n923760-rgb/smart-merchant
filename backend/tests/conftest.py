@@ -24,7 +24,7 @@ def client():
 
 @pytest.fixture
 def merchant(client):
-    email = f"owner-{uuid4()}@example.test"
+    email = f"owner-{uuid4()}@example.com"
     response = client.post(
         "/api/v1/bootstrap",
         headers={"X-Bootstrap-Key": os.environ["BOOTSTRAP_KEY"]},

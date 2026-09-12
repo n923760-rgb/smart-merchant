@@ -13,7 +13,7 @@ docker compose exec backend alembic upgrade head
 curl http://localhost:8000/health/ready
 ```
 
-Create the first owner and organization using a strong `X-Bootstrap-Key` equal to `BOOTSTRAP_KEY` in `.env`. Never put that key in browser code. The endpoint `POST /api/v1/bootstrap` creates owner, organization, active membership, initial permission catalog and roles in one transaction. For isolated development demo data, export `DEV_SEED_PASSWORD` with a unique 12+ character value and run `make seed`. Demo email addresses are `owner@demo.example`, `manager@demo.example`, `cashier@demo.example`.
+Create the first owner and organization using a strong `X-Bootstrap-Key` equal to `BOOTSTRAP_KEY` in `.env`. Never put that key in browser code. The endpoint `POST /api/v1/bootstrap` creates owner, organization, active membership, initial permission catalog and roles in one transaction. For isolated development demo data, export `DEV_SEED_PASSWORD` with a unique 12+ character value and run `make seed`. Demo email addresses are `owner-demo@example.com`, `manager-demo@example.com`, `cashier-demo@example.com`.
 
 ```sh
 cd apps/web

@@ -74,7 +74,7 @@ def seed():
         ):
             user = User(
                 name=code.title(),
-                email=f"{code}@demo.example",
+                email=f"{code}-demo@example.com",
                 password_hash=hash_password(password),
             )
             db.add(user)
@@ -90,7 +90,7 @@ def seed():
                     branch_id=branch,
                 )
             )
-    print("Demo ready: owner@demo.example, manager@demo.example, cashier@demo.example")
+    print("Demo ready: owner-demo@example.com, manager-demo@example.com, cashier-demo@example.com")
 
 
 if __name__ == "__main__":

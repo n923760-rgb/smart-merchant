@@ -7,7 +7,7 @@ describe('web login proxy', () => {
 
   it('stores tokens in HttpOnly cookies and does not return them to browser JavaScript', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => Response.json({ access_token: 'access', refresh_token: 'refresh' })));
-    const request = new NextRequest('http://localhost:3000/api/session', { method: 'POST', body: JSON.stringify({ email: 'owner@example.test', password: 'correct' }) });
+    const request = new NextRequest('http://localhost:3000/api/session', { method: 'POST', body: JSON.stringify({ email: 'owner@example.com', password: 'correct' }) });
     const response = await POST(request);
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ authenticated: true });

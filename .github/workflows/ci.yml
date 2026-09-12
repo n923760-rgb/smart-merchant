@@ -1,4 +1,7 @@
 name: Foundation CI
+permissions:
+  contents: read
+  pull-requests: read
 on:
   pull_request:
   push:
@@ -50,6 +53,7 @@ jobs:
   flutter:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix: { app: [pos, owner] }
     defaults:
       run: { working-directory: 'apps/${{ matrix.app }}' }
