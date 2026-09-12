@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final session = ref.watch(sessionProvider);
     if (session != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.go('/home');
+        if (context.mounted) context.go('/home');
       });
     }
     return Scaffold(appBar: AppBar(title: Text(tr(context, 'مساعد التاجر', 'Smart Merchant')),
@@ -136,9 +136,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ElevatedButton(onPressed: () async {
           try {
             final success = await ref.read(sessionProvider.notifier).login(email.text, password.text);
-            if (!mounted) return;
+            if (!context.mounted) return;
             if (success) { context.go('/home'); } else { setState(() => error = tr(context, 'تعذر الدخول', 'Sign-in failed')); }
-          } catch (_) { if (mounted) setState(() => error = tr(context, 'تعذر الاتصال', 'Connection failed')); }
+          } catch (_) { if (context.mounted) setState(() => error = tr(context, 'تعذر الاتصال', 'Connection failed')); }
         }, child: Text(tr(context, 'دخول', 'Sign in'))),
       ]))),
     );
@@ -166,7 +166,9 @@ class AccountScreen extends ConsumerWidget {
     appBar: AppBar(title: Text(tr(context, 'حسابي', 'Account'))),
     body: Center(child: ElevatedButton(onPressed: () async {
       await ref.read(sessionProvider.notifier).logout();
-      if (context.mounted) context.go('/');
+      if (context.mounted) {
+        context.go('/');
+      }
     }, child: Text(tr(context, 'تسجيل خروج', 'Sign out')))),
   );
 }
