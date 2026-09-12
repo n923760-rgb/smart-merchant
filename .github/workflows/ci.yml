@@ -38,6 +38,7 @@ jobs:
       - run: alembic upgrade head
       - run: alembic check
       - run: pytest
+      - run: python -m pip install pip-audit && python -m pip_audit --strict
       - run: alembic downgrade base && alembic upgrade head
   web:
     runs-on: ubuntu-latest
@@ -74,5 +75,3 @@ jobs:
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/dependency-review-action@v4
-        if: github.event_name == 'pull_request'
