@@ -15,7 +15,9 @@ class OwnerSession extends StateNotifier<String?> {
 
   Future<void> restore() async {
     final refreshToken = await storage.read(key: 'refresh_token');
-    if (refreshToken == null) return;
+    if (refreshToken == null) {
+      return;
+    }
     try {
       final response = await http.post(Uri.parse('$apiUrl/api/v1/auth/refresh'),
           headers: {'Content-Type': 'application/json'},
@@ -32,7 +34,9 @@ class OwnerSession extends StateNotifier<String?> {
     final response = await http.post(Uri.parse('$apiUrl/api/v1/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}));
-    if (response.statusCode != 200) return false;
+    if (response.statusCode != 200) {
+      return false;
+    }
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     await storage.write(key: 'access_token', value: data['access_token'] as String);
     await storage.write(key: 'refresh_token', value: data['refresh_token'] as String);
@@ -41,10 +45,14 @@ class OwnerSession extends StateNotifier<String?> {
   }
 
   Future<String?> organization() async {
-    if (state == null) return null;
+    if (state == null) {
+      return null;
+    }
     final response = await http.get(Uri.parse('$apiUrl/api/v1/auth/me'),
         headers: {'Authorization': 'Bearer $state'});
-    if (response.statusCode != 200) return null;
+    if (response.statusCode != 200) {
+      return null;
+    }
     final organizations = (jsonDecode(response.body) as Map<String, dynamic>)['organizations'] as List<dynamic>;
     return organizations.isEmpty ? null : organizations.first as String;
   }
@@ -124,7 +132,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final session = ref.watch(sessionProvider);
     if (session != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) context.go('/home');
+        if (context.mounted) {
+          context.go('/home');
+        }
       });
     }
     return Scaffold(appBar: AppBar(title: Text(tr(context, 'مساعد التاجر', 'Smart Merchant')),
@@ -136,9 +146,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ElevatedButton(onPressed: () async {
           try {
             final success = await ref.read(sessionProvider.notifier).login(email.text, password.text);
-            if (!context.mounted) return;
+            if (!context.mounted) {
+              return;
+            }
             if (success) { context.go('/home'); } else { setState(() => error = tr(context, 'تعذر الدخول', 'Sign-in failed')); }
-          } catch (_) { if (context.mounted) setState(() => error = tr(context, 'تعذر الاتصال', 'Connection failed')); }
+          } catch (_) { if (context.mounted) { setState(() => error = tr(context, 'تعذر الاتصال', 'Connection failed')); } }
         }, child: Text(tr(context, 'دخول', 'Sign in'))),
       ]))),
     );
@@ -150,7 +162,9 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final token = ref.watch(sessionProvider);
-    if (token == null) return const LoginScreen();
+    if (token == null) {
+      return const LoginScreen();
+    }
     return Scaffold(appBar: AppBar(title: Text(tr(context, 'المنشأة', 'Organization'))),
       body: FutureBuilder<String?>(future: ref.read(sessionProvider.notifier).organization(),
         builder: (context, snapshot) => Center(child: Text(snapshot.data == null ? tr(context, 'جارٍ تحميل المنشأة...', 'Loading organization...') : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'))),
