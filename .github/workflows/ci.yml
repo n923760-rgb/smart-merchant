@@ -66,9 +66,29 @@ jobs:
       - uses: subosito/flutter-action@v2
         with: { channel: stable }
       - run: flutter pub get
+      - run: flutter create . --platforms=android,ios
       - run: dart format lib test
       - run: flutter analyze
       - run: flutter test
+      - run: flutter build apk --debug
+  compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the complete development stack
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+      - name: Migrate, seed, and verify the running API
+        run: |
+          docker compose exec -T backend alembic upgrade head
+          docker compose exec -T -e DEV_SEED_PASSWORD=disposable-ci-demo-password-0000 backend python -m app.workers.seed
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 http://127.0.0.1:8000/health/ready
+          docker compose ps --status running worker
+          curl --fail -sS -H 'Content-Type: application/json' -d '{"email":"owner-demo@example.com","password":"disposable-ci-demo-password-0000"}' http://127.0.0.1:8000/api/v1/auth/login | python3 -c 'import json,sys; result=json.load(sys.stdin); assert result["access_token"] and result["refresh_token"]'
+      - name: Clean up disposable services
+        if: always()
+        run: docker compose down -v
   security:
     runs-on: ubuntu-latest
     steps:
