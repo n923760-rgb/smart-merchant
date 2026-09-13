@@ -12,7 +12,9 @@ class FakeSession extends OwnerSession {
 
 void main() {
   testWidgets('owner starts at login with Arabic direction', (tester) async {
-    await tester.pumpWidget(ProviderScope(overrides: [sessionProvider.overrideWith((ref) => FakeSession())], child: const OwnerApp()));
+    await tester.pumpWidget(ProviderScope(
+        overrides: [sessionProvider.overrideWith((ref) => FakeSession())],
+        child: const OwnerApp()));
     await tester.pumpAndSettle();
     expect(find.text('دخول'), findsOneWidget);
     expect(find.byType(MaterialApp), findsOneWidget);

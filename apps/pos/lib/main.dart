@@ -23,7 +23,9 @@ class DeviceRepository {
     try {
       await executor.ensureOpen(_FoundationSchema());
       final identifier = await storage.read(key: 'terminal_id');
-      return identifier == null ? DeviceState.notActivated : DeviceState.activated;
+      return identifier == null
+          ? DeviceState.notActivated
+          : DeviceState.activated;
     } finally {
       await executor.close();
     }
@@ -35,10 +37,14 @@ class _FoundationSchema implements QueryExecutorUser {
   int get schemaVersion => 1;
 
   @override
-  Future<void> beforeOpen(QueryExecutor executor, OpeningDetails details) async {
-    await executor.runCustom('CREATE TABLE IF NOT EXISTS device_config (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
-    await executor.runCustom('CREATE TABLE IF NOT EXISTS auth_session (id TEXT PRIMARY KEY, updated_at TEXT NOT NULL)');
-    await executor.runCustom('CREATE TABLE IF NOT EXISTS sync_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+  Future<void> beforeOpen(
+      QueryExecutor executor, OpeningDetails details) async {
+    await executor.runCustom(
+        'CREATE TABLE IF NOT EXISTS device_config (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
+    await executor.runCustom(
+        'CREATE TABLE IF NOT EXISTS auth_session (id TEXT PRIMARY KEY, updated_at TEXT NOT NULL)');
+    await executor.runCustom(
+        'CREATE TABLE IF NOT EXISTS sync_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
   }
 }
 
@@ -74,7 +80,10 @@ class _PosAppState extends ConsumerState<PosApp> {
   }
 
   @override
-  void dispose() { router.dispose(); super.dispose(); }
+  void dispose() {
+    router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +91,11 @@ class _PosAppState extends ConsumerState<PosApp> {
       title: 'Smart Merchant POS',
       locale: ref.watch(localeProvider),
       supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
       routerConfig: router,
     );
   }
@@ -95,14 +108,32 @@ class StartupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(deviceStateProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(tr(context, 'مساعد التاجر | POS', 'Smart Merchant | POS')),
-        actions: [TextButton(onPressed: () => ref.read(localeProvider.notifier).state = Localizations.localeOf(context).languageCode == 'ar' ? const Locale('en') : const Locale('ar'), child: Text(tr(context, 'English', 'العربية')))]),
-      body: Center(child: state.when(
+      appBar: AppBar(
+          title:
+              Text(tr(context, 'مساعد التاجر | POS', 'Smart Merchant | POS')),
+          actions: [
+            TextButton(
+                onPressed: () => ref.read(localeProvider.notifier).state =
+                    Localizations.localeOf(context).languageCode == 'ar'
+                        ? const Locale('en')
+                        : const Locale('ar'),
+                child: Text(tr(context, 'English', 'العربية')))
+          ]),
+      body: Center(
+          child: state.when(
         loading: () => const CircularProgressIndicator(),
-        error: (_, __) => Text(tr(context, 'تعذّر تحميل إعدادات الجهاز · تحقق من الحالة المحلية', 'Could not load device settings · check offline state')),
+        error: (_, __) => Text(tr(
+            context,
+            'تعذّر تحميل إعدادات الجهاز · تحقق من الحالة المحلية',
+            'Could not load device settings · check offline state')),
         data: (value) => Column(mainAxisSize: MainAxisSize.min, children: [
-          Text(value == DeviceState.activated ? tr(context, 'الجهاز مسجل', 'Device registered') : tr(context, 'الجهاز غير مفعل', 'Device not activated')),
-          TextButton(onPressed: () => context.go(value == DeviceState.activated ? '/login' : '/device'), child: Text(tr(context, 'متابعة', 'Continue'))),
+          Text(value == DeviceState.activated
+              ? tr(context, 'الجهاز مسجل', 'Device registered')
+              : tr(context, 'الجهاز غير مفعل', 'Device not activated')),
+          TextButton(
+              onPressed: () => context
+                  .go(value == DeviceState.activated ? '/login' : '/device'),
+              child: Text(tr(context, 'متابعة', 'Continue'))),
         ]),
       )),
     );
@@ -114,9 +145,14 @@ class DeviceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(tr(context, 'حالة الجهاز', 'Device status'))),
-    body: Center(child: Text(tr(context, 'تفعيل الجهاز يتم بواسطة مسؤول المنشأة. لا يمكن إتمام البيع قبل التفعيل.', 'An administrator must activate this device before checkout.'))),
-  );
+        appBar:
+            AppBar(title: Text(tr(context, 'حالة الجهاز', 'Device status'))),
+        body: Center(
+            child: Text(tr(
+                context,
+                'تفعيل الجهاز يتم بواسطة مسؤول المنشأة. لا يمكن إتمام البيع قبل التفعيل.',
+                'An administrator must activate this device before checkout.'))),
+      );
 }
 
 class LoginScreen extends StatelessWidget {
@@ -124,7 +160,11 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(tr(context, 'تسجيل الدخول', 'Sign in'))),
-    body: Center(child: Text(tr(context, 'ربط جلسة الموظف بالجهاز في Sprint لاحق. حالة الاتصال: غير متصل.', 'Employee session linking follows in a later sprint. Offline status.'))),
-  );
+        appBar: AppBar(title: Text(tr(context, 'تسجيل الدخول', 'Sign in'))),
+        body: Center(
+            child: Text(tr(
+                context,
+                'ربط جلسة الموظف بالجهاز في Sprint لاحق. حالة الاتصال: غير متصل.',
+                'Employee session linking follows in a later sprint. Offline status.'))),
+      );
 }

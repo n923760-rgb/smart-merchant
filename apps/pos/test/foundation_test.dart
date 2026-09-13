@@ -6,7 +6,10 @@ import 'package:smart_merchant_pos/main.dart';
 void main() {
   testWidgets('unactivated device starts safely', (tester) async {
     await tester.pumpWidget(ProviderScope(
-      overrides: [deviceStateProvider.overrideWith((ref) async => DeviceState.notActivated)],
+      overrides: [
+        deviceStateProvider
+            .overrideWith((ref) async => DeviceState.notActivated)
+      ],
       child: const PosApp(),
     ));
     await tester.pumpAndSettle();

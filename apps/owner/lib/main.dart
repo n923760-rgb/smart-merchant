@@ -7,7 +7,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 
-const apiUrl = String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8000');
+const apiUrl =
+    String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8000');
 
 class OwnerSession extends StateNotifier<String?> {
   OwnerSession(this.storage) : super(null);
@@ -22,12 +23,19 @@ class OwnerSession extends StateNotifier<String?> {
       final response = await http.post(Uri.parse('$apiUrl/api/v1/auth/refresh'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({'refresh_token': refreshToken}));
-      if (response.statusCode != 200) { await storage.deleteAll(); return; }
+      if (response.statusCode != 200) {
+        await storage.deleteAll();
+        return;
+      }
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      await storage.write(key: 'access_token', value: data['access_token'] as String);
-      await storage.write(key: 'refresh_token', value: data['refresh_token'] as String);
+      await storage.write(
+          key: 'access_token', value: data['access_token'] as String);
+      await storage.write(
+          key: 'refresh_token', value: data['refresh_token'] as String);
       state = data['access_token'] as String;
-    } catch (_) { state = null; }
+    } catch (_) {
+      state = null;
+    }
   }
 
   Future<bool> login(String email, String password) async {
@@ -38,8 +46,10 @@ class OwnerSession extends StateNotifier<String?> {
       return false;
     }
     final data = jsonDecode(response.body) as Map<String, dynamic>;
-    await storage.write(key: 'access_token', value: data['access_token'] as String);
-    await storage.write(key: 'refresh_token', value: data['refresh_token'] as String);
+    await storage.write(
+        key: 'access_token', value: data['access_token'] as String);
+    await storage.write(
+        key: 'refresh_token', value: data['refresh_token'] as String);
     state = data['access_token'] as String;
     return true;
   }
@@ -53,7 +63,8 @@ class OwnerSession extends StateNotifier<String?> {
     if (response.statusCode != 200) {
       return null;
     }
-    final organizations = (jsonDecode(response.body) as Map<String, dynamic>)['organizations'] as List<dynamic>;
+    final organizations = (jsonDecode(response.body)
+        as Map<String, dynamic>)['organizations'] as List<dynamic>;
     return organizations.isEmpty ? null : organizations.first as String;
   }
 
@@ -62,11 +73,15 @@ class OwnerSession extends StateNotifier<String?> {
     if (refresh != null && state != null) {
       try {
         await http.post(Uri.parse('$apiUrl/api/v1/auth/logout'),
-            headers: {'Authorization': 'Bearer $state', 'Content-Type': 'application/json'},
+            headers: {
+              'Authorization': 'Bearer $state',
+              'Content-Type': 'application/json'
+            },
             body: jsonEncode({'refresh_token': refresh}));
-      } catch (_) { /* Local logout still clears credentials. */ }
+      } catch (_) {/* Local logout still clears credentials. */ }
     }
-    await storage.deleteAll(); state = null;
+    await storage.deleteAll();
+    state = null;
   }
 }
 
@@ -99,7 +114,10 @@ class _OwnerAppState extends ConsumerState<OwnerApp> {
   }
 
   @override
-  void dispose() { router.dispose(); super.dispose(); }
+  void dispose() {
+    router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +125,11 @@ class _OwnerAppState extends ConsumerState<OwnerApp> {
       title: 'Smart Merchant Owner',
       locale: ref.watch(localeProvider),
       supportedLocales: const [Locale('ar'), Locale('en')],
-      localizationsDelegates: const [GlobalMaterialLocalizations.delegate, GlobalWidgetsLocalizations.delegate, GlobalCupertinoLocalizations.delegate],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate
+      ],
       routerConfig: router,
     );
   }
@@ -125,7 +147,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? error;
 
   @override
-  void dispose() { email.dispose(); password.dispose(); super.dispose(); }
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,22 +163,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         }
       });
     }
-    return Scaffold(appBar: AppBar(title: Text(tr(context, 'مساعد التاجر', 'Smart Merchant')),
-      actions: [TextButton(onPressed: () => ref.read(localeProvider.notifier).state = Localizations.localeOf(context).languageCode == 'ar' ? const Locale('en') : const Locale('ar'), child: Text(tr(context, 'English', 'العربية')))]),
-      body: Center(child: SizedBox(width: 320, child: Column(mainAxisSize: MainAxisSize.min, children: [
-        TextField(controller: email, decoration: InputDecoration(labelText: tr(context, 'البريد الإلكتروني', 'Email'))),
-        TextField(controller: password, obscureText: true, decoration: InputDecoration(labelText: tr(context, 'كلمة المرور', 'Password'))),
-        if (error != null) Text(error!, style: const TextStyle(color: Colors.red)),
-        ElevatedButton(onPressed: () async {
-          try {
-            final success = await ref.read(sessionProvider.notifier).login(email.text, password.text);
-            if (!context.mounted) {
-              return;
-            }
-            if (success) { context.go('/home'); } else { setState(() => error = tr(context, 'تعذر الدخول', 'Sign-in failed')); }
-          } catch (_) { if (context.mounted) { setState(() => error = tr(context, 'تعذر الاتصال', 'Connection failed')); } }
-        }, child: Text(tr(context, 'دخول', 'Sign in'))),
-      ]))),
+    return Scaffold(
+      appBar: AppBar(
+          title: Text(tr(context, 'مساعد التاجر', 'Smart Merchant')),
+          actions: [
+            TextButton(
+                onPressed: () => ref.read(localeProvider.notifier).state =
+                    Localizations.localeOf(context).languageCode == 'ar'
+                        ? const Locale('en')
+                        : const Locale('ar'),
+                child: Text(tr(context, 'English', 'العربية')))
+          ]),
+      body: Center(
+          child: SizedBox(
+              width: 320,
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                TextField(
+                    controller: email,
+                    decoration: InputDecoration(
+                        labelText: tr(context, 'البريد الإلكتروني', 'Email'))),
+                TextField(
+                    controller: password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        labelText: tr(context, 'كلمة المرور', 'Password'))),
+                if (error != null)
+                  Text(error!, style: const TextStyle(color: Colors.red)),
+                ElevatedButton(
+                    onPressed: () async {
+                      try {
+                        final success = await ref
+                            .read(sessionProvider.notifier)
+                            .login(email.text, password.text);
+                        if (!context.mounted) {
+                          return;
+                        }
+                        if (success) {
+                          context.go('/home');
+                        } else {
+                          setState(() => error =
+                              tr(context, 'تعذر الدخول', 'Sign-in failed'));
+                        }
+                      } catch (_) {
+                        if (context.mounted) {
+                          setState(() => error =
+                              tr(context, 'تعذر الاتصال', 'Connection failed'));
+                        }
+                      }
+                    },
+                    child: Text(tr(context, 'دخول', 'Sign in'))),
+              ]))),
     );
   }
 }
@@ -165,10 +225,18 @@ class HomeScreen extends ConsumerWidget {
     if (token == null) {
       return const LoginScreen();
     }
-    return Scaffold(appBar: AppBar(title: Text(tr(context, 'المنشأة', 'Organization'))),
-      body: FutureBuilder<String?>(future: ref.read(sessionProvider.notifier).organization(),
-        builder: (context, snapshot) => Center(child: Text(snapshot.data == null ? tr(context, 'جارٍ تحميل المنشأة...', 'Loading organization...') : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'))),
-      bottomNavigationBar: TextButton(onPressed: () => context.go('/account'), child: Text(tr(context, 'الحساب', 'Account'))),
+    return Scaffold(
+      appBar: AppBar(title: Text(tr(context, 'المنشأة', 'Organization'))),
+      body: FutureBuilder<String?>(
+          future: ref.read(sessionProvider.notifier).organization(),
+          builder: (context, snapshot) => Center(
+              child: Text(snapshot.data == null
+                  ? tr(context, 'جارٍ تحميل المنشأة...',
+                      'Loading organization...')
+                  : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'))),
+      bottomNavigationBar: TextButton(
+          onPressed: () => context.go('/account'),
+          child: Text(tr(context, 'الحساب', 'Account'))),
     );
   }
 }
@@ -177,12 +245,15 @@ class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    appBar: AppBar(title: Text(tr(context, 'حسابي', 'Account'))),
-    body: Center(child: ElevatedButton(onPressed: () async {
-      await ref.read(sessionProvider.notifier).logout();
-      if (context.mounted) {
-        context.go('/');
-      }
-    }, child: Text(tr(context, 'تسجيل خروج', 'Sign out')))),
-  );
+        appBar: AppBar(title: Text(tr(context, 'حسابي', 'Account'))),
+        body: Center(
+            child: ElevatedButton(
+                onPressed: () async {
+                  await ref.read(sessionProvider.notifier).logout();
+                  if (context.mounted) {
+                    context.go('/');
+                  }
+                },
+                child: Text(tr(context, 'تسجيل خروج', 'Sign out')))),
+      );
 }
