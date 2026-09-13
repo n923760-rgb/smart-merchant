@@ -1,0 +1,122 @@
+name: Foundation CI
+permissions:
+  contents: read
+  pull-requests: read
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: merchant, POSTGRES_PASSWORD: merchant, POSTGRES_DB: smart_merchant_test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U merchant -d smart_merchant_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+    defaults:
+      run: { working-directory: backend }
+    env:
+      DATABASE_URL: postgresql+psycopg://merchant:merchant@localhost:5432/smart_merchant_test
+      REDIS_URL: redis://localhost:6379/1
+      JWT_SECRET: ci-disposable-unique-testing-secret-not-for-production
+      BOOTSTRAP_KEY: test-bootstrap-key-for-disposable-test-db-000000
+      APP_ENV: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -e '.[dev]'
+      - run: ruff check app tests
+      - run: mypy app
+      - run: alembic upgrade head
+      - run: alembic check
+      - run: pytest
+      - run: |
+          python -m pip install pip-audit
+          python -m pip freeze --exclude-editable > /tmp/merchant-dependencies.txt
+          python -m pip_audit --strict --no-deps -r /tmp/merchant-dependencies.txt
+      - run: alembic downgrade base && alembic upgrade head
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: apps/web }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: npm ci
+      - run: npm run lint && npm run typecheck && npm test && npm run build
+      - run: npm audit --audit-level=high
+  flutter:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: { app: [pos, owner] }
+    defaults:
+      run: { working-directory: 'apps/${{ matrix.app }}' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - run: flutter create . --platforms=android,ios && rm -f test/widget_test.dart
+      - name: Verify Dart formatting
+        run: dart format lib test && git diff --exit-code -- lib test
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build apk --debug
+      - name: Retain debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-merchant-${{ matrix.app }}-debug-apk
+          path: apps/${{ matrix.app }}/build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+  flutter-ios:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix: { app: [pos, owner] }
+    defaults:
+      run: { working-directory: 'apps/${{ matrix.app }}' }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - run: flutter create . --platforms=ios && rm -f test/widget_test.dart
+      - run: flutter build ios --simulator --debug
+  compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the complete development stack
+        run: |
+          cp .env.example .env
+          docker compose up -d --build
+      - name: Migrate, seed, and verify the running API
+        run: |
+          docker compose exec -T backend alembic upgrade head
+          docker compose exec -T -e DEV_SEED_PASSWORD=disposable-ci-demo-password-0000 backend python -m app.workers.seed
+          curl --fail --retry 10 --retry-connrefused --retry-delay 2 http://127.0.0.1:8000/health/ready
+          docker compose ps --status running worker
+          curl --fail -sS -H 'Content-Type: application/json' -d '{"email":"owner-demo@example.com","password":"disposable-ci-demo-password-0000"}' http://127.0.0.1:8000/api/v1/auth/login | python3 -c 'import json,sys; result=json.load(sys.stdin); assert result["access_token"] and result["refresh_token"]'
+      - name: Clean up disposable services
+        if: always()
+        run: docker compose down -v
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
