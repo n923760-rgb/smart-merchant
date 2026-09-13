@@ -78,7 +78,7 @@ class OwnerSession extends StateNotifier<String?> {
               'Content-Type': 'application/json'
             },
             body: jsonEncode({'refresh_token': refresh}));
-      } catch (_) {/* Local logout still clears credentials. */ }
+      } catch (_) {/* Local logout still clears credentials. */}
     }
     await storage.deleteAll();
     state = null;
