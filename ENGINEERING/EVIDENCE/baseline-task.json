@@ -1,0 +1,43 @@
+{
+  "title": "SM-GOV-001: read-only Master Re-baseline",
+  "task_type": "READ-ONLY DIAGNOSIS",
+  "authority": "Read repository metadata/source and existing CI using the authorized connector; produce a report in conversation only. No mutation in first round.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
+  "existing_pr": 1,
+  "expected_pr_head": "42c33b761204c1195b686f2519e419d8bf979f7a",
+  "expected_pr_base": "main",
+  "scope": "Live project and governance discovery.",
+  "out_of_scope": "Source changes, branches, commits, PR creation, merges, settings, deployment and runtime claims.",
+  "task": "Inspect live repository and candidate source; produce baseline and propose roadmap without writing it.",
+  "validation": "Read official tree, branch/PR heads, instructions, architecture, CI state and rulesets; declare unavailable execution.",
+  "stop_conditions": "Repository/source mismatch, credentials exposure, attempted mutation or unsupported execution.",
+  "success_criteria": "Attributable read-only baseline with exact official/candidate sources and truthful unknowns.",
+  "requested_actions": [
+    "read"
+  ],
+  "authorized_actions": [
+    "read"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md"
+}

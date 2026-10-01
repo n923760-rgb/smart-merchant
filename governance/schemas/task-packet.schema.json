@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Engineering Task Packet",
+  "type": "object",
+  "required": [
+    "title",
+    "task_type",
+    "authority",
+    "repository",
+    "official_branch",
+    "expected_official_head",
+    "scope",
+    "out_of_scope",
+    "task",
+    "validation",
+    "stop_conditions",
+    "success_criteria",
+    "requested_actions",
+    "authorized_actions",
+    "protected_actions",
+    "protected_action_authorizations"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_type": {
+      "enum": [
+        "READ-ONLY DIAGNOSIS",
+        "IMPLEMENTATION",
+        "RUNTIME QUALIFICATION",
+        "CI INVESTIGATION",
+        "INFRASTRUCTURE MAINTENANCE"
+      ]
+    },
+    "authority": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "official_branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected_official_head": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{7,64}$"
+    },
+    "existing_pr": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "expected_pr_head": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-fA-F]{7,64}$"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "out_of_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task": {
+      "type": "string",
+      "minLength": 1
+    },
+    "validation": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {},
+    "stop_conditions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "report_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "success_criteria": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_:-]*$"
+      },
+      "uniqueItems": true
+    },
+    "authorized_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_:-]*$"
+      },
+      "uniqueItems": true
+    },
+    "protected_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_:-]*$"
+      },
+      "uniqueItems": true
+    },
+    "protected_action_authorizations": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "source",
+          "reference"
+        ],
+        "properties": {
+          "source": {
+            "const": "CURRENT_OWNER_INSTRUCTION"
+          },
+          "reference": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "expected_pr_base": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    }
+  },
+  "additionalProperties": true
+}

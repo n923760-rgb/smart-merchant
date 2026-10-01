@@ -1,0 +1,65 @@
+{
+  "status": "DRAFT_LIVE_VERIFICATION_REQUIRED",
+  "governance_source": "https://github.com/n923760-rgb/engineering-governance/blob/641e4f9e45da109257ba1f38752b94604c2e4531/MASTER_GOVERNANCE.md",
+  "project_name": "Smart Merchant Assistant",
+  "repository": "n923760-rgb/smart-merchant",
+  "repository_url": "https://github.com/n923760-rgb/smart-merchant",
+  "default_branch": "main",
+  "official_branch": "main",
+  "repository_authority_file": "AGENTS.md",
+  "project_baseline": "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
+  "architecture_guides": [],
+  "subsystem_contracts": [],
+  "master_roadmap": "ENGINEERING/MASTER_ROADMAP.md",
+  "master_baseline_report": "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
+  "ci_system": "Governance CI introduced by this adoption; Foundation CI exists only on PR #1 until merged",
+  "engineering_lab_contract": "governance/ENGINEERING_ENVIRONMENT_CONTRACT.md",
+  "execution_environment": "Repository API/MCP session; external GitHub Actions",
+  "verified_execution_capabilities": [
+    "repository_api_read"
+  ],
+  "controller": "Coding agent using governance/agents/controller.md",
+  "executor": "Authorized single writer using governance/agents/executor.md",
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "test_strategy": "Validate governance contracts and fail-closed fixtures in CI; application tests require canonical foundation source and qualified lab.",
+  "evidence_location": "ENGINEERING/EVIDENCE/",
+  "report_location": "ENGINEERING/REPORTS/",
+  "artifact_location": null,
+  "backup_restore_strategy": null,
+  "release_model": null,
+  "runtime_device_platform_matrix": [
+    "Proposed: supported web browsers",
+    "Candidate: Android debug builds",
+    "Candidate: iOS simulator builds",
+    "NOT RUN: physical devices and production-like deployment"
+  ],
+  "candidate_source": {
+    "branch": "foundation/sprint-01",
+    "head": "42c33b761204c1195b686f2519e419d8bf979f7a",
+    "pr": 1,
+    "architecture_guides": [
+      "docs/architecture/overview.md",
+      "docs/adr/"
+    ],
+    "test_strategy": "docs/testing/testing-strategy.md"
+  },
+  "verified_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
+  "observed_date": "2026-10-01"
+}
