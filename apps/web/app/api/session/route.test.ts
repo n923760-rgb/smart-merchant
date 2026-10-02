@@ -12,6 +12,9 @@ describe('web login proxy', () => {
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ authenticated: true });
     expect(response.headers.get('set-cookie')).toContain('HttpOnly');
+    expect(response.cookies.get('sm_context')?.value).toMatch(/^[0-9a-f-]{36}$/);
+    expect(response.cookies.get('sm_context')?.httpOnly).toBeFalsy();
+    expect(response.cookies.get('sm_org')?.value).toBe('');
   });
 
   it('does not create a session on denied credentials', async () => {
@@ -39,9 +42,19 @@ describe('web logout proxy', () => {
     expect(JSON.parse(init.body as string)).toEqual({ refresh_token: 'refresh-fixture' });
     expect(init.headers).toEqual({ 'Content-Type': 'application/json' });
     expect(await response.json()).toEqual({ authenticated: false });
-    for (const name of ['sm_access', 'sm_refresh', 'sm_org']) {
+    for (const name of ['sm_access', 'sm_refresh', 'sm_org', 'sm_context']) {
       expect(response.cookies.get(name)?.value).toBe('');
     }
+  });
+
+  it('does not sign out a newer account from an earlier context', async () => {
+    vi.stubGlobal('fetch', vi.fn());
+    const response = await DELETE(new NextRequest('http://localhost:3000/api/session', {
+      method: 'DELETE', headers: { cookie: 'sm_context=beta; sm_refresh=fixture-refresh', 'X-Session-Context': 'alpha' },
+    }));
+    expect(response.status).toBe(409);
+    expect(response.headers.has('set-cookie')).toBe(false);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it('clears local cookies when the backend is unavailable', async () => {
