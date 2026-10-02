@@ -1,0 +1,69 @@
+{
+  "title": "SM-AUDIT-006: tenant-safe invitation and terminal-rename audit coverage",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "6b6a5107ffa6867adcbcb26adb8233780d14a2c0",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "Success audit coverage for the existing user invitation and terminal rename commands.",
+  "out_of_scope": "Other audit actions, failed-attempt audit policy, backend auth/token/schema redesign, web/owner/POS features, historical audit backfill, production and Telegram.",
+  "task": "Insert minimal tenant/actor-scoped USER_INVITED membership events and branch-scoped TERMINAL_RENAMED before/after name events in the same transaction as the mutation; lock rename rows to capture authoritative before state.",
+  "validation": "Disposable PostgreSQL API tests for new/existing users, minimal snapshots, duplicates/membership-flush conflict, foreign tenants, branch/global RBAC, explicit no-op renames and audit-failure rollback; exact Foundation/Governance CI plus complete diff/source review.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Every successful command records one correctly scoped event; rejected or rolled-back mutations create no success event; audit contains no passwords/hashes/tokens or copied foreign tenant/profile data; existing tenant/RBAC/last-owner and append-only contracts remain unchanged.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; reviewed bounded mutation audit repair into main after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/TENANT_MUTATION_AUDIT.md",
+  "allowed_paths": [
+    "backend/app/api/routes.py",
+    "backend/tests/test_mutation_audit.py",
+    "ENGINEERING/REPORTS/TENANT_MUTATION_AUDIT.md",
+    "ENGINEERING/EVIDENCE/mutation-audit-task.json",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ]
+}
