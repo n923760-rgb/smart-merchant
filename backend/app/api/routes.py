@@ -497,6 +497,16 @@ def invite_user(
         raise ConflictError()
     member = Membership(user_id=user.id, organization_id=ctx.organization.id)
     db.add(member)
+    db.flush()
+    record(
+        db,
+        "USER_INVITED",
+        "membership",
+        member.id,
+        ctx.organization.id,
+        ctx.user.id,
+        after={"user_id": str(user.id), "status": member.status},
+    )
     commit(db)
     return {**user_dict(user), "membership_id": str(member.id)}
 
@@ -744,14 +754,26 @@ def rename_terminal(
     db: Session = Depends(db_session),
 ):
     terminal = db.scalar(
-        select(Terminal).where(
-            Terminal.id == terminal_id, Terminal.organization_id == ctx.organization.id
-        )
+        select(Terminal)
+        .where(Terminal.id == terminal_id, Terminal.organization_id == ctx.organization.id)
+        .with_for_update()
     )
     if not terminal:
         raise NotFoundError()
     ctx.require("terminals.manage", terminal.branch_id)
+    before = {"name": terminal.name}
     terminal.name = payload.name
+    record(
+        db,
+        "TERMINAL_RENAMED",
+        "terminal",
+        terminal.id,
+        ctx.organization.id,
+        ctx.user.id,
+        branch_id=terminal.branch_id,
+        before=before,
+        after={"name": terminal.name},
+    )
     commit(db)
     return terminal_dict(terminal)
 
