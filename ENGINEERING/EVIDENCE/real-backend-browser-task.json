@@ -1,0 +1,23 @@
+{
+  "title": "SM-E2E-007: real-backend browser foundation qualification",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner request: @GitHub راجع المشروع و نكمل; implement the next bounded foundation verification task. No protected merge is requested in this packet.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "80de2647186d999e98e2ff77eff1e1dd1c7810d0",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "One Chromium browser context per account against production Next.js BFF, real FastAPI and disposable PostgreSQL/Redis.",
+  "out_of_scope": "Application fixes, multi-tab cache invalidation, physical/mobile devices, POS transactions, catalog, financial policy, production and protected merges.",
+  "task": "Add a bounded CI integration journey for rendered login/branch creation, browser-origin BFF membership/role/device/audit commands, branch RBAC, foreign tenant denial, refresh rotation and logout revocation.",
+  "validation": "Local JavaScript syntax, task validator, complete diff review; exact-source Foundation/Governance CI and new real-backend Chromium job. Runtime unavailable locally because Docker/PostgreSQL/Redis are absent; CI is the disposable external executor.",
+  "stop_conditions": "Changed main, conflicting PR, failed required checks, secrets in evidence, unsupported runtime or scope expansion.",
+  "success_criteria": "Real browser cookies authenticate the real backend; owner mutations persist; scoped manager sees only the allowed branch; cashier and foreign owner cannot mutate/read protected resources; tenant audit records exist; rotated and logged-out refresh capabilities reject reuse. No interception or synthetic upstream.",
+  "requested_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci"],
+  "authorized_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci"],
+  "protected_actions": ["merge", "release", "production_deploy", "force_push"],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/REAL_BACKEND_BROWSER.md",
+  "allowed_paths": ["apps/web/e2e/real-backend.mjs", "apps/web/e2e/README.md", ".github/workflows/ci.yml", "ENGINEERING/EVIDENCE/real-backend-browser-task.json", "ENGINEERING/REPORTS/REAL_BACKEND_BROWSER.md", "ENGINEERING/MASTER_ROADMAP.md"]
+}

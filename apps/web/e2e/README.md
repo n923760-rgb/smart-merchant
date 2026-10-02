@@ -1,5 +1,31 @@
 # Account-switch browser regression
 
+## Real-backend foundation qualification
+
+`real-backend.mjs` connects Chromium to a production Next.js build, real FastAPI,
+migrated disposable PostgreSQL 16 and Redis 7. There are no route interceptions or
+synthetic upstream responses. Foundation CI runs it in its own isolated job.
+
+Rendered flows: owner/manager/cashier login, owner branch creation, branch list,
+role-hidden navigation and terminal revocation. Browser-origin BFF API commands
+cover basic invitation, branch-scoped role assignment, device creation/rename,
+audit events, last-owner protection, permission denial and cross-tenant UUIDs.
+Real HttpOnly cookies, explicit refresh rotation/reuse rejection and logout
+revocation are checked. Credentials are generated in memory and never retained.
+
+Only `http://127.0.0.1` targets and `SM_DISPOSABLE_E2E=1` are accepted. Use an empty,
+disposable migrated database and a fresh Redis database; the fixture creates two
+merchants and does not delete rows afterward. CI destroys its service containers.
+Provide an ephemeral `BOOTSTRAP_KEY` to both backend and script, start the backend
+on port 8000 and production Next.js with `BACKEND_URL=http://127.0.0.1:8000` on
+port 3000. Copy the script beside the pinned Playwright installation described
+below, then run `SM_DISPOSABLE_E2E=1 node <tools-dir>/real-backend.mjs`.
+
+This does not qualify every management form, automatic expiry recovery,
+cross-tab cache invalidation, multiple BFF instances, other browser engines,
+physical/mobile devices, POS transactions or production deployment. The existing
+synthetic concurrency and transport fixtures remain separate, complementary gates.
+
 session-isolation.mjs runs against the production Next.js app with explicit synthetic BFF responses.
 It exercises actual client navigation and query-provider lifecycle, not a mocked QueryClient.
 The first account warms identity/organization/branch/user/device caches. An in-flight request survives logout. The second account's responses are held while the test checks that old data and old organization selection never appear.
