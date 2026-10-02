@@ -1,0 +1,72 @@
+{
+  "title": "SM-AUTH-005: renew owner sessions on foreground and explicit expiry",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "2f5440165d7c2f2a8ef7cb07a1204b40456964b8",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "One owner-app session-expiry outcome including serialized credential operations and actionable failure UI.",
+  "out_of_scope": "Backend token families/schema/RBAC, web sessions, audit coverage, POS transactions, device/production qualification and Telegram.",
+  "task": "Probe stored access at startup/resume; renew only on explicit 401, serialize credential operations, revoke rotation successors at logout, suppress stale account responses and surface recoverable service errors.",
+  "validation": "Owner MockClient/secure-storage regressions for concurrent expiry, resume, malformed/rejected refresh, logout race, stale organization and request timeout; widget lifecycle/retry/account-context tests; exact Foundation/Governance CI and full source/diff review.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Normal expiry recovers once without concurrent rotation; outage preserves stored credentials; logout uses the current queued successor and cannot revive old UI; lifecycle expiry is handled; required CI passes.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; reviewed bounded owner-session repair into main after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/OWNER_SESSION_RENEWAL.md",
+  "allowed_paths": [
+    "apps/owner/lib/session.dart",
+    "apps/owner/lib/main.dart",
+    "apps/owner/test/session_test.dart",
+    "apps/owner/test/session_widget_test.dart",
+    "docs/adr/0009-owner-session-renewal.md",
+    "ENGINEERING/REPORTS/OWNER_SESSION_RENEWAL.md",
+    "ENGINEERING/EVIDENCE/owner-renewal-task.json",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ]
+}

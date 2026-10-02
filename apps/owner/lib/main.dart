@@ -1,86 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
+import 'session.dart';
 
-const apiUrl =
-    String.fromEnvironment('API_URL', defaultValue: 'http://localhost:8000');
-
-class OwnerSession extends StateNotifier<String?> {
-  OwnerSession(this.storage) : super(null);
-  final FlutterSecureStorage storage;
-
-  Future<void> restore() async {
-    final refreshToken = await storage.read(key: 'refresh_token');
-    if (refreshToken == null) {
-      return;
-    }
-    try {
-      final response = await http.post(Uri.parse('$apiUrl/api/v1/auth/refresh'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({'refresh_token': refreshToken}));
-      if (response.statusCode != 200) {
-        await storage.deleteAll();
-        return;
-      }
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      await storage.write(
-          key: 'access_token', value: data['access_token'] as String);
-      await storage.write(
-          key: 'refresh_token', value: data['refresh_token'] as String);
-      state = data['access_token'] as String;
-    } catch (_) {
-      state = null;
-    }
-  }
-
-  Future<bool> login(String email, String password) async {
-    final response = await http.post(Uri.parse('$apiUrl/api/v1/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}));
-    if (response.statusCode != 200) {
-      return false;
-    }
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
-    await storage.write(
-        key: 'access_token', value: data['access_token'] as String);
-    await storage.write(
-        key: 'refresh_token', value: data['refresh_token'] as String);
-    state = data['access_token'] as String;
-    return true;
-  }
-
-  Future<String?> organization() async {
-    if (state == null) {
-      return null;
-    }
-    final response = await http.get(Uri.parse('$apiUrl/api/v1/auth/me'),
-        headers: {'Authorization': 'Bearer $state'});
-    if (response.statusCode != 200) {
-      return null;
-    }
-    final organizations = (jsonDecode(response.body)
-        as Map<String, dynamic>)['organizations'] as List<dynamic>;
-    return organizations.isEmpty ? null : organizations.first as String;
-  }
-
-  Future<void> logout() async {
-    final refresh = await storage.read(key: 'refresh_token');
-    if (refresh != null) {
-      try {
-        await http.post(Uri.parse('$apiUrl/api/v1/auth/logout'),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode({'refresh_token': refresh}));
-      } catch (_) {/* Local logout still clears credentials. */}
-    }
-    await storage.deleteAll();
-    state = null;
-  }
-}
+export 'session.dart';
 
 final sessionProvider = StateNotifierProvider<OwnerSession, String?>(
   (ref) => OwnerSession(const FlutterSecureStorage()),
@@ -97,8 +22,32 @@ class OwnerApp extends ConsumerStatefulWidget {
   ConsumerState<OwnerApp> createState() => _OwnerAppState();
 }
 
-class _OwnerAppState extends ConsumerState<OwnerApp> {
+class _OwnerAppState extends ConsumerState<OwnerApp>
+    with WidgetsBindingObserver {
   late final GoRouter router;
+  bool sessionUnavailable = false;
+
+  Future<void> checkSession() async {
+    final session = ref.read(sessionProvider.notifier);
+    final epoch = session.contextVersion;
+    try {
+      await session.resume();
+      if (mounted && epoch == session.contextVersion) {
+        setState(() => sessionUnavailable = false);
+      }
+    } catch (_) {
+      if (mounted && epoch == session.contextVersion) {
+        setState(() => sessionUnavailable = true);
+      }
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      checkSession();
+    }
+  }
   @override
   void initState() {
     super.initState();
@@ -107,11 +56,13 @@ class _OwnerAppState extends ConsumerState<OwnerApp> {
       GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
       GoRoute(path: '/account', builder: (_, __) => const AccountScreen()),
     ]);
-    Future.microtask(() => ref.read(sessionProvider.notifier).restore());
+    WidgetsBinding.instance.addObserver(this);
+    Future.microtask(checkSession);
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     router.dispose();
     super.dispose();
   }
@@ -128,6 +79,20 @@ class _OwnerAppState extends ConsumerState<OwnerApp> {
         GlobalCupertinoLocalizations.delegate
       ],
       routerConfig: router,
+      builder: (context, child) => Column(children: [
+        if (sessionUnavailable)
+          MaterialBanner(
+            content: Text(tr(context, 'تعذر التحقق من الجلسة. أعد المحاولة.',
+                'Session unavailable. Try again.')),
+            actions: [
+              TextButton(
+                onPressed: checkSession,
+                child: Text(tr(context, 'إعادة المحاولة', 'Retry')),
+              ),
+            ],
+          ),
+        Expanded(child: child!),
+      ]),
     );
   }
 }
@@ -214,23 +179,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  Future<String?>? organization;
+  int? loadedContext;
+
+  @override
+  Widget build(BuildContext context) {
     final token = ref.watch(sessionProvider);
     if (token == null) {
+      organization = null;
       return const LoginScreen();
     }
+    final currentContext = ref.read(sessionProvider.notifier).contextVersion;
+    if (loadedContext != currentContext) {
+      organization = null;
+      loadedContext = currentContext;
+    }
+    organization ??= ref.read(sessionProvider.notifier).organization();
     return Scaffold(
       appBar: AppBar(title: Text(tr(context, 'المنشأة', 'Organization'))),
       body: FutureBuilder<String?>(
-          future: ref.read(sessionProvider.notifier).organization(),
-          builder: (context, snapshot) => Center(
-              child: Text(snapshot.data == null
-                  ? tr(context, 'جارٍ تحميل المنشأة...',
-                      'Loading organization...')
-                  : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'))),
+        future: organization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Text(tr(context, 'تعذر تحميل المنشأة', 'Organization unavailable')),
+                TextButton(
+                  onPressed: () => setState(() {
+                    organization =
+                        ref.read(sessionProvider.notifier).organization();
+                  }),
+                  child: Text(tr(context, 'إعادة المحاولة', 'Retry')),
+                ),
+              ]),
+            );
+          }
+          return Center(
+            child: Text(snapshot.connectionState != ConnectionState.done
+                ? tr(context, 'جارٍ تحميل المنشأة...', 'Loading organization...')
+                : snapshot.data == null
+                    ? tr(context, 'لا توجد منشأة متاحة', 'No organization available')
+                    : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'),
+          );
+        },
+      ),
       bottomNavigationBar: TextButton(
           onPressed: () => context.go('/account'),
           child: Text(tr(context, 'الحساب', 'Account'))),

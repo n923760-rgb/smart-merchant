@@ -11,6 +11,7 @@ FACT: Governance #2 merged at d1a148b8f30c4ceaf68f670dc8b4409e8b3ca3db; [Governa
 FACT: POS requirements #3 merged at 8538eb6de3a800836a007a4d23e898d94b40c2e3; [Foundation CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36966049894) and [Governance CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36966049889) passed on 7cb6a2e6cc7eb11510ccf723a5700b9868f368af. It preserves 150 rules and 25 NOT RUN acceptance groups; no POS transaction implementation is claimed.
 FACT: Logout #6 merged at d273ea5ca0e7a841b3db423840d6cecb95011d8a; candidate 4eb0d980e3ad98d78716f75561d0d641c77416a2 passed Foundation/Governance 36966865089 / 36966865063. Main passed [36967403546](https://github.com/n923760-rgb/smart-merchant/actions/runs/36967403546) / [36967403567](https://github.com/n923760-rgb/smart-merchant/actions/runs/36967403567). Refresh-only logout and its regressions are integrated.
 FACT: Web renewal #7 merged at 9ed105206becda3c88a369f8feff46aa66cda50c, preserving tested tree 4f5ab2064528a0b3be3c04646b4f399dc0c249e8. Main Foundation/Governance passed [36970604523](https://github.com/n923760-rgb/smart-merchant/actions/runs/36970604523) / [36970604435](https://github.com/n923760-rgb/smart-merchant/actions/runs/36970604435); 22 web/14 backend tests plus Chromium and Android/iOS simulator gates passed.
+FACT: BFF bounds #8 merged at 2f5440165d7c2f2a8ef7cb07a1204b40456964b8, preserving tested tree c980d285ed5932ed8c39400b81f38b98067d160a. Main Foundation/Governance passed [37006048107](https://github.com/n923760-rgb/smart-merchant/actions/runs/37006048107) / [37006048068](https://github.com/n923760-rgb/smart-merchant/actions/runs/37006048068); 50 web/14 backend tests and browser/Android/iOS simulator gates passed.
 FACT: Owner instructed continued work without repeat permission requests and granted project authority. Reviewed merges are authorized; actions need exact-source verification and relevant successful checks.
 UNKNOWN: Physical device/pilot acceptance, real payment adapters, production identities/signing/infrastructure, backups and restore.
 BLOCKED: Branch-protection writes are not available through this connector.
@@ -36,7 +37,8 @@ SOURCE FACT at original foundation: Backend logout depended on current_user, so 
 SOURCE FACT: Independent BFF requests attempted rotation on the same cookie snapshot. SM-AUTH-003 uses cross-tab browser locking and context binding, preserving backend one-use rotation. Source/CI correction is merged in #7; cross-tab rendered-cache invalidation and lost-cookie delivery remain separate qualification gaps.
 SOURCE FACT: BFF transport was unbounded on diagnosis main; SM-WEB-004 adds streamed byte caps, cumulative deadlines and bounded browser auth-lock requests. Its exact checks/review/merge are recorded in the task PR.
 SOURCE FACT: User invitation and terminal rename omit audit records; repair separately.
-NOT RUN: Owner-app foreground expiry behavior, real backend browser E2E, physical input/printing/offline durability and complete POS-148.
+SOURCE FACT: SM-AUTH-005 adds owner foreground renewal and serialized credential operations; its exact checks/review/merge are recorded in the task PR.
+NOT RUN: Real backend browser/device E2E, physical input/printing/offline durability and complete POS-148.
 Governance fixtures cover packet authority/evidence, not live dirty-source/capacity/protection enforcement.
 No permanent autonomous agent is installed. Role review in this session is the same actor; never label it independent review.
 
@@ -68,9 +70,9 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 
 ## Exact immediate next round
 
-Complete SM-WEB-004 exact-source transport failure tests, Foundation/Governance CI and reviewed owner-authorized merge. Then address owner-client foreground expiry in one bounded task; audit coverage and cross-tab rendered-cache invalidation remain separate. This round follows ADR 0008.
+Complete SM-AUTH-005 owner foreground/session regressions, Foundation/Governance CI and reviewed owner-authorized merge. Then repair user-invitation and terminal-rename audit coverage in a separate bounded task; cross-tab rendered-cache invalidation remains separate. This round follows ADR 0009.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
 
 ## Reports and evidence
 
-[Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md).
+[Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md).
