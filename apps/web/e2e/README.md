@@ -28,3 +28,11 @@ Start Next.js with BACKEND_URL=http://127.0.0.1:8000, then copy/run session-rene
 The renewal script owns/cleans up port 8000. Use a disposable environment with that port free.
 HTTPS (or a trustworthy localhost context) and Web Locks are required for session-changing actions.
 Browsers without Web Locks receive an actionable session error; no unsafe process-local coordination fallback is used.
+
+## BFF failure bounds
+
+The same real-BFF fixture also stalls a mutation response after sending upstream headers, proving a 504 leaves cookies/navigation intact and makes only one command attempt, without refresh.
+It then stalls logout revocation and verifies local cookies are cleared within the server deadline.
+The test uses default server limits (10 seconds), with two deliberately stalled bodies and disposable data. Browser steps retain their 15-second bound.
+Vitest uses fake timers for cumulative input/upstream deadlines and the 65-second browser deadline/lock release; it does not sleep for those durations.
+These fixtures do not assert that abort rolls back an authoritative command or proves logout revocation when the result is unavailable.
