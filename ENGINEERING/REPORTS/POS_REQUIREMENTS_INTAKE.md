@@ -44,3 +44,10 @@ Record final branch/head/PR in PR metadata after creation; commits cannot contai
 
 Review/merge requirements and governance under owner authority; resolve canonical application source; qualify lab; select the policy details needed for the first dependent slice; execute one bounded task at a time against live source.
 Existing project roadmap is in PR #2. Reconcile it with these adopted POS requirements after governance/source decisions instead of silently copying or editing the pending roadmap.
+
+## Canonical integration — 2026-10-02
+
+Owner authorized continued work and reviewed merges. Starting official main d1a148b8f30c4ceaf68f670dc8b4409e8b3ca3db already contains foundation #1 and governance #2.
+The normalized 150-rule baseline and all 25 NOT RUN acceptance groups remain unchanged. Link these documents from the existing README and single roadmap; update current state without rewriting this historical intake.
+Validate sequential rule/case IDs, all POS references and relative document links in the API controller; fresh Foundation/Governance CI is required before integration. Results are attached to PR #3 with its exact head.
+This is source/document adoption. Complete POS lifecycle, shared calculator, inventory/profit, offline/payment/provider, refund/shift and physical acceptance remain NOT RUN. No fiscal/rate/rounding/provider examples become production policies.

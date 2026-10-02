@@ -2,10 +2,10 @@
 
 Status: REQUIREMENTS RECORDED; IMPLEMENTATION NOT STARTED.
 Normative requirement baseline: [POS Transaction Flow v1](POS_TRANSACTION_FLOW_V1.md).
-This is a subordinate POS delivery plan, not a second project roadmap. ENGINEERING/MASTER_ROADMAP.md remains the sole project roadmap once governance PR #2 is adopted.
+This is a subordinate POS delivery plan, not a second project roadmap. ENGINEERING/MASTER_ROADMAP.md is the sole project roadmap; governance PR #2 is adopted.
 Owner authority: the supplied document is DECIDED — Foundation v1; examples/recommendations/configurable details do not select production policies.
 
-## Live source boundary
+## Historical source boundary — 2026-10-01
 
 Observed 2026-10-01:
 - Official main: 737facd48180d7920540f93032ba0a827c9d1ef2, README only.
@@ -14,6 +14,10 @@ Observed 2026-10-01:
 - Both PRs remain unmerged. This requirements change derives from main and does not promote either candidate.
 - Local shell/runtime unavailable; repository API/MCP supports read/write/PR review.
 - No application behavior, merchant pilot, provider integration, signing or deployment is qualified by this document.
+
+## Canonical integration — 2026-10-02
+
+Foundation #1 and governance #2 are merged into main. This integration starts from d1a148b8f30c4ceaf68f670dc8b4409e8b3ca3db; reverify live HEAD before implementation. The owner authorized continued development and reviewed merges. This is requirement adoption, not execution of POS-148 or selection of fiscal/provider/pilot policies.
 
 Before application implementation, verify live state and use canonical application source or an explicitly owner-authorized development base. Review overlaps before any merge. Preserve the foundation's tenant/RBAC/audit/last-owner rules.
 
@@ -90,5 +94,5 @@ Telegram integration remains deferred by the owner's prior instruction.
 ## Evidence and project roadmap integration
 
 The intake report belongs to ENGINEERING/REPORTS/POS_REQUIREMENTS_INTAKE.md.
-Reference this plan from the existing sole project roadmap in a later reconciliation round after governance adoption; do not create another roadmap while PR #2 is pending.
+The existing sole project roadmap links to this plan; maintain it there rather than creating another roadmap.
 Examples are not runtime evidence. Acceptance starts NOT RUN and must be bound to actual tested source, actors, database/provider state, safe artifact identities and runtime.

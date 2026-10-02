@@ -1,0 +1,55 @@
+{
+  "task_id": "SM-GOV-001",
+  "task_type": "READ-ONLY DIAGNOSIS",
+  "task_packet_ref": "ENGINEERING/EVIDENCE/baseline-task.json",
+  "executor": "Controller session via repository API/MCP",
+  "execution_environment": "Repository connector; no shell/runtime",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "verified_remote_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
+  "exact_tested_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
+  "authorized_actions": [
+    "read"
+  ],
+  "actions_actually_performed": [
+    "read"
+  ],
+  "validation": [
+    {
+      "check": "Official repository and source inspection",
+      "status": "PASS",
+      "evidence": [
+        "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
+        "https://github.com/n923760-rgb/smart-merchant/tree/737facd48180d7920540f93032ba0a827c9d1ef2"
+      ]
+    },
+    {
+      "check": "Candidate historical CI read at candidate source",
+      "status": "PASS",
+      "evidence": [
+        "https://github.com/n923760-rgb/smart-merchant/actions/runs/34741522604"
+      ],
+      "candidate_head": "42c33b761204c1195b686f2519e419d8bf979f7a"
+    },
+    {
+      "check": "Local builds, runtime and devices",
+      "status": "NOT RUN",
+      "evidence": [],
+      "reason": "No shell/runtime/device tool available; first round was source/API inspection."
+    }
+  ],
+  "facts": [
+    "main contains README only.",
+    "Open PR #1 holds foundation source.",
+    "Rulesets returned empty; main was unprotected.",
+    "No mutation occurred during discovery."
+  ],
+  "inferences": [
+    "Session lifecycle requires isolated regression-backed diagnoses."
+  ],
+  "assumptions": [],
+  "residual_risks": [
+    "No canonical application acceptance, lab/runtime proof or branch protection."
+  ],
+  "recommended_next_action": "Perform separately authorized bounded governance adoption from live main; keep merge/application implementation separate."
+}

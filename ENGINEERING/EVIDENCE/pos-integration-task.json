@@ -1,0 +1,58 @@
+{
+  "title": "SM-POS-002: canonical POS requirement integration",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "d1a148b8f30c4ceaf68f670dc8b4409e8b3ca3db",
+  "existing_pr": 3,
+  "expected_pr_head": "1522452b3f948ec175ada14c1f5b217b93308ad4",
+  "expected_pr_base": "main",
+  "scope": "Integrate decided POS v1 documents with the single canonical roadmap and current foundation/governance.",
+  "out_of_scope": "Application behavior, production/signing/releases, paid infrastructure, Telegram and qualification claims without evidence.",
+  "task": "Preserve all 150 rules and 25 NOT RUN acceptance groups, distinguish historical/current source, and link to canonical documents.",
+  "validation": "Verify sequential rule/case IDs, all requirement references and relative links; review complete diff and run exact-source Foundation/Governance CI.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Requirements are canonical and traceable, without invented defaults or POS acceptance claims.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-10-02 continued-work/full-project authority; reviewed PR #3 into main after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/POS_REQUIREMENTS_INTAKE.md"
+}
