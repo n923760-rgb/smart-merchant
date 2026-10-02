@@ -60,10 +60,8 @@
   ],
   "protected_action_authorizations": {
     "merge": {
-      "instruction": "اصلح و ادمج",
-      "target": "foundation/sprint-01",
-      "pull_request": 4,
-      "condition": "Required CI passes and reviewed source matches expected head."
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner instruction on 2026-10-02: اصلح و ادمج; PR #4 into foundation/sprint-01 after required checks pass."
     }
   }
 }
