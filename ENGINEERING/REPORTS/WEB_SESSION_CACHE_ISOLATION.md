@@ -4,7 +4,7 @@ Observed: 2026-10-02 UTC.
 Repository: n923760-rgb/smart-merchant.
 Official main at discovery: 737facd48180d7920540f93032ba0a827c9d1ef2.
 Authorized development base: foundation/sprint-01 at 42c33b761204c1195b686f2519e419d8bf979f7a.
-Owner explicitly accepted this development base and the first bounded cache-isolation task. Merge remains protected.
+Owner explicitly accepted this development base and the first bounded cache-isolation task. The owner subsequently instructed 'اصلح و ادمج' on 2026-10-02, authorizing this PR's merge into foundation/sprint-01 after the required checks pass.
 Execution capability: repository API/MCP; no local shell/browser runtime.
 
 ## Diagnosis
@@ -21,5 +21,5 @@ Local commands/browser/runtime: NOT RUN in the controller API session. External 
 No real backend/provider/device or multi-tab behavior is qualified by the browser fixture.
 
 ## Scope
-One client session-cache defect; no backend authentication, token rotation, financial/POS changes, unrelated UI refactoring, main writes or merge.
+One client session-cache defect; no backend authentication, token rotation, financial/POS changes, unrelated UI refactoring, main writes or production operations.
 Governance #2 and POS requirements #3 remain separate pending adoption work.

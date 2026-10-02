@@ -1,7 +1,7 @@
 {
   "title": "SM-WEB-001: isolate web query caches across account switches",
   "task_type": "IMPLEMENTATION",
-  "authority": "Owner accepted foundation/sprint-01 as the development base and the first bounded account-cache correction. Read, isolated branch edits, regression checks, commit, push and draft PR are authorized by the development request; merge and production actions are not.",
+  "authority": "Owner accepted foundation/sprint-01 as the development base and explicitly instructed 'اصلح و ادمج' on 2026-10-02. Repair dependency prerequisites and merge this bounded account-isolation PR into foundation/sprint-01 after required checks pass.",
   "repository": "n923760-rgb/smart-merchant",
   "official_branch": "main",
   "expected_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
@@ -22,7 +22,7 @@
     "ENGINEERING/REPORTS/WEB_SESSION_CACHE_ISOLATION.md",
     "ENGINEERING/EVIDENCE/SM-WEB-001-task.json"
   ],
-  "out_of_scope": "Backend auth/token rotation, POS money/business logic, unrelated UI changes, merges, production and Telegram.",
+  "out_of_scope": "Backend auth/token rotation, POS money/business logic, unrelated UI changes, main/source promotion, production and Telegram.",
   "task": "Remount and dispose the query provider across login/dashboard boundaries; verify two-account behavior and late old-account responses in a real browser with synthetic BFF.",
   "validation": "Inspect full diff; preserve existing web lint/type/unit/build/audit checks; execute browser regression and inspect source-attributable Foundation CI. Local shell/browser commands are unavailable and must be NOT RUN.",
   "artifacts": "Safe source-attributable report, task packet and CI/PR links.",
@@ -35,7 +35,8 @@
     "commit",
     "push",
     "open_pr",
-    "run_ci"
+    "run_ci",
+    "merge"
   ],
   "authorized_actions": [
     "read",
@@ -43,7 +44,8 @@
     "commit",
     "push",
     "open_pr",
-    "run_ci"
+    "run_ci",
+    "merge"
   ],
   "protected_actions": [
     "merge",
@@ -56,5 +58,12 @@
     "destructive_infrastructure",
     "credential_rotation"
   ],
-  "protected_action_authorizations": {}
+  "protected_action_authorizations": {
+    "merge": {
+      "instruction": "اصلح و ادمج",
+      "target": "foundation/sprint-01",
+      "pull_request": 4,
+      "condition": "Required CI passes and reviewed source matches expected head."
+    }
+  }
 }
