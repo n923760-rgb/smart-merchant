@@ -1,0 +1,67 @@
+{
+  "title": "SM-WEB-001: isolate web query caches across account switches",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner accepted foundation/sprint-01 as the development base and explicitly instructed 'اصلح و ادمج' on 2026-10-02. Repair dependency prerequisites and merge this bounded account-isolation PR into foundation/sprint-01 after required checks pass.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
+  "development_base": {
+    "branch": "foundation/sprint-01",
+    "head": "42c33b761204c1195b686f2519e419d8bf979f7a",
+    "pr": 1
+  },
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "One client-side account/session cache isolation defect.",
+  "allowed_paths": [
+    "apps/web/components/providers.tsx",
+    "apps/web/e2e/session-isolation.mjs",
+    ".github/workflows/ci.yml",
+    "apps/web/e2e/README.md",
+    "ENGINEERING/REPORTS/WEB_SESSION_CACHE_ISOLATION.md",
+    "ENGINEERING/EVIDENCE/SM-WEB-001-task.json"
+  ],
+  "out_of_scope": "Backend auth/token rotation, POS money/business logic, unrelated UI changes, main/source promotion, production and Telegram.",
+  "task": "Remount and dispose the query provider across login/dashboard boundaries; verify two-account behavior and late old-account responses in a real browser with synthetic BFF.",
+  "validation": "Inspect full diff; preserve existing web lint/type/unit/build/audit checks; execute browser regression and inspect source-attributable Foundation CI. Local shell/browser commands are unavailable and must be NOT RUN.",
+  "artifacts": "Safe source-attributable report, task packet and CI/PR links.",
+  "stop_conditions": "Stop on wrong main/development head, conflicting code PR, unclear authority, unsafe data/credentials, required evidence failure or unrelated scope expansion.",
+  "report_path": "ENGINEERING/REPORTS/WEB_SESSION_CACHE_ISOLATION.md",
+  "success_criteria": "No old identity, organization selection or branch/user/device data appears during next-account loading, including an old in-flight response; ordinary dashboard caching preserved.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "release",
+    "tag",
+    "signing",
+    "production_deploy",
+    "force_push",
+    "history_rewrite",
+    "destructive_infrastructure",
+    "credential_rotation"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner instruction on 2026-10-02: اصلح و ادمج; PR #4 into foundation/sprint-01 after required checks pass."
+    }
+  }
+}

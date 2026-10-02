@@ -16,7 +16,7 @@ These instructions configure agent behavior; they do not install a hosted model,
 2. Executor validates the packet, performs live checks and owns the only source writes.
 3. Executor returns attributable validation and a result packet.
 4. Reviewer checks the complete diff and evidence; controller reconciles the single roadmap.
-5. Owner decides any protected merge/release/deployment.
+5. Reconcile protected actions with current explicit owner instructions. The owner has authorized continued development and merges; do not request the same authorization again. Verify exact source and required evidence before each merge.
 
 Validate actual packets using:
 ```sh
@@ -25,4 +25,4 @@ python governance/tools/validate-result-packet.py path/to/result.json
 ```
 The baseline packets under ENGINEERING/EVIDENCE are historical records, never reusable execution authorization.
 GitHub Governance CI checks contracts and negative authority/evidence fixtures. It does not run the application.
-Before application work, resolve the unmerged foundation PR #1 and reverify main; do not silently treat it as canonical.
+Foundation PR #1 is merged into main. Reverify live main and task heads before application work; historical SHA values are not live execution authority.

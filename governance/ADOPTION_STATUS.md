@@ -1,20 +1,20 @@
 # Adoption Status
 
-Status: DRAFT_LIVE_VERIFICATION_REQUIRED — not production or governance-qualified.
+Status: SOURCE_REVIEWED_QUALIFICATION_INCOMPLETE. Governance prompts configure this coding session; no persistent hosted agent is provisioned.
 
-- [x] Read-only discovery completed before repository mutation.
-- [x] Official source and candidate source distinguished.
-- [x] Baseline report produced from repository/API evidence.
-- [x] Governance adoption prepared as one bounded change.
-- [x] Existing candidate merchant AGENTS.md preserved byte-for-byte.
-- [ ] Adoption PR merged with owner authorization.
-- [ ] Foundation candidate accepted into canonical source or alternate base explicitly chosen.
-- [ ] Governance CI verified on exact adoption PR source.
-- [ ] Protected branch/ruleset enforcement configured and verified.
-- [ ] Shell-capable application lab qualified.
-- [ ] Live wrong-SHA/dirty-source/conflicting-PR/capacity stops qualified.
-- [ ] One governed application diagnosis and isolated correction completed.
-- [ ] Browser, physical-device and production-like evidence captured.
+- [x] Read-only discovery and attributable historical baseline completed.
+- [x] Canonical source distinguished from historical candidates.
+- [x] Foundation #1 accepted into main with explicit owner authority.
+- [x] Foundation merchant AGENTS.md preserved byte-for-byte.
+- [x] Single roadmap and controller/executor/reviewer contracts prepared.
+- [x] One bounded account-cache diagnosis/correction completed in #4; dependency prerequisites #5 passed separately.
+- [x] Chromium client regression and disposable backend/Compose/Android/iOS CI executed.
+- [ ] This updated adoption PR merged after exact-source Foundation and Governance CI.
+- [ ] Enforced branch protection/rulesets verified; connector has no administration write capability.
+- [ ] Permanent shell-capable application lab and resource/capacity gates qualified.
+- [ ] Live wrong-SHA/dirty-source/conflicting-PR/capacity stops qualified beyond API/source checks.
+- [ ] Physical devices, real merchant workflow and production-like evidence captured.
 - [ ] Production secrets, backups and restore qualified.
 
-CI negative fixtures check packet authority/evidence rejection only; they do not prove live Git, runtime or branch protection.
+Packet fixtures prove recorded authority/evidence checks. They do not prove live Git state, physical runtime, protection or production readiness.
+Historical records keep their original sources; live authority is the owner's current instruction, not old checkpoints.

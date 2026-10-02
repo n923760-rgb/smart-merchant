@@ -1,0 +1,58 @@
+{
+  "title": "SM-GOV-003: canonical governance integration",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d",
+  "existing_pr": 2,
+  "expected_pr_head": "3ed9172c93f39b95a1ead6274af44656aa653481",
+  "expected_pr_base": "main",
+  "scope": "Integrate engineering governance with the canonical foundation and reconcile current project records.",
+  "out_of_scope": "Application behavior, production/signing/releases, paid infrastructure, Telegram and qualification claims without evidence.",
+  "task": "Preserve root instructions and historical baseline; update current profile/roadmap, normalize prior authorization schema and validate all evidence packets.",
+  "validation": "Complete diff and source tree review; exact-source Foundation and Governance CI; historical data unchanged; API-only local commands NOT RUN.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Canonical governance files coexist with foundation source, all contract checks pass, historical records preserved and current gaps truthful.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "commit",
+    "push",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-10-02 owner continued-work/full-project authority; merge reviewed PR #2 into main only after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/GOVERNANCE_ADOPTION.md"
+}

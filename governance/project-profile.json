@@ -1,5 +1,5 @@
 {
-  "status": "DRAFT_LIVE_VERIFICATION_REQUIRED",
+  "status": "ADOPTED_SOURCE_REVIEWED_QUALIFICATION_INCOMPLETE",
   "governance_source": "https://github.com/n923760-rgb/engineering-governance/blob/641e4f9e45da109257ba1f38752b94604c2e4531/MASTER_GOVERNANCE.md",
   "project_name": "Smart Merchant Assistant",
   "repository": "n923760-rgb/smart-merchant",
@@ -8,15 +8,21 @@
   "official_branch": "main",
   "repository_authority_file": "AGENTS.md",
   "project_baseline": "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
-  "architecture_guides": [],
+  "architecture_guides": [
+    "docs/architecture/overview.md",
+    "docs/adr/"
+  ],
   "subsystem_contracts": [],
   "master_roadmap": "ENGINEERING/MASTER_ROADMAP.md",
   "master_baseline_report": "ENGINEERING/REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md",
-  "ci_system": "Governance CI introduced by this adoption; Foundation CI exists only on PR #1 until merged",
+  "ci_system": "Foundation CI and Governance CI on pull requests and main",
   "engineering_lab_contract": "governance/ENGINEERING_ENVIRONMENT_CONTRACT.md",
   "execution_environment": "Repository API/MCP session; external GitHub Actions",
   "verified_execution_capabilities": [
-    "repository_api_read"
+    "repository_api_read",
+    "repository_api_git_object_write",
+    "repository_api_branch_pr_merge",
+    "external_github_actions"
   ],
   "controller": "Coding agent using governance/agents/controller.md",
   "executor": "Authorized single writer using governance/agents/executor.md",
@@ -38,7 +44,7 @@
     "destructive_billing",
     "protected_product_identity_change"
   ],
-  "test_strategy": "Validate governance contracts and fail-closed fixtures in CI; application tests require canonical foundation source and qualified lab.",
+  "test_strategy": "docs/testing/testing-strategy.md; exact-source Foundation CI, Chromium account-switch regression and governance contract/authority rejection fixtures.",
   "evidence_location": "ENGINEERING/EVIDENCE/",
   "report_location": "ENGINEERING/REPORTS/",
   "artifact_location": null,
@@ -52,14 +58,16 @@
   ],
   "candidate_source": {
     "branch": "foundation/sprint-01",
-    "head": "42c33b761204c1195b686f2519e419d8bf979f7a",
+    "head": "ad50311a9df9b522607eea17fd4f65f6cc782078",
     "pr": 1,
     "architecture_guides": [
       "docs/architecture/overview.md",
       "docs/adr/"
     ],
-    "test_strategy": "docs/testing/testing-strategy.md"
+    "test_strategy": "docs/testing/testing-strategy.md",
+    "status": "MERGED",
+    "merge_commit": "cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d"
   },
-  "verified_official_head": "737facd48180d7920540f93032ba0a827c9d1ef2",
-  "observed_date": "2026-10-01"
+  "verified_official_head": "cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d",
+  "observed_date": "2026-10-02"
 }

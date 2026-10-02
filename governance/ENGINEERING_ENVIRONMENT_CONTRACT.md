@@ -1,11 +1,11 @@
 # Engineering Environment Contract
 
-Observed 2026-10-01; reverify at each session.
+Observed 2026-10-02; reverify at each session.
 
 ## Current execution
-Repository API/MCP reads verified; isolated Git object/branch/PR writes are available tools and must be evidenced when used.
+Repository API/MCP reads verified; isolated Git object/branch/PR writes and owner-authorized merges have been executed and verified.
 No shell, clone/worktree, Python/Node/Flutter runtime, Docker, browser or device runner is available in this session.
-Do not simulate commands. GitHub Actions is external validation, not local execution.
+Do not simulate commands. GitHub Actions is the available external executor for bounded, reproducible checks: Python 3.12, Node 22, disposable PostgreSQL 16/Redis 7, Compose, Chromium and Flutter Android/iOS simulator jobs have passed on attributable sources. It is not a local or permanently provisioned interactive lab. Do not use it for uncontrolled experiments or production data.
 
 ## Required application lab
 Isolated authorized checkout; Git, Python 3.12, Node 22/npm, Flutter/Dart, Docker Compose, disposable PostgreSQL 16 and Redis 7.

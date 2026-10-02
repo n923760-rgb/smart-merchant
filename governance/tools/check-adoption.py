@@ -69,6 +69,15 @@ def main():
     packet_check("validate-task-packet.py", task, True)
     packet_check("validate-result-packet.py", result, True)
 
+    for path in sorted((ROOT / "ENGINEERING/EVIDENCE").glob("*-task.json")):
+        packet = json.loads(path.read_text(encoding="utf-8"))
+        validate_contract(packet, "governance/schemas/task-packet.schema.json")
+        packet_check("validate-task-packet.py", packet, True)
+    for path in sorted((ROOT / "ENGINEERING/EVIDENCE").glob("*-result.json")):
+        packet = json.loads(path.read_text(encoding="utf-8"))
+        validate_contract(packet, "governance/schemas/result-packet.schema.json")
+        packet_check("validate-result-packet.py", packet, True)
+
     bad = copy.deepcopy(task)
     bad["requested_actions"].append("modify")
     packet_check("validate-task-packet.py", bad, False)
