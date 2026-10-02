@@ -4,12 +4,14 @@ from uuid import UUID, uuid4
 
 import pytest
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from app.api import routes
 from app.core.config import get_settings
 from app.core.database import SessionLocal
 from app.core.models import (
     AuditLog,
+    Membership,
     MembershipRole,
     Permission,
     Role,
@@ -232,3 +234,26 @@ def test_audit_failure_rolls_back_the_business_mutation(client, merchant, monkey
         with SessionLocal() as db:
             assert db.get(Terminal, UUID(device["id"])).name == "Front desk"
     assert events(merchant["org"], action) == []
+
+
+def test_membership_flush_conflict_remains_409_without_success_audit(client, merchant, monkeypatch):
+    original_flush = Session.flush
+    injected = False
+
+    def duplicate_membership(db, objects=None):
+        nonlocal injected
+        member = next((row for row in db.new if isinstance(row, Membership)), None)
+        if member is not None and not injected:
+            injected = True
+            db.add(Membership(
+                user_id=member.user_id, organization_id=member.organization_id
+            ))
+        return original_flush(db, objects)
+
+    monkeypatch.setattr(Session, "flush", duplicate_membership)
+    response, email = invite(client, merchant["headers"])
+    assert injected
+    assert response.status_code == 409
+    assert events(merchant["org"], "USER_INVITED") == []
+    with SessionLocal() as db:
+        assert db.scalar(select(User.id).where(User.email == email)) is None

@@ -11,7 +11,7 @@
   "scope": "Success audit coverage for the existing user invitation and terminal rename commands.",
   "out_of_scope": "Other audit actions, failed-attempt audit policy, backend auth/token/schema redesign, web/owner/POS features, historical audit backfill, production and Telegram.",
   "task": "Insert minimal tenant/actor-scoped USER_INVITED membership events and branch-scoped TERMINAL_RENAMED before/after name events in the same transaction as the mutation; lock rename rows to capture authoritative before state.",
-  "validation": "Disposable PostgreSQL API tests for new/existing users, minimal snapshots, duplicates, foreign tenants, branch/global RBAC, explicit no-op renames and audit-failure rollback; exact Foundation/Governance CI plus complete diff/source review.",
+  "validation": "Disposable PostgreSQL API tests for new/existing users, minimal snapshots, duplicates/membership-flush conflict, foreign tenants, branch/global RBAC, explicit no-op renames and audit-failure rollback; exact Foundation/Governance CI plus complete diff/source review.",
   "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
   "success_criteria": "Every successful command records one correctly scoped event; rejected or rolled-back mutations create no success event; audit contains no passwords/hashes/tokens or copied foreign tenant/profile data; existing tenant/RBAC/last-owner and append-only contracts remain unchanged.",
   "requested_actions": [

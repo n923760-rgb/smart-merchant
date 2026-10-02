@@ -497,7 +497,11 @@ def invite_user(
         raise ConflictError()
     member = Membership(user_id=user.id, organization_id=ctx.organization.id)
     db.add(member)
-    db.flush()
+    try:
+        db.flush()
+    except IntegrityError as exc:
+        db.rollback()
+        raise ConflictError() from exc
     record(
         db,
         "USER_INVITED",
