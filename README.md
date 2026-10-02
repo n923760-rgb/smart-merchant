@@ -31,4 +31,4 @@ The Foundation CI workflow passes backend lint/type checks, PostgreSQL and Redis
 
 ## Engineering and product requirements
 
-Development-agent instructions: [governance/START_HERE.md](governance/START_HERE.md). Project state and next task: [ENGINEERING/MASTER_ROADMAP.md](ENGINEERING/MASTER_ROADMAP.md). These configure a coding session; no persistent agent service is installed. POS v1 requirements are recorded in PR #3 and will be integrated after their source checks. Telegram remains deferred.
+Development-agent instructions: [governance/START_HERE.md](governance/START_HERE.md). Project state and next task: [ENGINEERING/MASTER_ROADMAP.md](ENGINEERING/MASTER_ROADMAP.md). These configure a coding session; no persistent agent service is installed. POS v1 [transaction rules](docs/product/POS_TRANSACTION_FLOW_V1.md), [delivery/policy plan](docs/product/POS_DELIVERY_PLAN_V1.md) and [acceptance matrix](docs/product/POS_ACCEPTANCE_V1.md) define the next merchant work; acceptance remains NOT RUN. Telegram remains deferred.

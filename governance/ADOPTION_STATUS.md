@@ -9,7 +9,7 @@ Status: SOURCE_REVIEWED_QUALIFICATION_INCOMPLETE. Governance prompts configure t
 - [x] Single roadmap and controller/executor/reviewer contracts prepared.
 - [x] One bounded account-cache diagnosis/correction completed in #4; dependency prerequisites #5 passed separately.
 - [x] Chromium client regression and disposable backend/Compose/Android/iOS CI executed.
-- [ ] This updated adoption PR merged after exact-source Foundation and Governance CI.
+- [x] Adoption #2 merged after exact-source Foundation and Governance CI (9e4487b803a06273aff7e23fd612a70e5e19adbe).
 - [ ] Enforced branch protection/rulesets verified; connector has no administration write capability.
 - [ ] Permanent shell-capable application lab and resource/capacity gates qualified.
 - [ ] Live wrong-SHA/dirty-source/conflicting-PR/capacity stops qualified beyond API/source checks.
