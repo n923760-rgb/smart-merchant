@@ -8,8 +8,15 @@ from sqlalchemy import select
 from app.api import routes
 from app.core.config import get_settings
 from app.core.database import SessionLocal
-from app.core.models import AuditLog, MembershipRole, Permission, Role, RolePermission, Terminal, User
-
+from app.core.models import (
+    AuditLog,
+    MembershipRole,
+    Permission,
+    Role,
+    RolePermission,
+    Terminal,
+    User,
+)
 
 PASSWORD = "audit-disposable-password-123"
 
