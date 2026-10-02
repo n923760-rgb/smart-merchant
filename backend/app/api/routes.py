@@ -228,10 +228,12 @@ def refresh(payload: RefreshIn, request: Request, db: Session = Depends(db_sessi
 
 
 @router.post("/auth/logout", status_code=204)
-def logout(
-    payload: RefreshIn, user: User = Depends(current_user), db: Session = Depends(db_session)
-):
-    revoke_refresh(db, payload.refresh_token, user.id)
+def logout(payload: RefreshIn, request: Request, db: Session = Depends(db_session)):
+    limiter(f"logout:{request.client.host if request.client else 'unknown'}", 30)
+    session = revoke_refresh(db, payload.refresh_token)
+    if session is not None:
+        record(db, "USER_LOGOUT", "refresh_session", session.id, None, session.user_id)
+    # Identical response for unknown/already-revoked tokens; do not reveal sessions.
     commit(db)
 
 

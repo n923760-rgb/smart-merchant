@@ -1,0 +1,75 @@
+{
+  "title": "SM-AUTH-002: revoke refresh session after access expiry",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "8538eb6de3a800836a007a4d23e898d94b40c2e3",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "One logout defect across backend, web BFF and owner client: access expiry/missing access skips refresh revocation.",
+  "out_of_scope": "Refresh-family/concurrency redesign, general BFF limits, foreground auto-refresh, catalog/POS finances, production/providers, unrelated audit coverage and Telegram.",
+  "task": "Authorize revocation by the opaque refresh capability, lock/idempotently revoke only its session with one audit, and update both callers to attempt refresh-only logout.",
+  "validation": "Backend PostgreSQL expiry/missing/disabled/unknown/replay/other-session/audit regressions; web refresh-only/failure tests; owner mocked HTTP/secure-storage tests; complete diff and exact-source Foundation/Governance CI.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Expired/missing access cannot prevent revoking its valid refresh session; unknown/repeated requests are uniform/idempotent; other sessions stay valid; clients clear local credentials on unreachable backend.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; reviewed bounded logout repair into main after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/EXPIRED_ACCESS_LOGOUT.md",
+  "allowed_paths": [
+    "backend/app/core/security.py",
+    "backend/app/api/routes.py",
+    "backend/tests/test_logout.py",
+    "apps/web/app/api/session/route.ts",
+    "apps/web/app/api/session/route.test.ts",
+    "apps/owner/lib/main.dart",
+    "apps/owner/test/logout_test.dart",
+    "docs/adr/0006-refresh-capability-logout.md",
+    "ENGINEERING/REPORTS/EXPIRED_ACCESS_LOGOUT.md",
+    "ENGINEERING/EVIDENCE/logout-task.json",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ]
+}
