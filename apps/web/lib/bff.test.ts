@@ -46,6 +46,17 @@ describe('BFF transport bounds', () => {
     expect(denied.status).toBe(400);
   });
 
+  it('preserves a large Unicode JSON body across many chunks and buffer growth', async () => {
+    const text = JSON.stringify({ note: 'قهوة'.repeat(5000) });
+    const bytes = new TextEncoder().encode(text);
+    const body = new ReadableStream<Uint8Array>({ start(c) {
+      for (let offset = 0; offset < bytes.byteLength; offset += 997) c.enqueue(bytes.subarray(offset, offset + 997));
+      c.close();
+    } });
+    const result = await withBffLimits(async scope => new NextResponse(await scope.request(request(body))));
+    expect(await result.text()).toBe(text);
+  });
+
   it('times out an incomplete upload without reaching the backend', async () => {
     vi.useFakeTimers(); vi.stubEnv('BFF_TIMEOUT_MS', '100');
     const cancel = vi.fn();
@@ -60,6 +71,15 @@ describe('BFF transport bounds', () => {
     expect((await operation).status).toBe(504);
     expect(cancel).toHaveBeenCalledOnce();
     expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('expires while draining buffered empty chunks before the timer callback runs', async () => {
+    vi.useFakeTimers(); vi.stubEnv('BFF_TIMEOUT_MS', '100');
+    const body = new ReadableStream<Uint8Array>({ pull(c) {
+      vi.setSystemTime(Date.now() + 30); c.enqueue(new Uint8Array(0));
+    } });
+    const result = await withBffLimits(async scope => new NextResponse(await scope.request(request(body))));
+    expect(result.status).toBe(504);
   });
 
   it('uses one deadline across upload and upstream wait, with only one backend attempt', async () => {

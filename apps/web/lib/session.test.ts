@@ -32,6 +32,11 @@ describe('browser request deadline', () => {
     expect(cancel).toHaveBeenCalled();
     expect(fetch).toHaveBeenCalledOnce();
   });
+  it('preserves a complete large JSON response through the bounded browser reader', async () => {
+    const data = { note: 'قهوة'.repeat(5000) };
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json(data)));
+    expect(await (await sessionRequest('/api/session')).json()).toEqual(data);
+  });
   it('rejects oversized browser responses and already-cancelled requests', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => new Response(new Uint8Array(8_388_609))));
     await expect(sessionRequest('/api/session')).rejects.toMatchObject({ status: 502 });

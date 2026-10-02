@@ -14,6 +14,7 @@ A timeout cannot prove whether an authoritative mutation, rotation or revocation
 One common BFF scope covers request reading, upstream headers and complete upstream response reading with a single deadline.
 Stream UTF-8 bodies incrementally and count actual bytes, including chunked bodies and understated/missing Content-Length.
 Reject oversized input before forwarding (413), malformed JSON/UTF-8 input (400), oversized/malformed/unavailable upstream (502), invalid server limit configuration (503), and deadline expiry (504).
+Use capped growing byte buffers, rather than retaining per-chunk metadata; check elapsed time during buffered reads as well as using the cancellation timer.
 Cancel outstanding reads, abort the fetch, clear timers/listeners and return controlled no-store errors without raw exceptions/credentials.
 Do not follow upstream redirects or automatically retry any transport failure.
 

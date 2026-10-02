@@ -23,6 +23,11 @@ export async function withSessionLock<T>(action: () => Promise<T>): Promise<T> {
 export async function sessionRequest(url: string, init?: RequestInit): Promise<Response> {
   if (init?.signal?.aborted) throw new SessionError(499, 'Request cancelled.');
   const controller = new AbortController();
+  const expiresAt = Date.now() + 65_000;
+  const check = () => {
+    if (!controller.signal.aborted && Date.now() >= expiresAt) controller.abort(new SessionError(504, 'Request timed out. Check the result before trying again.'));
+    if (controller.signal.aborted) throw controller.signal.reason;
+  };
   let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let cancel: () => void = () => undefined;
@@ -42,22 +47,24 @@ export async function sessionRequest(url: string, init?: RequestInit): Promise<R
       void response.body?.cancel().catch(() => undefined);
       throw controller.signal.reason;
     }
-    const chunks: Uint8Array[] = [];
+    let buffer = new Uint8Array(8192);
     let size = 0;
     reader = response.body?.getReader();
     try {
       while (reader) {
         const { done, value } = await reader.read();
-        if (controller.signal.aborted) throw controller.signal.reason;
+        check();
         if (done) break;
-        size += value.byteLength;
-        if (size > 8_388_608) throw new SessionError(502, 'Response unavailable.');
-        chunks.push(value);
+        const needed = size + value.byteLength;
+        if (needed > 8_388_608) throw new SessionError(502, 'Response unavailable.');
+        if (needed > buffer.byteLength) {
+          const expanded = new Uint8Array(Math.min(8_388_608, Math.max(needed, buffer.byteLength * 2)));
+          expanded.set(buffer.subarray(0, size)); buffer = expanded;
+        }
+        buffer.set(value, size); size = needed;
       }
-      const body = new Uint8Array(size);
-      let offset = 0;
-      for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
-      return new Response(size ? body : null, { status: response.status, statusText: response.statusText, headers: response.headers });
+      check();
+      return new Response(size ? buffer.subarray(0, size) : null, { status: response.status, statusText: response.statusText, headers: response.headers });
     } finally {
       void reader?.cancel().catch(() => undefined);
       reader?.releaseLock();
