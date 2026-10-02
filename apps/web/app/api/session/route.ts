@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   return result;
 }
 export async function DELETE(req: NextRequest) {
-  const refresh = req.cookies.get('sm_refresh')?.value; const access = req.cookies.get('sm_access')?.value;
-  if (refresh && access) await fetch(`${backend}/api/v1/auth/logout`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${access}` }, body: JSON.stringify({ refresh_token: refresh }) }).catch(() => undefined);
+  const refresh = req.cookies.get('sm_refresh')?.value;
+  if (refresh) await fetch(`${backend}/api/v1/auth/logout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: refresh }), cache: 'no-store' }).catch(() => undefined);
   const response = NextResponse.json({ authenticated: false });
   response.cookies.delete('sm_access'); response.cookies.delete('sm_refresh'); response.cookies.delete('sm_org');
   return response;

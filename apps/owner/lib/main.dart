@@ -70,13 +70,10 @@ class OwnerSession extends StateNotifier<String?> {
 
   Future<void> logout() async {
     final refresh = await storage.read(key: 'refresh_token');
-    if (refresh != null && state != null) {
+    if (refresh != null) {
       try {
         await http.post(Uri.parse('$apiUrl/api/v1/auth/logout'),
-            headers: {
-              'Authorization': 'Bearer $state',
-              'Content-Type': 'application/json'
-            },
+            headers: {'Content-Type': 'application/json'},
             body: jsonEncode({'refresh_token': refresh}));
       } catch (_) {/* Local logout still clears credentials. */}
     }

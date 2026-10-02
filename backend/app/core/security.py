@@ -71,14 +71,17 @@ def issue_refresh(db: Session, user_id: UUID) -> str:
     return token
 
 
-def revoke_refresh(db: Session, token: str, user_id: UUID) -> None:
+def revoke_refresh(db: Session, token: str) -> RefreshSession | None:
+    """The opaque refresh capability authorizes revocation of that session only."""
     session = db.scalar(
         select(RefreshSession)
-        .where(RefreshSession.token_hash == token_digest(token), RefreshSession.user_id == user_id)
+        .where(RefreshSession.token_hash == token_digest(token))
         .with_for_update()
     )
-    if session and session.revoked_at is None:
-        session.revoked_at = now()
+    if session is None or session.revoked_at is not None:
+        return None
+    session.revoked_at = now()
+    return session
 
 
 def rotate_refresh(db: Session, token: str) -> tuple[UUID, str] | None:

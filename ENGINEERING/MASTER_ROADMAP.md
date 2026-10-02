@@ -8,7 +8,7 @@ FACT: Foundation #1 is merged into main at cec4eba1eb07b9ab4b62ca79cb91a808eb3f3
 FACT: #5 repaired SQLAlchemy plugin compatibility and Next.js/brace-expansion vulnerabilities; #4 isolates account caches across web login boundaries.
 FACT: Foundation CI run [36964046492](https://github.com/n923760-rgb/smart-merchant/actions/runs/36964046492) passed on ad50311a9df9b522607eea17fd4f65f6cc782078, whose tree matches the canonical integration.
 FACT: Governance #2 merged at d1a148b8f30c4ceaf68f670dc8b4409e8b3ca3db; [Governance CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36965459067) and [Foundation CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36965459078) passed on 9e4487b803a06273aff7e23fd612a70e5e19adbe, with matching merge tree.
-FACT: POS requirement integration #3 preserves the owner's 150 rules and 25 NOT RUN acceptance groups. No POS transaction implementation is claimed.
+FACT: POS requirements #3 merged at 8538eb6de3a800836a007a4d23e898d94b40c2e3; [Foundation CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36966049894) and [Governance CI](https://github.com/n923760-rgb/smart-merchant/actions/runs/36966049889) passed on 7cb6a2e6cc7eb11510ccf723a5700b9868f368af. It preserves 150 rules and 25 NOT RUN acceptance groups; no POS transaction implementation is claimed.
 FACT: Owner instructed continued work without repeat permission requests and granted project authority. Reviewed merges are authorized; actions need exact-source verification and relevant successful checks.
 UNKNOWN: Physical device/pilot acceptance, real payment adapters, production identities/signing/infrastructure, backups and restore.
 BLOCKED: Branch-protection writes are not available through this connector.
@@ -30,7 +30,7 @@ Completed financial records will be immutable; money must use decimal arithmetic
 
 ## Current findings and qualification gaps
 
-SOURCE FACT: Backend logout depends on current_user, so an expired access JWT rejects logout before revoking the refresh session. An isolated regression/repair is next.
+SOURCE FACT at original foundation: Backend logout depended on current_user, so expired access rejected logout before revocation; web/owner also required in-memory access. SM-AUTH-002 corrects this single defect; candidate verification and merge must be confirmed from its PR.
 INFERENCE: Concurrent BFF refresh can race rotating refresh tokens. Diagnose and repair separately.
 SOURCE FACT: BFF request bodies/timeouts are unbounded; user invitation and terminal rename omit audit records. Each needs its own bounded task.
 NOT RUN: Owner-app foreground expiry behavior, real backend browser E2E, physical input/printing/offline durability and complete POS-148.
@@ -39,7 +39,7 @@ No permanent autonomous agent is installed. Role review in this session is the s
 
 ## Ordered engineering gates
 
-1. Complete POS requirements #3 review/CI/integration; governance #2 is merged.
+1. Canonical foundation/governance/POS requirements #1–#3 are merged.
 2. Isolated expired-access logout regression and correction.
 3. Separate BFF refresh concurrency, limits and owner expiry rounds.
 4. Separate tenant-safe audit-coverage correction.
@@ -65,9 +65,9 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 
 ## Exact immediate next round
 
-Finish #3 integration (#2 is merged). Then SM-AUTH-002: make logout revoke the provided refresh capability even when access is expired, retaining ownership isolation, idempotency and audit; run disposable PostgreSQL integration and full relevant CI before merge.
+Complete SM-AUTH-002 exact-source verification and owner-authorized merge. After that, the next isolated round is concurrent BFF refresh diagnosis; BFF limits and owner foreground expiry remain separate. Require a durable session/rotation design before any concurrency implementation.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
 
 ## Reports and evidence
 
-[Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md).
+[Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md).
