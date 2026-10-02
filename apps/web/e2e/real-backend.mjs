@@ -97,13 +97,16 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
   await form.getByRole('button', { name: button, exact: true }).click();
   const result = await response;
   assert.equal(result.status(), expected, `Rendered ${resource} create status`);
+  // Next.js also uses role=alert in its screen-reader route announcer shadow DOM.
+  // Only this page's explicit mutation error is relevant to form outcome.
+  const mutationError = page.locator('section > p[role="alert"]');
   if (expected === 201) {
     // This times out on the old post-await event.currentTarget handler, even if
     // its backend mutation committed and query invalidation refreshed the list.
     await page.waitForFunction(key => document.querySelector(`input[name="${key}"]`)?.value === '', key);
-    assert.equal(await page.getByRole('alert').count(), 0, 'No false/stale success error');
+    assert.equal(await mutationError.count(), 0, 'No false/stale success error');
   } else {
-    await page.getByRole('alert').waitFor();
+    await mutationError.waitFor();
     for (const [name, value] of Object.entries(fields)) {
       const retained = await form.locator(`[name="${name}"]`).inputValue();
       // Boolean assertion avoids retaining password values on a failure.

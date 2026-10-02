@@ -46,6 +46,15 @@ executor. No merge/release is included in this task's authority.
 Local PASS: web lint, strict TypeScript, all 50 Vitest tests, production build,
 Node fixture syntax, task/governance validators and Git whitespace review.
 
+First candidate cc12ea03ed82d29886c81f86f55b9225a9503d14 failed Chromium in
+Foundation run 37074606288: the form reset check passed, but a global alert count
+also matched Next.js's screen-reader route announcer. The installed pinned
+Next.js `app-router-announcer.js` explicitly creates that shadow-DOM role=alert.
+Correct the fixture to select only the page's `section > p[role=alert]` mutation
+error, including the rejection wait; do not remove accessibility announcements
+or alter production behavior to satisfy the test. The corrected source needs
+fresh CI; the old failure is retained as attributable test evidence.
+
 ## Limits and next action
 
 This is a two-form async-lifetime correction, not a redesign or complete UI
