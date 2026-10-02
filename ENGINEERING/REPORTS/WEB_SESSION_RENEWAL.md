@@ -11,7 +11,7 @@ Scope: one BFF/session concurrency defect; see [ADR 0007](../../docs/adr/0007-we
 SOURCE FACT: proxy request snapshots independently rotated one-use tokens; auth/me errors unconditionally redirected to login.
 INFERENCE: simultaneous expired requests can produce a false logout. The new deterministic regressions force those rejected requests.
 Implementation removes proxy rotation, serializes browser session operations across tabs, rechecks current access under the lock, and retries a rejected authorization once.
-Non-secret context binding rejects stale account/organization requests before backend forwarding and rejects late data before client consumption.
+Non-secret context binding rejects stale account/organization requests before initial dispatch/backend forwarding and rejects late data before client consumption.
 Refresh credentials remain HttpOnly, and backend strict rotation/RBAC are unchanged.
 Login clears the prior organization, changes context, and requires an initial sign-in for legacy cookies after rollout.
 
@@ -28,7 +28,7 @@ Previous main Foundation/Governance PASS: [36967403546](https://github.com/n9237
 Requires modern browser Web Locks over HTTPS/localhost. Same-origin browser storage partition only.
 Real backend browser E2E, multi-instance runtime, Safari/Firefox, physical devices and production: NOT RUN.
 Abrupt rotation/network failure with lost cookie delivery is not recovered by weakening one-use refresh.
-Cross-tab already-rendered query caches before another request remain a separate qualification task.
+Cross-tab already-rendered query cache invalidation remains separate. This round blocks the dormant tab's fresh command until reload; Chromium tests that actual form submission.
 BFF timeout/body limits, owner foreground expiry and unrelated audit coverage remain separate rounds.
 No permanent background agent, payment adapter, POS transaction implementation or production readiness is claimed.
 Final exact-source result is a PR attachment so adding its own tested SHA cannot invalidate the tested tree.

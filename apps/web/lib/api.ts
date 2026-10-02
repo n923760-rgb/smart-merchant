@@ -1,4 +1,4 @@
-import { assertContext, sessionContext, SessionError, withSessionLock } from './session';
+import { assertContext, boundSessionContext, SessionError, withSessionLock } from './session';
 export type Page<T> = { items: T[]; page: number; page_size: number };
 export type Branch = { id: string; name: string; code: string; city: string | null; status: string };
 export type User = { id: string; name: string; email: string; status: string; membership_id: string };
@@ -12,7 +12,7 @@ async function failure(response: Response, context: string | null): Promise<neve
   throw new SessionError(response.status, data.message ?? `HTTP ${response.status}`);
 }
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const context = sessionContext();
+  const context = boundSessionContext();
   const headers = new Headers(init?.headers);
   headers.set('Content-Type', 'application/json');
   if (context) headers.set('X-Session-Context', context);

@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 const baseURL = process.env.SM_TEST_BASE_URL ?? 'http://127.0.0.1:3000';
 const org = '11111111-1111-4111-8111-111111111111';
-const permissions = ['organization.read', 'branches.read', 'users.read', 'roles.read', 'terminals.read'];
+const permissions = ['organization.read', 'branches.read', 'branches.create', 'users.read', 'roles.read', 'terminals.read'];
 function deferred() {
   let resolve;
   const promise = new Promise(complete => { resolve = complete; });
@@ -124,6 +124,12 @@ try {
   await first.getByText('Alpha Branch', { exact: true }).waitFor();
   assert.equal(refreshCalls, 2, 'A late failure must reuse the renewed session');
 
+  const dormant = await context.newPage();
+  dormant.setDefaultTimeout(15_000);
+  await dormant.goto(baseURL + '/branches');
+  await identity(dormant, 'Alpha');
+  await dormant.getByText('Alpha Branch', { exact: true }).waitFor();
+
   // Logout waits for rotation and revokes the successor, then Beta signs in.
   holdRefresh = true; expired = true;
   await first.reload();
@@ -135,6 +141,13 @@ try {
   await second.waitForURL(baseURL + '/login');
   assert.equal(logoutCalls, 1);
   await signIn(second, 'Beta');
+  // This tab retains Alpha's UI; a fresh API call must not adopt Beta silently.
+  await dormant.locator('input[name="name"]').fill('Old UI command');
+  await dormant.locator('input[name="code"]').fill('OLDUI');
+  await dormant.getByRole('button', { name: 'إضافة فرع', exact: true }).click();
+  await dormant.getByRole('alert').getByText('Error: Session changed. Reload this page.', { exact: true }).waitFor();
+  assert.deepEqual(seenCommands, [], 'A dormant account tab must not submit under the new account');
+
   const denied = await second.evaluate(async previous => {
     const response = await fetch('/api/proxy/branches', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Session-Context': previous }, body: '{}' });
     return response.status;
@@ -144,7 +157,7 @@ try {
   await first.reload();
   await identity(first, 'Beta');
   assert.equal(await second.evaluate(() => /sm_access=|sm_refresh=/.test(document.cookie)), false);
-  console.log('PASS: real Next.js BFF, two-tab renewal, delayed 401, serialized logout, stale-command rejection and HttpOnly credentials');
+  console.log('PASS: real Next.js BFF, two-tab renewal, delayed 401, serialized logout, stale-command/dormant-tab rejection and HttpOnly credentials');
 } finally {
   initialFailures.resolve(); branchRelease.resolve(); refreshRelease.resolve();
   await browser.close();

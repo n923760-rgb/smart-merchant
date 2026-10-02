@@ -51,6 +51,16 @@ describe('session renewal coordinator', () => {
     expect(fetch).toHaveBeenCalledOnce();
   });
 
+  it('blocks commands from an already-rendered tab after a different tab switches accounts', async () => {
+    const doc = fixture();
+    const upstream = vi.fn(async () => Response.json({ name: 'Alpha' }));
+    vi.stubGlobal('fetch', upstream);
+    await api('auth/me');
+    doc.cookie = 'sm_context=beta';
+    await expect(api('branches', { method: 'POST', body: '{}' })).rejects.toMatchObject({ status: 409 });
+    expect(upstream).toHaveBeenCalledOnce();
+  });
+
   it('blocks a queued organization change after another account has logged in', async () => {
     const doc = fixture();
     const operation = sessionFetch('/api/session/organization', { method: 'POST', body: '{}' });
