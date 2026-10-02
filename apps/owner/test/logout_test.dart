@@ -38,7 +38,8 @@ void main() {
     session.dispose();
   });
 
-  test('logout clears local credentials if revocation is unreachable', () async {
+  test('logout clears local credentials if revocation is unreachable',
+      () async {
     const storage = FlutterSecureStorage();
     final session = OwnerSession(storage);
     await http.runWithClient(
