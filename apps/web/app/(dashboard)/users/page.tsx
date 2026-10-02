@@ -23,9 +23,11 @@ export default function Users() {
 
   async function add(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    setError('');
     try {
-      await api('users', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))) });
-      qc.invalidateQueries({ queryKey: ['users'] }); e.currentTarget.reset();
+      await api('users', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(form))) });
+      qc.invalidateQueries({ queryKey: ['users'] }); form.reset();
     } catch (err) { setError(String(err)); }
   }
 

@@ -46,7 +46,7 @@ async function ready() {
 }
 
 // Browser-origin requests use real HttpOnly cookies, context binding and Web Locks.
-// These API commands are not claimed as rendered user/device form acceptance.
+// These API commands are not claimed as full management-form acceptance.
 async function bff(page, path, method = 'GET', body, expected = 200) {
   const result = await page.evaluate(async ({ path, method, body }) => {
     return navigator.locks.request('smart-merchant-session', async () => {
@@ -85,6 +85,34 @@ function refreshCookie(cookies) {
   return value;
 }
 
+async function submitCreate(page, resource, fields, button, expected = 201) {
+  // Only the top-level create form has an email/device identifier input.
+  const key = resource === 'users' ? 'email' : 'device_identifier';
+  const form = page.locator('form').filter({ has: page.locator(`input[name="${key}"]`) });
+  for (const [name, value] of Object.entries(fields)) {
+    if (name === 'branch_id') await form.locator('select[name="branch_id"]').selectOption(value);
+    else await form.locator(`input[name="${name}"]`).fill(value);
+  }
+  const response = page.waitForResponse(r => new URL(r.url()).pathname === `/api/proxy/${resource}` && r.request().method() === 'POST');
+  await form.getByRole('button', { name: button, exact: true }).click();
+  const result = await response;
+  assert.equal(result.status(), expected, `Rendered ${resource} create status`);
+  if (expected === 201) {
+    // This times out on the old post-await event.currentTarget handler, even if
+    // its backend mutation committed and query invalidation refreshed the list.
+    await page.waitForFunction(key => document.querySelector(`input[name="${key}"]`)?.value === '', key);
+    assert.equal(await page.getByRole('alert').count(), 0, 'No false/stale success error');
+  } else {
+    await page.getByRole('alert').waitFor();
+    for (const [name, value] of Object.entries(fields)) {
+      const retained = await form.locator(`[name="${name}"]`).inputValue();
+      // Boolean assertion avoids retaining password values on a failure.
+      assert.ok(retained === value, `Rejected ${resource} retains ${name} input`);
+    }
+  }
+  return result.json();
+}
+
 await ready();
 const alpha = await backend('bootstrap', {
   owner_name: 'E2E Alpha Owner', owner_email: alphaEmail, owner_password: password,
@@ -118,26 +146,47 @@ try {
   assert.equal(branch.organization_id, alpha.organization.id);
   const other = await bff(owner.page, 'branches', 'POST', { name: 'E2E Khamis', code: 'E2E_KHM' }, 201);
   const roles = (await bff(owner.page, 'roles')).items;
-  const manager = await bff(owner.page, 'users', 'POST', {
+  await owner.page.getByRole('link', { name: 'Users', exact: true }).click();
+  const managerFields = {
     name: 'E2E Manager', email: `manager-${suffix}@example.com`, password,
-  }, 201);
+  };
+  const manager = await submitCreate(owner.page, 'users', managerFields, 'إضافة');
+  await owner.page.locator('article').filter({ hasText: manager.email }).waitFor();
   const assignment = await bff(owner.page, `users/${manager.id}/roles`, 'POST', {
     role_id: roles.find(r => r.code === 'MANAGER').id, branch_id: branch.id,
   }, 201);
-  const cashier = await bff(owner.page, 'users', 'POST', {
+  await submitCreate(owner.page, 'users', managerFields, 'إضافة', 409);
+  const cashier = await submitCreate(owner.page, 'users', {
     name: 'E2E Cashier', email: `cashier-${suffix}@example.com`, password,
-  }, 201);
+  }, 'إضافة');
+  await owner.page.locator('article').filter({ hasText: cashier.email }).waitFor();
   await bff(owner.page, `users/${cashier.id}/roles`, 'POST', {
     role_id: roles.find(r => r.code === 'CASHIER').id, branch_id: branch.id,
   }, 201);
   const detail = await bff(owner.page, `users/${manager.id}`);
   assert.ok(detail.roles.some(r => r.code === 'MANAGER' && r.branch_id === branch.id));
-  const terminal = await bff(owner.page, 'terminals', 'POST', {
+  await owner.page.getByRole('link', { name: 'Devices', exact: true }).click();
+  const terminalFields = {
     name: 'E2E Terminal', device_identifier: `e2e-${suffix}`, branch_id: branch.id,
-  }, 201);
+  };
+  const terminal = await submitCreate(owner.page, 'terminals', terminalFields, 'إنشاء');
+  await owner.page.getByRole('cell', { name: 'E2E Terminal', exact: true }).waitFor();
+  // Send an invalid branch value through the actual form/BFF for a real 422.
+  // No HTTP interception; this deliberately exercises rejected input preservation.
+  await owner.page.locator('select[name="branch_id"]').evaluate(select => {
+    select.add(new Option('Invalid test branch', 'not-a-uuid'));
+  });
+  await submitCreate(owner.page, 'terminals', {
+    ...terminalFields, branch_id: 'not-a-uuid',
+  }, 'إنشاء', 422);
+  await submitCreate(owner.page, 'terminals', {
+    name: 'E2E Retry Terminal', device_identifier: `e2e-retry-${suffix}`, branch_id: branch.id,
+  }, 'إنشاء');
+  await owner.page.getByRole('cell', { name: 'E2E Retry Terminal', exact: true }).waitFor();
   assert.equal(terminal.activation_status, 'PENDING');
   await bff(owner.page, `terminals/${terminal.id}`, 'PATCH', { name: 'E2E Renamed Terminal' });
-  await owner.page.getByRole('link', { name: 'Devices', exact: true }).click();
+  // A direct fixture API rename is outside React Query's mutation callbacks.
+  await owner.page.reload();
   const terminalRow = owner.page.getByRole('row').filter({ hasText: 'E2E Renamed Terminal' });
   await terminalRow.waitFor();
   const revocation = owner.page.waitForResponse(r => new URL(r.url()).pathname === `/api/proxy/terminals/${terminal.id}/revoke`);
@@ -207,7 +256,7 @@ try {
   await owner.page.waitForURL(baseURL + '/login');
   assert.ok(!(await owner.context.cookies()).some(c => ['sm_access', 'sm_refresh', 'sm_org'].includes(c.name)));
   await backend('auth/refresh', { refresh_token: newRefresh }, 401);
-  console.log('PASS: real-backend Chromium foundation (UI login/branch/revoke; BFF membership, RBAC, tenant/audit, rotation/logout)');
+  console.log('PASS: real-backend Chromium foundation (rendered user/device success, rejection/retry; RBAC, tenant/audit, rotation/logout)');
 } finally {
   await browser.close();
 }

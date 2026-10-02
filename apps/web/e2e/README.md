@@ -7,8 +7,12 @@ migrated disposable PostgreSQL 16 and Redis 7. There are no route interceptions 
 synthetic upstream responses. Foundation CI runs it in its own isolated job.
 
 Rendered flows: owner/manager/cashier login, owner branch creation, branch list,
-role-hidden navigation and terminal revocation. Browser-origin BFF API commands
-cover basic invitation, branch-scoped role assignment, device creation/rename,
+role-hidden navigation, basic user invitation, device creation and terminal
+revocation. User/device create checks assert form reset and no false error after
+success, input preservation on user duplicate (409) or invalid device branch
+(422) rejection, and a successful new attempt
+that clears the stale error. Browser-origin BFF API commands cover
+branch-scoped role assignment and device rename,
 audit events, last-owner protection, permission denial and cross-tenant UUIDs.
 Real HttpOnly cookies, explicit refresh rotation/reuse rejection and logout
 revocation are checked. Credentials are generated in memory and never retained.
