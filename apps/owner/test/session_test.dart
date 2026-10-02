@@ -7,8 +7,11 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:smart_merchant_owner/main.dart';
 
-http.Response me() =>
-    http.Response(jsonEncode({'organizations': ['org-fixture']}), 200);
+http.Response me() => http.Response(
+    jsonEncode({
+      'organizations': ['org-fixture']
+    }),
+    200);
 
 http.Response pair() => http.Response(
     jsonEncode({
@@ -150,8 +153,8 @@ void main() {
     var calls = 0;
     await http.runWithClient(
       () async {
-        await expectLater(session.restore(),
-            throwsA(isA<OwnerSessionException>()));
+        await expectLater(
+            session.restore(), throwsA(isA<OwnerSessionException>()));
         expect(await storage.read(key: 'refresh_token'), 'old-refresh-fixture');
         unavailable = false;
         await session.resume();
@@ -169,19 +172,19 @@ void main() {
   test('malformed rotation never writes a partial pair', () async {
     final session = OwnerSession(storage);
     await http.runWithClient(
-      () => expectLater(
-          session.restore(), throwsA(isA<OwnerSessionException>())),
-      () => MockClient((request) async =>
-          request.url.path.endsWith('/refresh')
-              ? http.Response('{"access_token":"incomplete-fixture"}', 200)
-              : http.Response('', 401)),
+      () =>
+          expectLater(session.restore(), throwsA(isA<OwnerSessionException>())),
+      () => MockClient((request) async => request.url.path.endsWith('/refresh')
+          ? http.Response('{"access_token":"incomplete-fixture"}', 200)
+          : http.Response('', 401)),
     );
     expect(await storage.read(key: 'access_token'), 'old-access-fixture');
     expect(await storage.read(key: 'refresh_token'), 'old-refresh-fixture');
     session.dispose();
   });
 
-  test('logout waits for rotation and revokes its persisted successor', () async {
+  test('logout waits for rotation and revokes its persisted successor',
+      () async {
     final session = OwnerSession(storage);
     final rotating = Completer<void>();
     final rotation = Completer<http.Response>();

@@ -16,7 +16,8 @@ void main() {
     });
   });
 
-  testWidgets('resume renews expiry and an outage offers retry', (tester) async {
+  testWidgets('resume renews expiry and an outage offers retry',
+      (tester) async {
     final session = OwnerSession(const FlutterSecureStorage());
     var expired = false;
     var unavailable = false;
@@ -31,9 +32,11 @@ void main() {
         expect(find.text('المنشأة: org-fixture'), findsOneWidget);
         unavailable = true;
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
         await tester.pumpAndSettle();
-        expect(find.text('تعذر التحقق من الجلسة. أعد المحاولة.'), findsOneWidget);
+        expect(
+            find.text('تعذر التحقق من الجلسة. أعد المحاولة.'), findsOneWidget);
         expect(session.accessToken, 'old-access-fixture');
         unavailable = false;
         await tester.tap(find.text('إعادة المحاولة'));
@@ -41,7 +44,8 @@ void main() {
         expect(find.text('تعذر التحقق من الجلسة. أعد المحاولة.'), findsNothing);
         expired = true;
         tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
-        tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        tester.binding
+            .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
         await tester.pumpAndSettle();
         expect(session.accessToken, 'new-access-fixture');
         expect(refreshes, 1);
@@ -65,7 +69,10 @@ void main() {
           return http.Response('', 401);
         }
         return http.Response(
-            jsonEncode({'organizations': ['org-fixture']}), 200);
+            jsonEncode({
+              'organizations': ['org-fixture']
+            }),
+            200);
       }),
     );
   });

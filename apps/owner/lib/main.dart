@@ -48,6 +48,7 @@ class _OwnerAppState extends ConsumerState<OwnerApp>
       checkSession();
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -210,7 +211,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (snapshot.hasError) {
             return Center(
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(tr(context, 'تعذر تحميل المنشأة', 'Organization unavailable')),
+                Text(tr(
+                    context, 'تعذر تحميل المنشأة', 'Organization unavailable')),
                 TextButton(
                   onPressed: () => setState(() {
                     organization =
@@ -223,9 +225,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }
           return Center(
             child: Text(snapshot.connectionState != ConnectionState.done
-                ? tr(context, 'جارٍ تحميل المنشأة...', 'Loading organization...')
+                ? tr(
+                    context, 'جارٍ تحميل المنشأة...', 'Loading organization...')
                 : snapshot.data == null
-                    ? tr(context, 'لا توجد منشأة متاحة', 'No organization available')
+                    ? tr(context, 'لا توجد منشأة متاحة',
+                        'No organization available')
                     : '${tr(context, 'المنشأة', 'Organization')}: ${snapshot.data}'),
           );
         },
