@@ -1,0 +1,82 @@
+{
+  "title": "SM-WEB-004: bound web BFF transport and session-lock requests",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; continued project development and reviewed merges authorized.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "9ed105206becda3c88a369f8feff46aa66cda50c",
+  "existing_pr": null,
+  "expected_pr_head": null,
+  "expected_pr_base": null,
+  "scope": "One web transport-bounds defect across existing BFF routes and browser auth-lock requests.",
+  "out_of_scope": "Backend token-family/schema/financial/POS implementation, owner foreground expiry, audit coverage, rendered-cache invalidation, infrastructure/provider/production tuning and Telegram.",
+  "task": "Apply cumulative server deadlines, streamed UTF-8 request/response byte limits, safe configuration/error handling, bounded browser response reads and local logout cleanup without replaying unknown command results.",
+  "validation": "Vitest byte boundary/chunked length/cancellation/cumulative deadline/configuration/JSON/token/cookie/one-attempt/browser lock tests; real Next.js BFF Chromium stalled mutation and logout cases plus retained auth isolation; exact Foundation/Governance CI and complete diff/source review.",
+  "stop_conditions": "Wrong main/task head, unexpected scope overlap, failed required checks, secret exposure or unsupported capability.",
+  "success_criteria": "Unbounded input/response/deadline defects are removed from current BFF/session paths; failed login/refresh do not overwrite cookies; logout local cleanup is bounded; timeouts/transport errors never cause automatic command replay/refresh; all required CI passes.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "tag",
+    "release",
+    "signing",
+    "store_publication",
+    "production_deploy",
+    "dns_changes",
+    "destructive_database_migration",
+    "production_credential_rotation",
+    "destructive_infrastructure",
+    "repository_deletion",
+    "force_push",
+    "history_rewrite",
+    "permanent_release_artifact_deletion",
+    "destructive_billing",
+    "protected_product_identity_change"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Owner 2026-10-02: تمام كمل بدون توقف و لك جميع الصلاحيات من عندي; reviewed bounded BFF transport repair into main after required checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/BFF_TRANSPORT_BOUNDS.md",
+  "allowed_paths": [
+    "apps/web/lib/bff.ts",
+    "apps/web/app/api/proxy/[...path]/route.ts",
+    "apps/web/app/api/session/route.ts",
+    "apps/web/app/api/session/refresh/route.ts",
+    "apps/web/app/api/session/organization/route.ts",
+    "apps/web/app/api/session/language/route.ts",
+    "apps/web/lib/session.ts",
+    "apps/web/lib/api.ts",
+    "apps/web/.env.example",
+    "apps/web/lib/bff.test.ts",
+    "apps/web/lib/session.test.ts",
+    "apps/web/app/api/bff-limits.test.ts",
+    "apps/web/e2e/session-renewal.mjs",
+    "apps/web/e2e/README.md",
+    "docs/adr/0008-bff-transport-bounds.md",
+    "ENGINEERING/REPORTS/BFF_TRANSPORT_BOUNDS.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "ENGINEERING/EVIDENCE/bff-bounds-task.json"
+  ]
+}

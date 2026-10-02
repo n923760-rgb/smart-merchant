@@ -24,6 +24,7 @@ const refreshReady = deferred(), refreshRelease = deferred();
 let initialCount = 0, generation = 0, currentAccess = '', currentRefresh = '';
 let expired = false, account = 'Alpha', refreshCalls = 0, logoutCalls = 0;
 let holdBranch = false, holdRefresh = false;
+let stallMutation = false, stallLogout = false, stalledMutationCalls = 0;
 const usedRefreshes = new Set();
 const seenCommands = [];
 function issue() {
@@ -55,6 +56,7 @@ const upstream = createServer(async (req, res) => {
     if (path === 'auth/logout') {
       logoutCalls++;
       assert.equal(body.refresh_token, currentRefresh, 'Logout must use the rotated successor');
+      if (stallLogout) { res.writeHead(200, { 'Content-Type': 'application/json' }); res.write('{'); return; }
       return send(null, 204);
     }
     const authorized = req.headers.authorization === 'Bearer ' + currentAccess && !expired;
@@ -71,6 +73,9 @@ const upstream = createServer(async (req, res) => {
       return send({ message: 'Delayed earlier authorization failure' }, 401);
     }
     if (req.method === 'POST') seenCommands.push({ path, account });
+    if (path === 'branches' && req.method === 'POST' && stallMutation) {
+      stalledMutationCalls++; res.writeHead(200, { 'Content-Type': 'application/json' }); res.write('{'); return;
+    }
     if (path === 'auth/me') return send({ id: org, name: account + ' Account', email: account.toLowerCase() + '@example.test', organizations: [org] });
     if (path === 'auth/context') return send({ organization: { id: org, name: account + ' Cafe' }, permissions, branch_permissions: {} });
     if (path === 'organizations') return send([{ id: org, name: account + ' Cafe' }]);
@@ -157,6 +162,26 @@ try {
   await first.reload();
   await identity(first, 'Beta');
   assert.equal(await second.evaluate(() => /sm_access=|sm_refresh=/.test(document.cookie)), false);
+  // A backend may have accepted a command while its response body stalls.
+  await second.goto(baseURL + '/branches');
+  await identity(second, 'Beta');
+  const before = (await context.cookies()).filter(cookie => ['sm_access', 'sm_refresh', 'sm_context', 'sm_org'].includes(cookie.name));
+  stallMutation = true;
+  await second.locator('input[name="name"]').fill('Disposable timeout command');
+  await second.locator('input[name="code"]').fill('TIMEOUT');
+  await second.getByRole('button', { name: 'إضافة فرع', exact: true }).click();
+  await second.getByRole('alert').getByText('Error: Request timed out. Check the result before trying again.', { exact: true }).waitFor();
+  assert.equal(stalledMutationCalls, 1, 'An unknown mutation result must never be retried');
+  assert.equal(refreshCalls, 3, 'A 504 must not trigger refresh');
+  assert.deepEqual((await context.cookies()).filter(cookie => ['sm_access', 'sm_refresh', 'sm_context', 'sm_org'].includes(cookie.name)), before);
+  assert.equal(new URL(second.url()).pathname, '/branches');
+
+  stallLogout = true;
+  await second.getByRole('button', { name: 'Sign out', exact: true }).click();
+  await second.waitForURL(baseURL + '/login');
+  assert.equal(logoutCalls, 2);
+  assert.equal((await context.cookies()).some(cookie => ['sm_access', 'sm_refresh', 'sm_context', 'sm_org'].includes(cookie.name)), false);
+  console.log('PASS: bounded real BFF stalled mutation and logout, no replay/refresh, preserved timeout credentials and local logout cleanup');
   console.log('PASS: real Next.js BFF, two-tab renewal, delayed 401, serialized logout, stale-command/dormant-tab rejection and HttpOnly credentials');
 } finally {
   initialFailures.resolve(); branchRelease.resolve(); refreshRelease.resolve();

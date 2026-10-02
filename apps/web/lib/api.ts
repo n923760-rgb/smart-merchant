@@ -1,4 +1,4 @@
-import { assertContext, boundSessionContext, SessionError, withSessionLock } from './session';
+import { assertContext, boundSessionContext, SessionError, sessionRequest, withSessionLock } from './session';
 export type Page<T> = { items: T[]; page: number; page_size: number };
 export type Branch = { id: string; name: string; code: string; city: string | null; status: string };
 export type User = { id: string; name: string; email: string; status: string; membership_id: string };
@@ -16,7 +16,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
   headers.set('Content-Type', 'application/json');
   if (context) headers.set('X-Session-Context', context);
-  const call = () => fetch(`/api/proxy/${path}`, { ...init, headers, credentials: 'same-origin', cache: 'no-store' });
+  const call = () => sessionRequest(`/api/proxy/${path}`, { ...init, headers, credentials: 'same-origin', cache: 'no-store' });
   let response = await call();
   assertContext(context);
   if (response.status === 401 && context) {
@@ -26,10 +26,10 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     response = await withSessionLock(async () => {
       assertContext(context);
       // Another tab/request may already have renewed the HttpOnly cookies.
-      const probe = await fetch('/api/proxy/auth/me', { headers, credentials: 'same-origin', cache: 'no-store' });
+      const probe = await sessionRequest('/api/proxy/auth/me', { headers, credentials: 'same-origin', cache: 'no-store' });
       assertContext(context);
       if (probe.status === 401) {
-        const renewed = await fetch('/api/session/refresh', { method: 'POST', headers, credentials: 'same-origin', cache: 'no-store' });
+        const renewed = await sessionRequest('/api/session/refresh', { method: 'POST', headers, credentials: 'same-origin', cache: 'no-store' });
         assertContext(context);
         if (!renewed.ok) return renewed;
       } else if (!probe.ok) {
