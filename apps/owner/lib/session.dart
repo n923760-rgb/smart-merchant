@@ -113,12 +113,15 @@ class OwnerSession extends StateNotifier<String?> {
 
   Future<Map<String, dynamic>?> _me(int epoch) async {
     var token = state ?? await storage.read(key: 'access_token');
-    token ??= await _refresh(epoch);
+    final initializedFromRefresh = token == null;
+    if (initializedFromRefresh) {
+      token = await _refresh(epoch);
+    }
     if (token == null) {
       return null;
     }
     var response = await _request('auth/me', token: token);
-    if (response.statusCode == 401) {
+    if (response.statusCode == 401 && !initializedFromRefresh) {
       token = await _refresh(epoch);
       if (token == null) {
         return null;

@@ -262,6 +262,33 @@ void main() {
     session.dispose();
   });
 
+  for (final refreshOnly in [false, true]) {
+    test('a rejected renewed access stops after one rotation: $refreshOnly',
+        () async {
+      if (refreshOnly) {
+        FlutterSecureStorage.setMockInitialValues({
+          'refresh_token': 'old-refresh-fixture',
+        });
+      }
+      final session = OwnerSession(storage);
+      var refreshes = 0;
+      await http.runWithClient(
+        () => session.restore(),
+        () => MockClient((request) async {
+          if (request.url.path.endsWith('/refresh')) {
+            refreshes++;
+            return pair();
+          }
+          return http.Response('', 401);
+        }),
+      );
+      expect(refreshes, 1);
+      expect(session.accessToken, isNull);
+      expect(await storage.read(key: 'refresh_token'), isNull);
+      session.dispose();
+    });
+  }
+
   testWidgets('timeout releases the session queue without replay',
       (tester) async {
     final session = OwnerSession(storage);

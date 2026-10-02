@@ -5,7 +5,7 @@ Diagnosis base: main 2f5440165d7c2f2a8ef7cb07a1204b40456964b8.
 
 The Flutter owner shell renewed only at startup; ordinary auth/me and foreground return did not recover access expiry.
 One OwnerSession instance now serializes credential reads, login, refresh, authenticated organization reads and logout within the application isolate. Startup and overlapping resume checks share their in-flight probe.
-Probe existing access at startup/resume. Only an explicit auth/me 401 permits one rotation and one read retry; an authoritative refresh/retried-me 401 clears local credentials. Other failures preserve credentials and offer retry.
+Probe existing access at startup/resume. If access is absent, retained refresh may initialize it once. With existing access, only an explicit auth/me 401 permits one rotation and one read retry; an authoritative refresh or post-renewal me 401 clears local credentials. Other failures preserve credentials and offer retry.
 Validate the complete nonempty token pair before storage writes. No transport, malformed-response or unknown rotation result is automatically replayed.
 Each HTTP attempt has a ten-second deadline and closes its client on completion/failure, so a stalled request cannot permanently hold the queue. This is an engineering bound, not a merchant financial policy.
 
