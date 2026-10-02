@@ -22,6 +22,16 @@ describe('browser request deadline', () => {
     expect(upstream).toHaveBeenCalledTimes(2); // Two explicit actions; no implicit retry.
     expect(upstream.mock.calls[0][1].signal.aborted).toBe(true);
   });
+  it('keeps rejected credentials distinct from login service failure', async () => {
+    vi.stubGlobal('document', { cookie: '' });
+    vi.stubGlobal('navigator', { locks: { request: (_name: string, action: () => Promise<unknown>) => action() } });
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce(Response.json({}, { status: 401 }))
+      .mockResolvedValueOnce(Response.json({}, { status: 504 })));
+    expect((await sessionFetch('/api/session', { method: 'POST', body: '{}' })).status).toBe(401);
+    await expect(sessionFetch('/api/session', { method: 'POST', body: '{}' })).rejects.toMatchObject({ status: 504 });
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
   it('bounds a partial response body and cancels the read', async () => {
     vi.useFakeTimers();
     const cancel = vi.fn();

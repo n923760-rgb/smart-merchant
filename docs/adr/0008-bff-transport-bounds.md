@@ -32,7 +32,7 @@ Local cleanup does not prove authoritative revocation.
 
 Browser session requests separately bound headers and full response delivery at 65000ms (longer than the maximum server deadline) and 8388608 bytes.
 The browser aborts/cancels an expired read and releases its Web Lock, without reissuing the action.
-Caller cancellation is respected. The deadline starts inside a granted lock, not while waiting for another cooperating tab.
+Caller cancellation is respected. Session-service 5xx responses raise a service error, while a credential 401 remains a rejected-login response; the login UI must not label an outage as a wrong password. The deadline starts inside a granted lock, not while waiting for another cooperating tab.
 Only the existing explicit authorization-401 flow may renew/retry once; never retry 502/503/504, network errors or unknown results.
 
 ## Boundaries and qualification

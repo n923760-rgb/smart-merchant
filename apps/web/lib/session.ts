@@ -85,6 +85,8 @@ export async function sessionFetch(path: '/api/session' | '/api/session/organiza
     const headers = new Headers(init.headers);
     if (!login && expected) headers.set('X-Session-Context', expected);
     const response = await sessionRequest(path, { ...init, headers, credentials: 'same-origin', cache: 'no-store' });
+    // Login must distinguish service failure from rejected credentials.
+    if (response.status >= 500) throw new SessionError(response.status, response.status === 504 ? 'Request timed out. Check the result before trying again.' : 'Service temporarily unavailable.');
     if (response.ok) observedContext = sessionContext();
     return response;
   });
