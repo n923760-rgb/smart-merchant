@@ -53,6 +53,16 @@ jobs:
         with: { node-version: '22' }
       - run: npm ci
       - run: npm run lint && npm run typecheck && npm test && npm run build
+      - name: Browser regression for account switching
+        run: |
+          sm_browser_tools=/tmp/smart-merchant-session-browser
+          npm install --prefix "$sm_browser_tools" --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.55.1
+          node "$sm_browser_tools/node_modules/playwright/cli.js" install --with-deps chromium
+          cp e2e/session-isolation.mjs "$sm_browser_tools/session-isolation.mjs"
+          node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000 > /tmp/smart-merchant-session-web.log 2>&1 &
+          sm_session_web_pid=$!
+          trap 'kill "$sm_session_web_pid" 2>/dev/null || true' EXIT
+          SM_TEST_BASE_URL=http://127.0.0.1:3000 node "$sm_browser_tools/session-isolation.mjs"
       - run: npm audit --audit-level=high
   flutter:
     runs-on: ubuntu-latest
