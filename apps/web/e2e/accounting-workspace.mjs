@@ -41,7 +41,7 @@ async function backend(
 }
 
 async function merchant(name) {
-  const email = `${name.toLowerCase()}-${randomUUID()}@example.test`;
+  const email = `${name.toLowerCase()}-${randomUUID()}@example.com`;
   const seed = await backend("bootstrap", {
     method: "POST",
     bootstrap: true,
@@ -105,7 +105,7 @@ async function branch(who, code) {
   ).id;
 }
 async function employee(who, roleCode, branches = [null]) {
-  const email = `accounting-${randomUUID()}@example.test`;
+  const email = `accounting-${randomUUID()}@example.com`;
   const user = await backend("users", {
     ...who,
     method: "POST",

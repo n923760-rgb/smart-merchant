@@ -25,6 +25,8 @@ Required browser proof includes: accountant without terminal/shift grants; exact
 
 The existing Foundation and Governance gates remain unchanged. The separate accounting browser workflow is additional evidence, not an audit bypass. Exact candidate/checkout/run outcomes belong to the PR qualification, never a previous successful commit.
 
+Initial candidate 832d89ad499ac56fbe08b97f4e06ea851c74d614 passed local checks but Accounting Web run 37121985282 failed during fixture bootstrap: the reserved example.test email domain is rejected by the unchanged backend email validator (422). Fixture addresses are corrected to example.com; no input-validation rule is weakened. Required browser assertions were not reached on that initial run and must qualify the corrected source.
+
 ## Merge blocker and limits
 
 BLOCKED: base accounting PR #13 is unmerged because the unchanged web ESLint transitive braces 3.0.3 chain fails the high-severity dependency audit. Registry checks on 2026-10-03 found no patched stable braces version, and even Next ESLint canary retained fast-glob. Forced downgrade, fork/alias substitution and an audit exception were not applied. Required gates are not relaxed. This dependent PR cannot merge into its unmerged base as a substitute for main integration.
