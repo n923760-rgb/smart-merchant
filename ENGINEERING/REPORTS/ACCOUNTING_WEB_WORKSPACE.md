@@ -29,6 +29,8 @@ Initial candidate 832d89ad499ac56fbe08b97f4e06ea851c74d614 passed local checks b
 
 Candidate a2cce3c5b1c49e7b4b0040362135d5a6a5269713 reached real reads/pagination/reversal/exact money/mobile and error-retry checks, then timed out on the branch scope selector's exact accessible label. Native option text contributed to its computed label. An explicit localized aria-label fixes the control's stable accessible name; the same real branch assertions remain required on the corrected source.
 
+Candidate 6eab1b7021d2aa7104d9fc362e12bc44c2e4e7ea passed branch list/scope-reset assertions, then its forged-branch check used Playwright's Node APIRequestContext, which returned 401 rather than exercising the authenticated browser's Secure loopback cookie rules. The check now uses actual in-page browser fetch with the existing non-secret session-context binding and still requires backend 403 and no secret records. No cookie/auth/permission policy changes are made. Layout artifacts from a2cce3c were visually inspected: desktop RTL and 390px phone layout; wide financial tables intentionally scroll inside their containers.
+
 ## Merge blocker and limits
 
 BLOCKED: base accounting PR #13 is unmerged because the unchanged web ESLint transitive braces 3.0.3 chain fails the high-severity dependency audit. Registry checks on 2026-10-03 found no patched stable braces version, and even Next ESLint canary retained fast-glob. Forced downgrade, fork/alias substitution and an audit exception were not applied. Required gates are not relaxed. This dependent PR cannot merge into its unmerged base as a substitute for main integration.

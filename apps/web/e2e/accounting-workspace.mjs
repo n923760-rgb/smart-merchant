@@ -403,16 +403,28 @@ try {
     (cookie) => cookie.name === "sm_context",
   );
   assert.ok(contextCookie);
-  const denied = await context.request.get(
-    `${baseURL}/api/proxy/accounting/journals?branch_id=${b3}`,
-    { headers: { "X-Session-Context": contextCookie.value } },
+  // Use the actual browser cookie rules, not Node's APIRequestContext cookie
+  // transport (which does not send production Secure cookies over loopback HTTP).
+  const denied = await page.evaluate(
+    async ({ branchId, sessionContext }) => {
+      const response = await fetch(
+        `/api/proxy/accounting/journals?branch_id=${encodeURIComponent(branchId)}`,
+        {
+          credentials: "same-origin",
+          cache: "no-store",
+          headers: { "X-Session-Context": sessionContext },
+        },
+      );
+      return { status: response.status, body: await response.text() };
+    },
+    { branchId: b3, sessionContext: contextCookie.value },
   );
   assert.equal(
-    denied.status(),
+    denied.status,
     403,
     "Real backend denies a manually forged branch query",
   );
-  assert.doesNotMatch(await denied.text(), /Forbidden branch secret/);
+  assert.doesNotMatch(denied.body, /Forbidden branch secret/);
   await signOut();
 
   // A cashier must have neither the link nor read requests even after direct URL navigation.
