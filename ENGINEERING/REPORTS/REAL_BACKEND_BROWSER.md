@@ -65,3 +65,11 @@ rendered real-backend regressions in a separate correction round.
 Next: review exact CI/diff; then repair and qualify these form-success paths.
 Physical targets, enforced branch protection, multi-tab cache invalidation and
 complete POS acceptance remain open. No merge/release is authorized by this packet.
+
+## Owner-authorized integration refresh — 2026-10-03
+
+Current owner explicitly authorizes continued reviewed merges. Upstream security
+PR 15 merged at 6f037be4594f7c2b1ddadf59e0141c8ae3c07905 with the qualified tree
+57fc875418ad58af513a2e307542a8ddf89fcde7. Refresh this original PR without new
+application behavior. Original source/CI remains historical; current candidate
+Foundation/Governance evidence and exact tested tree must pass before merge.

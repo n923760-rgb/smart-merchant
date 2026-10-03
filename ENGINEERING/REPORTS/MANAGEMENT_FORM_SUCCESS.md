@@ -72,3 +72,11 @@ automatically retried.
 
 After exact-source checks and review, owner integration must preserve the tested
 tree: #11 first, then this dependent PR retargeted/requalified against main.
+
+## Owner-authorized integration refresh — 2026-10-03
+
+Current owner explicitly authorizes reviewed merges. Refresh the upstream
+foundation qualification at d0a24c720f4f0bd280505a59056b4f21d020cac0, which carries
+merged security PR 15. Preserve the bounded two-form correction. New exact-source
+Foundation/Governance and rendered real-backend regressions must pass; dependency
+11 must integrate before retargeting this PR to main. No production acceptance.
