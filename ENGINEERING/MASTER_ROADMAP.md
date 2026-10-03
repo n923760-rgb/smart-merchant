@@ -1,19 +1,19 @@
 # Smart Merchant — Master Engineering Roadmap
 
-The sole canonical roadmap. Observed 2026-10-02. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
+The sole canonical roadmap. Observed 2026-10-03. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
 
 ## Current owner scope — 2026-10-03
 
 Owner directed merging previous/current prompts and applying changes, then explicitly replaced the proposed food-truck-first scope with a general accounting application for all business categories. The [Unified Master Prompt v2](../docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) is the consolidated product reference. Accounting/invoicing/customers/suppliers are the common core; POS, stock and recipes are optional modules. Preserve organization/branch architecture and POS-001–150; an accountant or service-business invoice must not depend on a POS terminal or shift. This latest direction overrides the older POS-first implementation order below without erasing historical evidence.
 
-SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. Existing open PR #11 (real-backend browser qualification) and dependent #12 (form success repair) remain separate, unmerged work observed at diagnosis.
+SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. PR #11 (real-backend qualification) and #12 (form success) were unmerged at diagnosis and are now integrated with #13/#14 and security #15.
 
-Current task source: main 80de2647186d999e98e2ff77eff1e1dd1c7810d0, tree e8e722a7d8001204df0df88c9b2203b2bb7ffdd4; reverify before merge. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
+Integrated application source: main 5831c8f3a035dfbff9374e086376447e6013c524, tree 05add842c83cee28d0409384be78aabb9cf30176; reverify each later task. Original diagnosis: 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
 
 ### Current delivery order
 
-1. Finish attributable foundation web/runtime qualification and repairs; preserve outstanding physical-device gates before catalog/POS acceptance.
-2. General chart/ledger/reversal core (SM-ACC-001), then accounting UI and account hierarchy/period-close policies.
+1. Preserve qualified foundation/accounting runtime checks; scope remaining form-conflict/cache repairs separately and retain physical-device gates before catalog/POS acceptance.
+2. Chart/ledger/reversal core and read-only UI (SM-ACC-001/002) are integrated. Next: confirmed journal composer/unknown-result reconciliation, then account hierarchy/period-close policies.
 3. Customer/supplier subledgers, sales/purchase/service invoices, receipts/payments, expenses and deterministic document posting; reports reconciled to the ledger.
 4. Optional product/service catalog, warehouses/movement ledger/costing, then bounded POS context/shifts/calculation/cash completion under the existing POS rules.
 5. Durable offline operation, reconciliation, eligible printing/fiscal paths, refunds and owner live projections; general-accounting usability without operational modules.
@@ -21,7 +21,13 @@ Current task source: main 80de2647186d999e98e2ff77eff1e1dd1c7810d0, tree e8e722a
 
 Telegram, SoftPOS and advanced sector modules remain deferred. Do not claim every industry/jurisdiction is supported without separately qualifying its requirements.
 
-## Current verified state
+## Current integrated accounting result — 2026-10-03
+
+Reviewed PRs #15/#11/#12/#13/#14 are merged into main. The [integration receipt](REPORTS/GENERAL_ACCOUNTING_INTEGRATION.md) records each exact candidate/merge/check and retained tree. Final application Foundation 37127922441 (all nine jobs), Governance 37127922388 and Accounting Web 37127922401 PASS: 80 web/51 backend tests, actual migrated PostgreSQL/BFF/Chromium, full zero-vulnerability audit, Compose/security and Android/iOS simulator builds. Original audit failures and unmerged-stack descriptions below are historical source-specific records.
+
+General accounting works without terminal/shift setup; POS/stock/recipes remain optional modules. Delivered chart accounts, immutable balanced journals/reversal/request identity and scoped Arabic/English read-only views. Current manual web posting/reversal, documents/AR/AP/periods/reports/fiscal/offline/pilot/production acceptance remain separate. Next bounded slice is confirmed journal creation with durable same-command reconciliation after an unknown result; no automatic financial replay or new UUID on an uncertain outcome.
+
+## Historical verified state
 
 FACT: Foundation #1 is merged into main at cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d, preserving tested tree 71d65bb3671afd968d06504d74de45e99322bbb0.
 FACT: #5 repaired SQLAlchemy plugin compatibility and Next.js/brace-expansion vulnerabilities; #4 isolates account caches across web login boundaries.
@@ -60,7 +66,7 @@ SOURCE FACT: Independent BFF requests attempted rotation on the same cookie snap
 SOURCE FACT: BFF transport was unbounded on diagnosis main; SM-WEB-004 adds streamed byte caps, cumulative deadlines and bounded browser auth-lock requests. Its exact checks/review/merge are recorded in the task PR.
 SOURCE FACT: User invitation and terminal rename omitted audit records on diagnosis main. SM-AUDIT-006 adds minimal tenant/actor-scoped records in the mutation transaction; its exact checks/review/merge are recorded in the task PR.
 SOURCE FACT: SM-AUTH-005 adds owner foreground renewal and serialized credential operations; its exact checks/review/merge are recorded in the task PR.
-NOT RUN: Real backend browser/device E2E, physical input/printing/offline durability and complete POS-148.
+PASS: Real-backend web journeys are integrated via #11/#12/#14. NOT RUN: physical/mobile device E2E, input/printing/offline durability and complete POS-148.
 Governance fixtures cover packet authority/evidence, not live dirty-source/capacity/protection enforcement.
 No permanent autonomous agent is installed. Role review in this session is the same actor; never label it independent review.
 
@@ -95,7 +101,7 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 SM-AUDIT-006 is merged and main checks passed. SM-E2E-007 (#11) is qualified on its candidate and remains open. Qualify SM-WEB-008's separate dependent repair of user/device create forms and rendered rejection/success-retry tests; capture the form before await instead of reading expired React currentTarget. Integrate #11 before its dependent PR, with exact-source owner review/requalification. Next separately diagnose tenant unique-conflict mapping: terminal creation flushes before IntegrityError handling. Cross-tab rendered-cache invalidation remains separate. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
 
-## Current dependency recovery — 2026-10-03
+## Historical dependency recovery — 2026-10-03
 
 SM-SEC-007 diagnoses main 80de2647186d999e98e2ff77eff1e1dd1c7810d0 and open PRs #11–14.
 Owner again expressly authorizes continuation and merges. A bounded, version-scoped
@@ -118,20 +124,20 @@ each merge. General-accounting scope remains the latest owner product direction.
 
 SM-ACC-002 adds read-only account/journal/detail views, accounting-only landing, independent organization/branch read scopes, exact decimal-string presentation and real disposable ledger/BFF browser qualification. Original source depended on #13 at 00c18bd; current integration refresh depends on #13 at 12947dd6c7eb6311bb2ed1a07262b9c1ced2d78a with #12/#11/security #15 carried as explicit prerequisites. No new accounting behavior is added during refresh.
 
-The original accounting candidate was blocked by the braces audit. Security PR #15 removes that engine through a qualified bounded directory adapter while preserving Next lint rules and the full audit gate. The refreshed explicit stack must still pass all current checks and integrate predecessors before main merge. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
+The original accounting candidate was blocked by the braces audit. Security PR #15 removes that engine through a qualified bounded directory adapter while preserving Next lint rules and the full audit gate. The refreshed stack subsequently passed all checks and integrated; see the current receipt. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
 
 Read-only UI is not full accounting: journal composer/unknown-result reconciliation, hierarchies/period policy, documents/AR/AP and reconciled reports remain subsequent bounded tasks. No device, fiscal or production acceptance is implied.
 [Real-backend browser qualification](REPORTS/REAL_BACKEND_BROWSER.md).
 
 [Management form success](REPORTS/MANAGEMENT_FORM_SUCCESS.md).
 
-## Reviewed integration stack — 2026-10-03
+## Historical integration refresh — 2026-10-03
 
 Security PR #15 is merged at 6f037be4594f7c2b1ddadf59e0141c8ae3c07905; tree
 57fc875418ad58af513a2e307542a8ddf89fcde7 equals qualified checkout 993a705f6829fdc06a38e9bc4bb875b9e99c9234.
 Foundation 37126881609 (all eight jobs) and Governance 37126881577 pass; web
 audit reports zero vulnerabilities. Owner explicitly authorizes continuing and
-merging. Pending #11 → #12 → #13 → #14 now form an explicit qualification stack,
+merging. At refresh, #11 → #12 → #13 → #14 formed an explicit qualification stack,
 carrying the repair and retaining each bounded outcome. Reverify exact source,
 resolve report/roadmap overlaps by preserving both records, require successful
 current checks, integrate predecessors, then retarget successors to main.
@@ -141,14 +147,10 @@ FACT: Refreshed real-backend PR #11 merged at 5df9dbfcf578fabcd3720a0f33ff83010c
 retaining qualified tree ec914dafea35487d323d00a5d2178d3a86754917. Foundation
 37127389477 (all nine jobs, including actual PostgreSQL/BFF Chromium) and
 Governance 37127389403 pass on d0a24c720f4f0bd280505a59056b4f21d020cac0.
-Remaining successors require their own exact-source qualification and integration.
+Successors subsequently qualified and integrated; see the current receipt.
 
-## Accounting observation correction — 2026-10-03
+## Qualified post-merge observation correction — 2026-10-03
 
-Main f7e31d7's Accounting Web run 37128381976 and documentation candidate run
-37128773307 fail the same late request-count capture at fixture line 396 despite
-earlier candidate success. SM-E2E-010 captures before automatic accounting landing,
-waits for both resources and proves every resource/authorized-branch pair while
-retaining all foreign/unscoped denial assertions. No application behavior changes.
-PR 16 remains blocked pending qualified correction and refreshed checks. See
-[observation report](REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md).
+Original main Accounting Web 37128381976 and documentation candidate 37128773307 failed the late scopedReads count despite pre-merge candidate success. SM-E2E-010 captures before automatic accounting landing, waits for account/journal content and proves every authorized resource/branch pair, retaining every unscoped/foreign denial assertion. No application behavior changes. The [observation report](REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md) retains the failed-source diagnosis.
+
+PR #17 merged at 5831c8f3a035dfbff9374e086376447e6013c524, retaining qualified tree 05add842c83cee28d0409384be78aabb9cf30176. Foundation 37129241430 (all nine jobs), Governance 37129241513 and Accounting Web 37129241502 PASS on 17fc050b68a0e1bbe295229d2eff84a24e860b73. Initial documentation PR 16 was kept unmerged after its failure; this refreshed source carries the actual correction and requires its own full current checks. Historical failures are not suppressed. The next confirmed journal-composer/document/report sequence is unchanged.
