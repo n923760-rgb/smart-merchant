@@ -11,6 +11,7 @@ from app.core.database import engine
 from app.core.exceptions import AppError, handle_app_error
 from app.core.logging import configure_logging
 from app.core.middleware import request_middleware
+from app.domains.accounting.routes import router as accounting_router
 
 settings = get_settings()
 configure_logging(settings.log_level)
@@ -54,6 +55,7 @@ async def validation_error(request: Request, exc: RequestValidationError):
 
 
 app.include_router(router)
+app.include_router(accounting_router)
 
 
 @app.get("/health/live")

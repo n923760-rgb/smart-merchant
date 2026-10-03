@@ -2,6 +2,25 @@
 
 The sole canonical roadmap. Observed 2026-10-02. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
 
+## Current owner scope — 2026-10-03
+
+Owner directed merging previous/current prompts and applying changes, then explicitly replaced the proposed food-truck-first scope with a general accounting application for all business categories. The [Unified Master Prompt v2](../docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) is the consolidated product reference. Accounting/invoicing/customers/suppliers are the common core; POS, stock and recipes are optional modules. Preserve organization/branch architecture and POS-001–150; an accountant or service-business invoice must not depend on a POS terminal or shift. This latest direction overrides the older POS-first implementation order below without erasing historical evidence.
+
+SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. Existing open PR #11 (real-backend browser qualification) and dependent #12 (form success repair) remain separate, unmerged work observed at diagnosis.
+
+Current task source: main 80de2647186d999e98e2ff77eff1e1dd1c7810d0, tree e8e722a7d8001204df0df88c9b2203b2bb7ffdd4; reverify before merge. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
+
+### Current delivery order
+
+1. Finish attributable foundation web/runtime qualification and repairs; preserve outstanding physical-device gates before catalog/POS acceptance.
+2. General chart/ledger/reversal core (SM-ACC-001), then accounting UI and account hierarchy/period-close policies.
+3. Customer/supplier subledgers, sales/purchase/service invoices, receipts/payments, expenses and deterministic document posting; reports reconciled to the ledger.
+4. Optional product/service catalog, warehouses/movement ledger/costing, then bounded POS context/shifts/calculation/cash completion under the existing POS rules.
+5. Durable offline operation, reconciliation, eligible printing/fiscal paths, refunds and owner live projections; general-accounting usability without operational modules.
+6. Mixed-activity pilots, full financial/tenant/security/device/restore acceptance, production identity/infrastructure and owner release decision.
+
+Telegram, SoftPOS and advanced sector modules remain deferred. Do not claim every industry/jurisdiction is supported without separately qualifying its requirements.
+
 ## Current verified state
 
 FACT: Foundation #1 is merged into main at cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d, preserving tested tree 71d65bb3671afd968d06504d74de45e99322bbb0.
@@ -69,7 +88,7 @@ Telegram remains deferred by prior owner instruction.
 Payment provider, pilot/fiscal/tax policy, production identity/hosting/signing, paid service and physical targets remain unspecified.
 Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per POS requirements.
 
-## Exact immediate next round
+## Historical immediate next round — superseded by current owner scope
 
 Complete SM-AUDIT-006 tenant/permission/snapshot/rollback regressions, Foundation/Governance CI and reviewed owner-authorized merge. Next qualify browser flow against the real disposable backend; cross-tab rendered-cache invalidation remains a separate issue. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
@@ -77,3 +96,5 @@ Keep each independent problem in one branch/PR and update this same roadmap with
 ## Reports and evidence
 
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
+
+[General accounting foundation report](REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md) and [task](EVIDENCE/general-accounting-task.json).

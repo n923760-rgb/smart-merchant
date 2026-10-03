@@ -5,6 +5,10 @@ Source: [owner requirements](POS_TRANSACTION_FLOW_V1.md).
 Dependency and unresolved-policy register: [delivery plan](POS_DELIVERY_PLAN_V1.md).
 Numeric examples are illustrative; selected tax/rounding/costing policies must define expected monetary assertions before execution.
 
+## Applicability — 2026-10-03
+
+This is the acceptance matrix for the optional POS module of the [general accounting platform](SMART_MERCHANT_MASTER_PROMPT_V2.md). It remains entirely NOT RUN. Add separate ledger/accounting/service-business acceptance; a service invoice must not need a cashier shift, terminal, recipe or stock movement. Activity examples do not define a required vertical.
+
 ## Minimum end-to-end gate — POS-148
 
 Run on one frozen source with an activated terminal, scoped cashier/manager/owner, supported hardware and disposable production-like data.

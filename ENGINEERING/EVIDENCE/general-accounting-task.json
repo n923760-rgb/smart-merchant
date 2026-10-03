@@ -1,0 +1,71 @@
+{
+  "title": "SM-ACC-001: general accounting scope and immutable balanced journal foundation",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 requests merging the new and previous prompts, applying project changes, then explicitly directs a general accounting application for all business categories. Persistent owner authorization permits reviewed merges after checks.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "80de2647186d999e98e2ff77eff1e1dd1c7810d0",
+  "scope": "Adopt sector-neutral accounting-first scope and implement chart accounts plus atomic balanced journal posting, durable replay and explicit reversal without POS/device/shift dependencies.",
+  "out_of_scope": "Sales/invoices/receivables/payables/period close/full reports, POS/catalog/offline implementation, fiscal provider, physical devices and production. Existing PRs 11/12 stay independent.",
+  "task": "Merge accepted requirements without deleting POS-001..150; update only canonical roadmap; add scoped accounting domain/migration/RBAC/API and immutable balanced journal regressions.",
+  "validation": "Local schema/money/hash unit tests, backend lint and typing, packet/adoption validation; disposable PostgreSQL concurrency/rollback/immutability/tenant/branch API tests and migration roundtrip; exact-source Foundation and Governance CI; complete same-session diff review.",
+  "stop_conditions": "Source mismatch, unexpected overlapping application work, financial/tenant regression, secret exposure, failed required checks.",
+  "success_criteria": "General accounting works without terminals/shifts; only balanced authorized tenant-safe journals commit; request replay and reversal do not duplicate; DB blocks posted record mutation; old POS rules remain traceable; no full accounting/production readiness claim.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "production_deploy",
+    "signing",
+    "release",
+    "force_push",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Persistent owner project instruction grants reviewed merges after requirements succeed; current 2026-10-03 instruction authorizes application of the merged general-accounting scope."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md",
+  "allowed_paths": [
+    "docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md",
+    "docs/product/POS_TRANSACTION_FLOW_V1.md",
+    "docs/product/POS_DELIVERY_PLAN_V1.md",
+    "docs/product/POS_ACCEPTANCE_V1.md",
+    "docs/adr/0010-general-accounting-core.md",
+    "README.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "ENGINEERING/REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md",
+    "ENGINEERING/EVIDENCE/general-accounting-task.json",
+    "backend/app/domains/accounting/__init__.py",
+    "backend/app/domains/accounting/models.py",
+    "backend/app/domains/accounting/schemas.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/app/domains/accounting/routes.py",
+    "backend/app/api/routes.py",
+    "backend/app/main.py",
+    "backend/migrations/env.py",
+    "backend/migrations/versions/0002_accounting.py",
+    "backend/tests/test_accounting.py",
+    "backend/tests/test_accounting_units.py"
+  ]
+}
