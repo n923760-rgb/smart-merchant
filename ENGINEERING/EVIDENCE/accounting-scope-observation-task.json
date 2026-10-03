@@ -1,0 +1,56 @@
+{
+  "title": "SM-E2E-010: deterministically observe branch accounting requests from login",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 explicitly authorizes continued fixes and reviewed merges with full authority.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "f7e31d719ad0527d2a305270e944a251738ba976",
+  "scope": "Correct accounting browser fixture request-observation boundary and strengthen per-resource/per-branch coverage.",
+  "out_of_scope": "Production application, auth/RBAC/financial behavior, dependencies, migrations, runtime/CI gates and unrelated documentation PR 16 edits.",
+  "task": "Main post-merge Accounting Web run 37128381976 and dependent docs run 37128773307 fail because scopeStart is captured after login can dispatch branch reads. Capture before login, wait for branch account/journal rendering and require each resource/branch pair.",
+  "validation": "Node syntax, formatter, task/adoption validators, complete bounded diff; exact-source Accounting Web/Foundation/Governance CI including unchanged permission-denial assertions.",
+  "stop_conditions": "Unexpected live source overlap, weakened assertions, new application behavior, failed current checks, secrets or scope expansion.",
+  "success_criteria": "Branch reads dispatched during automatic accounting landing are observed; every accounts/journals branch pair is proven and all unscoped/foreign branch requests remain rejected.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "production_deploy",
+    "signing",
+    "release",
+    "force_push",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Current owner: continue and merge with full authority, 2026-10-03. Exact current successful checks required."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/accounting-scope-observation-task.json",
+    "ENGINEERING/REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "apps/web/e2e/accounting-workspace.mjs",
+    "apps/web/e2e/README.md"
+  ]
+}

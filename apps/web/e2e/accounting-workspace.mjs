@@ -355,10 +355,13 @@ try {
   await page.unroute(accountRoute);
   await signOut();
 
-  await signIn(restricted);
+  // Automatic accounting landing can dispatch reads before signIn returns.
+  // Observe the entire account transition, including already-cached first scope.
   const scopeStart = accountingRequests.length;
+  await signIn(restricted);
   await page.locator('a[href="/accounting"]').click();
   await page.getByLabel("نطاق العرض", { exact: true }).selectOption(b1);
+  await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   await journals().getByText(branchOne.description, { exact: true }).waitFor();
   assert.equal(
     await page.getByRole("option", { name: "كل المنشأة", exact: true }).count(),
@@ -375,6 +378,7 @@ try {
   await journals()
     .getByText("Authorized branch two", { exact: true })
     .waitFor();
+  await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   assert.equal(
     await page
       .getByRole("region", { name: "تفاصيل القيد", exact: true })
@@ -393,7 +397,18 @@ try {
         new URL(item.url).pathname,
       ),
     );
-  assert.ok(scopedReads.length >= 4);
+  for (const branchId of [b1, b2])
+    for (const resource of ["accounts", "journals"])
+      assert.ok(
+        scopedReads.some((request) => {
+          const url = new URL(request.url);
+          return (
+            url.pathname === `/api/proxy/accounting/${resource}` &&
+            url.searchParams.get("branch_id") === branchId
+          );
+        }),
+        `Observed ${resource} read for authorized branch`,
+      );
   for (const request of scopedReads)
     assert.ok(
       [b1, b2].includes(new URL(request.url).searchParams.get("branch_id")),
