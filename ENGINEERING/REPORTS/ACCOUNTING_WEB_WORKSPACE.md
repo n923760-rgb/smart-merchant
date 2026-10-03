@@ -31,10 +31,22 @@ Candidate a2cce3c5b1c49e7b4b0040362135d5a6a5269713 reached real reads/pagination
 
 Candidate 6eab1b7021d2aa7104d9fc362e12bc44c2e4e7ea passed branch list/scope-reset assertions, then its forged-branch check used Playwright's Node APIRequestContext, which returned 401 rather than exercising the authenticated browser's Secure loopback cookie rules. The check now uses actual in-page browser fetch with the existing non-secret session-context binding and still requires backend 403 and no secret records. No cookie/auth/permission policy changes are made. Layout artifacts from a2cce3c were visually inspected: desktop RTL and 390px phone layout; wide financial tables intentionally scroll inside their containers.
 
-## Merge blocker and limits
+## Historical merge blocker and limits
 
 BLOCKED: base accounting PR #13 is unmerged because the unchanged web ESLint transitive braces 3.0.3 chain fails the high-severity dependency audit. Registry checks on 2026-10-03 found no patched stable braces version, and even Next ESLint canary retained fast-glob. Forced downgrade, fork/alias substitution and an audit exception were not applied. Required gates are not relaxed. This dependent PR cannot merge into its unmerged base as a substitute for main integration.
 
 NOT RUN / not implemented: manual posting/reversal UI, account hierarchy/period policy, document/AR/AP/fiscal integration, trial balance/statements, mobile accounting screens, other browser engines, physical devices, merchant pilot and production. CI layout screenshots contain only disposable fixture records.
 
 Next bounded product step after safe base integration: an explicitly confirmed manual journal composer with durable command identity, unknown-outcome reconciliation and backend-authoritative balance/permission validation. Financial reports/period policy remain separate roadmap items.
+
+## Owner-authorized integration refresh — 2026-10-03
+
+Current owner explicitly authorizes continued reviewed merges. Security PR 15
+actually replaces the vulnerable directory-glob engine and is merged with all
+gates passing; previous audit failures remain historical source evidence. Refresh
+upstream accounting PR 13 at 12947dd6c7eb6311bb2ed1a07262b9c1ced2d78a, including
+real-backend/form PRs 11/12. Preserve both roadmap/report sections and both E2E
+readme sections. Workspace production code is unchanged. Require new Foundation,
+Governance and real-ledger browser checks (80 web tests including the 12 upstream
+lint regressions), then predecessor integration and exact tested-tree review.
+The next product slice remains confirmed journal creation/reconciliation.

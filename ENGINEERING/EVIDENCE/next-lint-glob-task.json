@@ -1,0 +1,61 @@
+{
+  "title": "SM-SEC-007: remove vulnerable Next lint glob dependency with a bounded directory adapter",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 expressly instructs continuation and merges with full project authority; existing successful-check requirement remains.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "80de2647186d999e98e2ff77eff1e1dd1c7810d0",
+  "scope": "Replace only the exact Next 16.3.8 ESLint plugin directory-glob dependency, preserving rules and full audit.",
+  "out_of_scope": "Application financial/auth changes, security suppression, Next downgrades, generic fast-glob replacement, existing PR source changes before this repair qualifies.",
+  "task": "Use a local named directory-only glob adapter backed by pinned tinyglobby, explicitly scoped to the observed Next plugin. Guard unsupported calls; verify actual plugin root discovery and rule execution.",
+  "validation": "Clean npm ci, audit at high, lint/type/unit/build; exact plugin caller contract, root patterns and Next rules; full Foundation/Governance CI.",
+  "stop_conditions": "Source mismatch, changed upstream caller contract, loss of lint semantics, audit or required check failure, secret exposure. No merge on failed checks.",
+  "success_criteria": "No braces/micromatch dependency in web graph; same Next version/rules; intended directory root behavior; full security gate passes.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "production_deploy",
+    "signing",
+    "release",
+    "force_push",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Current owner: continue and merge with full authority, 2026-10-03. Exact current successful checks required."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/NEXT_LINT_GLOB_REPAIR.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/next-lint-glob-task.json",
+    "ENGINEERING/REPORTS/NEXT_LINT_GLOB_REPAIR.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "docs/adr/0011-next-lint-directory-glob.md",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/tools/next-root-glob/package.json",
+    "apps/web/tools/next-root-glob/index.cjs",
+    "apps/web/lib/next-lint-glob.test.ts",
+    "apps/web/.npmrc"
+  ]
+}

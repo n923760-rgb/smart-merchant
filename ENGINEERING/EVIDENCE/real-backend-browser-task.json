@@ -1,0 +1,73 @@
+{
+  "title": "SM-E2E-007: real-backend browser foundation qualification",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03: continue and merge with full authority. Refresh this existing bounded PR after qualified security PR 15; no failed-check merge.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "6f037be4594f7c2b1ddadf59e0141c8ae3c07905",
+  "existing_pr": 11,
+  "expected_pr_head": "e7a29f809df1e73857e199821c38f389d1b16100",
+  "expected_pr_base": "6f037be4594f7c2b1ddadf59e0141c8ae3c07905",
+  "scope": "One Chromium browser context per account against production Next.js BFF, real FastAPI and disposable PostgreSQL/Redis.",
+  "out_of_scope": "New application features/fixes, physical/mobile acceptance, financial policy and production.",
+  "task": "Integrate the qualified upstream security repair into existing real-backend browser qualification PR, preserve its application scope, rerun full CI and reviewed merge.",
+  "validation": "Local JavaScript syntax, task validator, complete diff review; exact-source Foundation/Governance CI and new real-backend Chromium job. Runtime unavailable locally because Docker/PostgreSQL/Redis are absent; CI is the disposable external executor.",
+  "stop_conditions": "Unexpected live source/overlap, failed required checks, secrets, or unreviewed scope expansion.",
+  "success_criteria": "Real browser cookies authenticate the real backend; owner mutations persist; scoped manager sees only the allowed branch; cashier and foreign owner cannot mutate/read protected resources; tenant audit records exist; rotated and logged-out refresh capabilities reject reuse. No interception or synthetic upstream.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "release",
+    "production_deploy",
+    "force_push"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Current owner explicitly says continue and merge with full authority; all current checks must pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/REAL_BACKEND_BROWSER.md",
+  "allowed_paths": [
+    ".github/workflows/ci.yml",
+    "ENGINEERING/EVIDENCE/next-lint-glob-task.json",
+    "ENGINEERING/EVIDENCE/real-backend-browser-task.json",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "ENGINEERING/REPORTS/NEXT_LINT_GLOB_REPAIR.md",
+    "ENGINEERING/REPORTS/REAL_BACKEND_BROWSER.md",
+    "apps/web/.npmrc",
+    "apps/web/e2e/README.md",
+    "apps/web/e2e/real-backend.mjs",
+    "apps/web/lib/next-lint-glob.test.ts",
+    "apps/web/package-lock.json",
+    "apps/web/package.json",
+    "apps/web/tools/next-root-glob/index.cjs",
+    "apps/web/tools/next-root-glob/package.json",
+    "docs/adr/0011-next-lint-directory-glob.md"
+  ],
+  "integration_refresh": {
+    "upstream_pr": 15,
+    "upstream_merge": "6f037be4594f7c2b1ddadf59e0141c8ae3c07905",
+    "upstream_tested_tree": "57fc875418ad58af513a2e307542a8ddf89fcde7",
+    "original_task_head": "e7a29f809df1e73857e199821c38f389d1b16100"
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "title": "SM-WEB-008: preserve form identity across asynchronous create commands",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 explicitly says continue and merge with full authority; successful exact-source checks remain required.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "6f037be4594f7c2b1ddadf59e0141c8ae3c07905",
+  "existing_pr": 12,
+  "expected_pr_head": "3ba2ad96e16d855c0a03434f9835dae27cd1bcb2",
+  "expected_pr_base": "d0a24c720f4f0bd280505a59056b4f21d020cac0",
+  "dependency_pr": 11,
+  "expected_dependency_head": "d0a24c720f4f0bd280505a59056b4f21d020cac0",
+  "task_base_branch": "test/real-backend-foundation",
+  "scope": "User and device create handlers and their rendered real-backend success/failure regressions.",
+  "out_of_scope": "New backend/API/schema, RBAC, financial/POS work or production behavior. Qualified upstream changes are carried only for integration.",
+  "task": "Capture HTMLFormElement during synchronous dispatch, use it after awaiting creation, clear stale error before a fresh attempt; exercise committed success, rejected user duplicate/device validation with retained inputs and successful retry.",
+  "validation": "Local web lint/typecheck/unit tests/build, task/governance validators, Node syntax and complete diff; exact Foundation/Governance CI including real backend Chromium. Same-session review, not independent.",
+  "stop_conditions": "Unexpected live source mismatch, unreviewed overlap, failed checks, secrets or scope expansion.",
+  "success_criteria": "Successful user/device creation resets the captured form without false alerts; user duplicate/device validation failures preserve input and show failure; subsequent success clears stale alerts and remains visible in persisted lists. No tenant/RBAC change.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "release",
+    "production_deploy",
+    "force_push"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Current owner explicitly authorizes reviewed merges; merge only after dependency integrates into main and exact current checks pass."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/MANAGEMENT_FORM_SUCCESS.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/management-form-task.json",
+    "ENGINEERING/EVIDENCE/next-lint-glob-task.json",
+    "ENGINEERING/EVIDENCE/real-backend-browser-task.json",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "ENGINEERING/REPORTS/MANAGEMENT_FORM_SUCCESS.md",
+    "ENGINEERING/REPORTS/NEXT_LINT_GLOB_REPAIR.md",
+    "ENGINEERING/REPORTS/REAL_BACKEND_BROWSER.md",
+    "apps/web/.npmrc",
+    "apps/web/app/(dashboard)/devices/page.tsx",
+    "apps/web/app/(dashboard)/users/page.tsx",
+    "apps/web/e2e/README.md",
+    "apps/web/e2e/real-backend.mjs",
+    "apps/web/lib/next-lint-glob.test.ts",
+    "apps/web/package-lock.json",
+    "apps/web/package.json",
+    "apps/web/tools/next-root-glob/index.cjs",
+    "apps/web/tools/next-root-glob/package.json",
+    "docs/adr/0011-next-lint-directory-glob.md"
+  ],
+  "integration_refresh": {
+    "upstream_pr": 11,
+    "upstream_head": "d0a24c720f4f0bd280505a59056b4f21d020cac0",
+    "original_task_head": "3ba2ad96e16d855c0a03434f9835dae27cd1bcb2"
+  }
+}

@@ -34,6 +34,8 @@ FACT: BFF bounds #8 merged at 2f5440165d7c2f2a8ef7cb07a1204b40456964b8, preservi
 FACT: Owner renewal #9 merged at 6b6a5107ffa6867adcbcb26adb8233780d14a2c0, preserving tested tree a7a5cfef732bd398059693055f4c522bc15aca7c. Candidate f7cd206ed07d4c46578b206ef41e0d868a6ab576 passed Foundation/Governance [37009604344](https://github.com/n923760-rgb/smart-merchant/actions/runs/37009604344) / [37009604354](https://github.com/n923760-rgb/smart-merchant/actions/runs/37009604354), including 18 owner/50 web/14 backend tests and all Android/iOS simulator gates. Main post-merge CI is newly triggered; reverify its state.
 FACT: Owner instructed continued work without repeat permission requests and granted project authority. Reviewed merges are authorized; actions need exact-source verification and relevant successful checks.
 UNKNOWN: Physical device/pilot acceptance, real payment adapters, production identities/signing/infrastructure, backups and restore.
+FACT: Audit #10 merged at 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Main Foundation [37012227678](https://github.com/n923760-rgb/smart-merchant/actions/runs/37012227678) passed all eight jobs; Governance [37012227663](https://github.com/n923760-rgb/smart-merchant/actions/runs/37012227663) passed. SM-E2E-007 adds a separate real-backend Chromium gate; its new runtime result is pending exact-source CI, not yet PASS.
+FACT: Open #11 at e7a29f809df1e73857e199821c38f389d1b16100 passed Foundation [37013713281](https://github.com/n923760-rgb/smart-merchant/actions/runs/37013713281), all nine jobs including real-backend Chromium, and Governance [37013712899](https://github.com/n923760-rgb/smart-merchant/actions/runs/37013712899). This is candidate evidence, not main integration. SM-WEB-008 is a separate dependent form-lifetime correction; its own runtime evidence is pending.
 BLOCKED: Branch-protection writes are not available through this connector.
 
 ## Architecture and ownership
@@ -90,8 +92,21 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 
 ## Historical immediate next round — superseded by current owner scope
 
-Complete SM-AUDIT-006 tenant/permission/snapshot/rollback regressions, Foundation/Governance CI and reviewed owner-authorized merge. Next qualify browser flow against the real disposable backend; cross-tab rendered-cache invalidation remains a separate issue. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
+SM-AUDIT-006 is merged and main checks passed. SM-E2E-007 (#11) is qualified on its candidate and remains open. Qualify SM-WEB-008's separate dependent repair of user/device create forms and rendered rejection/success-retry tests; capture the form before await instead of reading expired React currentTarget. Integrate #11 before its dependent PR, with exact-source owner review/requalification. Next separately diagnose tenant unique-conflict mapping: terminal creation flushes before IntegrityError handling. Cross-tab rendered-cache invalidation remains separate. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
+
+## Current dependency recovery — 2026-10-03
+
+SM-SEC-007 diagnoses main 80de2647186d999e98e2ff77eff1e1dd1c7810d0 and open PRs #11–14.
+Owner again expressly authorizes continuation and merges. A bounded, version-scoped
+Next lint directory adapter removes braces/micromatch without downgrading Next,
+dropping its rules or weakening the complete audit gate. Local clean installation,
+lint/types/62 tests/build and zero-vulnerability audit pass; current exact-source CI
+and reviewed integration remain required. See [report](REPORTS/NEXT_LINT_GLOB_REPAIR.md)
+and [ADR 0011](../docs/adr/0011-next-lint-directory-glob.md).
+After repair qualifies, refresh the pending foundation/form/accounting branches
+against live main, resolve any overlaps and require new exact-source checks before
+each merge. General-accounting scope remains the latest owner product direction.
 
 ## Reports and evidence
 
@@ -101,8 +116,29 @@ Keep each independent problem in one branch/PR and update this same roadmap with
 
 ## General accounting web round — 2026-10-03
 
-SM-ACC-002 adds read-only account/journal/detail views, accounting-only landing, independent organization/branch read scopes, exact decimal-string presentation and real disposable ledger/BFF browser qualification. Its branch depends explicitly on unmerged accounting PR #13 at 00c18bd36616f16fb365408d880df2e9056acc24; diagnosis main remains 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Existing PRs #11/#12 are not modified.
+SM-ACC-002 adds read-only account/journal/detail views, accounting-only landing, independent organization/branch read scopes, exact decimal-string presentation and real disposable ledger/BFF browser qualification. Original source depended on #13 at 00c18bd; current integration refresh depends on #13 at 12947dd6c7eb6311bb2ed1a07262b9c1ced2d78a with #12/#11/security #15 carried as explicit prerequisites. No new accounting behavior is added during refresh.
 
-The pre-existing web dependency audit remains BLOCKED (braces 3.0.3; no patched stable release observed). No forced downgrade, fork substitution or weakened security gate is adopted. Neither the base nor the dependent workspace may merge until current required checks pass. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
+The original accounting candidate was blocked by the braces audit. Security PR #15 removes that engine through a qualified bounded directory adapter while preserving Next lint rules and the full audit gate. The refreshed explicit stack must still pass all current checks and integrate predecessors before main merge. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
 
 Read-only UI is not full accounting: journal composer/unknown-result reconciliation, hierarchies/period policy, documents/AR/AP and reconciled reports remain subsequent bounded tasks. No device, fiscal or production acceptance is implied.
+[Real-backend browser qualification](REPORTS/REAL_BACKEND_BROWSER.md).
+
+[Management form success](REPORTS/MANAGEMENT_FORM_SUCCESS.md).
+
+## Reviewed integration stack — 2026-10-03
+
+Security PR #15 is merged at 6f037be4594f7c2b1ddadf59e0141c8ae3c07905; tree
+57fc875418ad58af513a2e307542a8ddf89fcde7 equals qualified checkout 993a705f6829fdc06a38e9bc4bb875b9e99c9234.
+Foundation 37126881609 (all eight jobs) and Governance 37126881577 pass; web
+audit reports zero vulnerabilities. Owner explicitly authorizes continuing and
+merging. Pending #11 → #12 → #13 → #14 now form an explicit qualification stack,
+carrying the repair and retaining each bounded outcome. Reverify exact source,
+resolve report/roadmap overlaps by preserving both records, require successful
+current checks, integrate predecessors, then retarget successors to main.
+General accounting remains independent of business category, terminals and shifts.
+
+FACT: Refreshed real-backend PR #11 merged at 5df9dbfcf578fabcd3720a0f33ff83010ce01d9d,
+retaining qualified tree ec914dafea35487d323d00a5d2178d3a86754917. Foundation
+37127389477 (all nine jobs, including actual PostgreSQL/BFF Chromium) and
+Governance 37127389403 pass on d0a24c720f4f0bd280505a59056b4f21d020cac0.
+Remaining successors require their own exact-source qualification and integration.

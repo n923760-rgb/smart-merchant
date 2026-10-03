@@ -41,3 +41,13 @@ Foundation CI must run PostgreSQL API, concurrency/immutability/audit/branch/ten
 NOT RUN: complete accounting/service invoicing, ledger reports, AR/AP, periods/closing, reconciliation, automatic posting rules, fiscal integration, mobile/web accounting screens, physical devices and merchant pilot. The API is the first ledger foundation, not a complete accounting application. No production release/signing/deployment or production data mutation.
 
 Next bounded work: accounting UI/account hierarchy/period policy, then general customers/suppliers/invoices/receipts/expenses and deterministic posting. Preserve the outstanding foundation browser/device work and old POS acceptance gates for the optional POS module.
+
+## Owner-authorized integration refresh — 2026-10-03
+
+Current owner explicitly authorizes reviewed merges. PR 13 now depends on refreshed
+form-success PR 12 at f52cdd107c077a25cb21612b1e4c74b363d88bae, carrying security
+PR 15 and real-backend foundation PR 11. Preserve both report links when resolving
+the sole roadmap text overlap. Accounting source/150 POS rule bodies are retained.
+Require new full Foundation/Governance checks and predecessor main integration.
+Original failed audit evidence is historical, not a current merge blocker after
+the actual dependency replacement. No full accounting/production readiness claim.
