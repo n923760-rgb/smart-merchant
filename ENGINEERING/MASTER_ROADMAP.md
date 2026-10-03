@@ -16,6 +16,7 @@ FACT: Owner renewal #9 merged at 6b6a5107ffa6867adcbcb26adb8233780d14a2c0, prese
 FACT: Owner instructed continued work without repeat permission requests and granted project authority. Reviewed merges are authorized; actions need exact-source verification and relevant successful checks.
 UNKNOWN: Physical device/pilot acceptance, real payment adapters, production identities/signing/infrastructure, backups and restore.
 FACT: Audit #10 merged at 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Main Foundation [37012227678](https://github.com/n923760-rgb/smart-merchant/actions/runs/37012227678) passed all eight jobs; Governance [37012227663](https://github.com/n923760-rgb/smart-merchant/actions/runs/37012227663) passed. SM-E2E-007 adds a separate real-backend Chromium gate; its new runtime result is pending exact-source CI, not yet PASS.
+FACT: Open #11 at e7a29f809df1e73857e199821c38f389d1b16100 passed Foundation [37013713281](https://github.com/n923760-rgb/smart-merchant/actions/runs/37013713281), all nine jobs including real-backend Chromium, and Governance [37013712899](https://github.com/n923760-rgb/smart-merchant/actions/runs/37013712899). This is candidate evidence, not main integration. SM-WEB-008 is a separate dependent form-lifetime correction; its own runtime evidence is pending.
 BLOCKED: Branch-protection writes are not available through this connector.
 
 ## Architecture and ownership
@@ -72,7 +73,7 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 
 ## Exact immediate next round
 
-SM-AUDIT-006 is merged and main checks passed. Qualify SM-E2E-007 browser flow against the real disposable backend and record exact-source CI/diff review. Separate source finding: user/device create forms read the React event currentTarget after await, risking a false error after committed success; repair and add rendered regressions in the next bounded round. Cross-tab rendered-cache invalidation remains separate. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
+SM-AUDIT-006 is merged and main checks passed. SM-E2E-007 (#11) is qualified on its candidate and remains open. Qualify SM-WEB-008's separate dependent repair of user/device create forms and rendered rejection/success-retry tests; capture the form before await instead of reading expired React currentTarget. Integrate #11 before its dependent PR, with exact-source owner review/requalification. Next separately diagnose tenant unique-conflict mapping: terminal creation flushes before IntegrityError handling. Cross-tab rendered-cache invalidation remains separate. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
 
 ## Current dependency recovery — 2026-10-03
@@ -93,3 +94,5 @@ each merge. General-accounting scope remains the latest owner product direction.
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
 
 [Real-backend browser qualification](REPORTS/REAL_BACKEND_BROWSER.md).
+
+[Management form success](REPORTS/MANAGEMENT_FORM_SUCCESS.md).
