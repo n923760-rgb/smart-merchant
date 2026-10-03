@@ -142,3 +142,13 @@ retaining qualified tree ec914dafea35487d323d00a5d2178d3a86754917. Foundation
 37127389477 (all nine jobs, including actual PostgreSQL/BFF Chromium) and
 Governance 37127389403 pass on d0a24c720f4f0bd280505a59056b4f21d020cac0.
 Remaining successors require their own exact-source qualification and integration.
+
+## Accounting observation correction — 2026-10-03
+
+Main f7e31d7's Accounting Web run 37128381976 and documentation candidate run
+37128773307 fail the same late request-count capture at fixture line 396 despite
+earlier candidate success. SM-E2E-010 captures before automatic accounting landing,
+waits for both resources and proves every resource/authorized-branch pair while
+retaining all foreign/unscoped denial assertions. No application behavior changes.
+PR 16 remains blocked pending qualified correction and refreshed checks. See
+[observation report](REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md).
