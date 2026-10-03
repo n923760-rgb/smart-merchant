@@ -5,6 +5,12 @@ Normative requirement baseline: [POS Transaction Flow v1](POS_TRANSACTION_FLOW_V
 This is a subordinate POS delivery plan, not a second project roadmap. ENGINEERING/MASTER_ROADMAP.md is the sole project roadmap; governance PR #2 is adopted.
 Owner authority: the supplied document is DECIDED — Foundation v1; examples/recommendations/configurable details do not select production policies.
 
+## General accounting integration — owner direction 2026-10-03
+
+The [unified master prompt](SMART_MERCHANT_MASTER_PROMPT_V2.md) makes general accounting the common core and removes the mandatory food-truck/restaurant vertical. This plan governs optional POS delivery only, not accounting-only usage. Products may be STOCKED, NON_STOCKED or SERVICE; recipe/inventory consumers apply only where enabled. Preserve POS-001–150 and all financial invariants. The sole project roadmap orders general-ledger work before dependent invoicing and optional operational modules.
+
+Accounting commands do not require a terminal or shift. POS-148 remains required for advertised POS functionality; it does not qualify the ledger, invoices, periods, receivables/payables or financial reports. Card/transfer/credit rollout needs separately verified settlement/receivables policy; the new prompt does not make manual UI confirmation authoritative payment evidence.
+
 ## Historical source boundary — 2026-10-01
 
 Observed 2026-10-01:

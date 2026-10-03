@@ -2,6 +2,25 @@
 
 The sole canonical roadmap. Observed 2026-10-02. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
 
+## Current owner scope — 2026-10-03
+
+Owner directed merging previous/current prompts and applying changes, then explicitly replaced the proposed food-truck-first scope with a general accounting application for all business categories. The [Unified Master Prompt v2](../docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) is the consolidated product reference. Accounting/invoicing/customers/suppliers are the common core; POS, stock and recipes are optional modules. Preserve organization/branch architecture and POS-001–150; an accountant or service-business invoice must not depend on a POS terminal or shift. This latest direction overrides the older POS-first implementation order below without erasing historical evidence.
+
+SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. Existing open PR #11 (real-backend browser qualification) and dependent #12 (form success repair) remain separate, unmerged work observed at diagnosis.
+
+Current task source: main 80de2647186d999e98e2ff77eff1e1dd1c7810d0, tree e8e722a7d8001204df0df88c9b2203b2bb7ffdd4; reverify before merge. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
+
+### Current delivery order
+
+1. Finish attributable foundation web/runtime qualification and repairs; preserve outstanding physical-device gates before catalog/POS acceptance.
+2. General chart/ledger/reversal core (SM-ACC-001), then accounting UI and account hierarchy/period-close policies.
+3. Customer/supplier subledgers, sales/purchase/service invoices, receipts/payments, expenses and deterministic document posting; reports reconciled to the ledger.
+4. Optional product/service catalog, warehouses/movement ledger/costing, then bounded POS context/shifts/calculation/cash completion under the existing POS rules.
+5. Durable offline operation, reconciliation, eligible printing/fiscal paths, refunds and owner live projections; general-accounting usability without operational modules.
+6. Mixed-activity pilots, full financial/tenant/security/device/restore acceptance, production identity/infrastructure and owner release decision.
+
+Telegram, SoftPOS and advanced sector modules remain deferred. Do not claim every industry/jurisdiction is supported without separately qualifying its requirements.
+
 ## Current verified state
 
 FACT: Foundation #1 is merged into main at cec4eba1eb07b9ab4b62ca79cb91a808eb3f373d, preserving tested tree 71d65bb3671afd968d06504d74de45e99322bbb0.
@@ -71,7 +90,7 @@ Telegram remains deferred by prior owner instruction.
 Payment provider, pilot/fiscal/tax policy, production identity/hosting/signing, paid service and physical targets remain unspecified.
 Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per POS requirements.
 
-## Exact immediate next round
+## Historical immediate next round — superseded by current owner scope
 
 SM-AUDIT-006 is merged and main checks passed. SM-E2E-007 (#11) is qualified on its candidate and remains open. Qualify SM-WEB-008's separate dependent repair of user/device create forms and rendered rejection/success-retry tests; capture the form before await instead of reading expired React currentTarget. Integrate #11 before its dependent PR, with exact-source owner review/requalification. Next separately diagnose tenant unique-conflict mapping: terminal creation flushes before IntegrityError handling. Cross-tab rendered-cache invalidation remains separate. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
@@ -93,6 +112,19 @@ each merge. General-accounting scope remains the latest owner product direction.
 
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
 
+[General accounting foundation report](REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md) and [task](EVIDENCE/general-accounting-task.json).
 [Real-backend browser qualification](REPORTS/REAL_BACKEND_BROWSER.md).
 
 [Management form success](REPORTS/MANAGEMENT_FORM_SUCCESS.md).
+
+## Reviewed integration stack — 2026-10-03
+
+Security PR #15 is merged at 6f037be4594f7c2b1ddadf59e0141c8ae3c07905; tree
+57fc875418ad58af513a2e307542a8ddf89fcde7 equals qualified checkout 993a705f6829fdc06a38e9bc4bb875b9e99c9234.
+Foundation 37126881609 (all eight jobs) and Governance 37126881577 pass; web
+audit reports zero vulnerabilities. Owner explicitly authorizes continuing and
+merging. Pending #11 → #12 → #13 → #14 now form an explicit qualification stack,
+carrying the repair and retaining each bounded outcome. Reverify exact source,
+resolve report/roadmap overlaps by preserving both records, require successful
+current checks, integrate predecessors, then retarget successors to main.
+General accounting remains independent of business category, terminals and shifts.

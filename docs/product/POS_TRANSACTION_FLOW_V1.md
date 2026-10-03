@@ -5,7 +5,9 @@
 Status: **DECIDED — Foundation v1**
 Scope: POS Transaction Lifecycle
 Primary Goal: Fast, reliable, auditable sales flow
-Initial Vertical: Restaurants & Cafés
+Applicability: Optional POS module of a sector-neutral accounting and business platform.
+Restaurants/cafés/food-truck examples do not restrict the product. Accounting-only and service businesses do not require POS terminals or shifts.
+Current owner scope: [Unified Master Prompt v2](SMART_MERCHANT_MASTER_PROMPT_V2.md).
 
 Source: owner-supplied requirements, received 2026-10-01. This is a structured transcription with normalized layout and compact prose; it is not a byte-for-byte archive of the chat. Original rule numbers are retained as POS-001 through POS-150 for traceability. Recommendations, examples, configurable values and future features retain their original status; examples do not become production defaults. DECIDED describes the requirement baseline, not implementation or acceptance.
 

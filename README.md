@@ -1,6 +1,8 @@
-# Smart Merchant Assistant — Foundation Sprint 01
+# Smart Merchant Assistant — General Accounting & Business Platform
 
-Independent multi-tenant merchant platform foundation. Scope: identity, organizations, branches, RBAC, terminals, audit, web shell, POS/owner Flutter shells. Orders, payments, catalog, inventory, analytics and AI are intentionally deferred.
+Sector-neutral multi-tenant accounting and business platform. The shared core is accounting, invoicing, customers and suppliers; POS, inventory and recipes are optional modules. The [Unified Master Prompt v2](docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) merges earlier scope with the owner's 2026-10-03 direction: no mandatory restaurant, food-truck or other business category.
+
+Implemented foundation: identity, organizations, branches, RBAC, terminals, audit, web shell and POS/owner Flutter shells. The first accounting slice adds chart accounts and balanced immutable journal posting/reversal with durable request replay, tenant/branch RBAC and database enforcement. It requires no POS terminal or shift; initial monetary qualification is SAR. Invoicing, AR/AP, fiscal integration, accounting periods/reports, catalog, POS sales, inventory, analytics and AI remain unimplemented. No full accounting or production-readiness claim is made.
 
 ## Start locally
 
@@ -32,3 +34,7 @@ The Foundation CI workflow passes backend lint/type checks, PostgreSQL and Redis
 ## Engineering and product requirements
 
 Development-agent instructions: [governance/START_HERE.md](governance/START_HERE.md). Project state and next task: [ENGINEERING/MASTER_ROADMAP.md](ENGINEERING/MASTER_ROADMAP.md). These configure a coding session; no persistent agent service is installed. POS v1 [transaction rules](docs/product/POS_TRANSACTION_FLOW_V1.md), [delivery/policy plan](docs/product/POS_DELIVERY_PLAN_V1.md) and [acceptance matrix](docs/product/POS_ACCEPTANCE_V1.md) define the next merchant work; acceptance remains NOT RUN. Telegram remains deferred.
+
+## General ledger API — first slice
+
+With an authenticated organization context, OWNER/ACCOUNTANT may create organization-level accounts (`POST /api/v1/accounting/accounts`), list them, post balanced journals (`POST /api/v1/accounting/journals`) and read/reverse journals. Branch-scoped accountants may post/read/reverse only their allowed branch; global chart management needs a global grant. JSON monetary values are decimal strings. Every journal/reversal request carries a persistent UUID `request_id`; retain the same ID and payload after an unknown result. Completed entries have no update/delete endpoint and PostgreSQL rejects mutation or additional lines. Reversals keep the original unchanged. The initial API is a developer-facing foundation; mobile/web accounting screens, invoice-to-journal rules and reports need separate implementation.
