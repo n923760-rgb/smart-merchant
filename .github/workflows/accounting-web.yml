@@ -1,0 +1,69 @@
+name: Accounting Web CI
+permissions:
+  contents: read
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  real-ledger-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_USER: merchant, POSTGRES_PASSWORD: merchant, POSTGRES_DB: smart_merchant_accounting_test }
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U merchant -d smart_merchant_accounting_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+    env:
+      DATABASE_URL: postgresql+psycopg://merchant:merchant@localhost:5432/smart_merchant_accounting_test
+      REDIS_URL: redis://localhost:6379/1
+      JWT_SECRET: ci-disposable-accounting-browser-key-not-production
+      BOOTSTRAP_KEY: ci-disposable-accounting-bootstrap-key-0000000000
+      SM_ACCOUNTING_TEST_PASSWORD: ci-disposable-accounting-password-0000000000
+      APP_ENV: local
+      BACKEND_URL: http://127.0.0.1:8000
+      SM_TEST_BASE_URL: http://127.0.0.1:3000
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - name: Install and migrate the disposable backend
+        working-directory: backend
+        run: |
+          pip install -e '.[dev]'
+          alembic upgrade head
+          alembic check
+      - name: Build the accounting web app
+        working-directory: apps/web
+        run: npm ci && npm run lint && npm run typecheck && npm test && npm run build
+      - name: Exercise the real ledger through the BFF and browser
+        run: |
+          sm_accounting_tools=/tmp/smart-merchant-accounting-browser
+          npm install --prefix "$sm_accounting_tools" --no-package-lock --ignore-scripts --no-audit --no-fund playwright@1.55.1
+          node "$sm_accounting_tools/node_modules/playwright/cli.js" install --with-deps chromium
+          cp apps/web/e2e/accounting-workspace.mjs "$sm_accounting_tools/accounting-workspace.mjs"
+          (cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000) > /tmp/smart-merchant-accounting-api.log 2>&1 &
+          sm_accounting_api_pid=$!
+          (cd apps/web && node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3000) > /tmp/smart-merchant-accounting-web.log 2>&1 &
+          sm_accounting_web_pid=$!
+          trap 'kill "$sm_accounting_web_pid" "$sm_accounting_api_pid" 2>/dev/null || true' EXIT
+          node "$sm_accounting_tools/accounting-workspace.mjs"
+      - name: Retain non-sensitive layout evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: accounting-workspace-layout
+          path: |
+            /tmp/smart-merchant-accounting-rtl.png
+            /tmp/smart-merchant-accounting-mobile.png
+          if-no-files-found: ignore
+          retention-days: 14

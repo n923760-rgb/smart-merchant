@@ -113,6 +113,14 @@ each merge. General-accounting scope remains the latest owner product direction.
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
 
 [General accounting foundation report](REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md) and [task](EVIDENCE/general-accounting-task.json).
+
+## General accounting web round — 2026-10-03
+
+SM-ACC-002 adds read-only account/journal/detail views, accounting-only landing, independent organization/branch read scopes, exact decimal-string presentation and real disposable ledger/BFF browser qualification. Original source depended on #13 at 00c18bd; current integration refresh depends on #13 at 12947dd6c7eb6311bb2ed1a07262b9c1ced2d78a with #12/#11/security #15 carried as explicit prerequisites. No new accounting behavior is added during refresh.
+
+The original accounting candidate was blocked by the braces audit. Security PR #15 removes that engine through a qualified bounded directory adapter while preserving Next lint rules and the full audit gate. The refreshed explicit stack must still pass all current checks and integrate predecessors before main merge. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
+
+Read-only UI is not full accounting: journal composer/unknown-result reconciliation, hierarchies/period policy, documents/AR/AP and reconciled reports remain subsequent bounded tasks. No device, fiscal or production acceptance is implied.
 [Real-backend browser qualification](REPORTS/REAL_BACKEND_BROWSER.md).
 
 [Management form success](REPORTS/MANAGEMENT_FORM_SUCCESS.md).
@@ -128,3 +136,9 @@ carrying the repair and retaining each bounded outcome. Reverify exact source,
 resolve report/roadmap overlaps by preserving both records, require successful
 current checks, integrate predecessors, then retarget successors to main.
 General accounting remains independent of business category, terminals and shifts.
+
+FACT: Refreshed real-backend PR #11 merged at 5df9dbfcf578fabcd3720a0f33ff83010ce01d9d,
+retaining qualified tree ec914dafea35487d323d00a5d2178d3a86754917. Foundation
+37127389477 (all nine jobs, including actual PostgreSQL/BFF Chromium) and
+Governance 37127389403 pass on d0a24c720f4f0bd280505a59056b4f21d020cac0.
+Remaining successors require their own exact-source qualification and integration.
