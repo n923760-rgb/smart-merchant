@@ -7,7 +7,7 @@ Task: [SM-DOC-009](../EVIDENCE/general-accounting-integration-task.json).
 
 ## Integrated result
 
-Official main is f7e31d719ad0527d2a305270e944a251738ba976, tree
+Application integration was initially verified at main f7e31d719ad0527d2a305270e944a251738ba976, tree
 376ac0a14172b62039a7bbb2840fe4e8f7f8f90d. Its tree equals qualified workspace
 candidate 7dffdfeeefd4d1b2950077473b9dbd9f026bf175 and CI checkout
 50dc73e92c6e1a9a7c21a816e2654a5683987f21. Each merge result was reread and its
@@ -71,3 +71,9 @@ browser engines, physical devices, pilot review and production release remain
 NOT RUN/unimplemented as applicable. Read-only accounting web is not a complete
 accounting app. Keep terminal unique-conflict mapping, cross-tab cache behavior
 and physical/POS acceptance as separately scoped foundation follow-ups.
+
+## Post-merge observation correction and current source
+
+Main Accounting Web 37128381976 and initial documentation candidate run 37128773307 subsequently failed scopedReads >= 4. Automatic accounting landing can issue lists before signIn returns, so the late fixture boundary omitted valid initial/cached requests. Both failures are retained; old passing runs were not used to ignore them. [PR 17](https://github.com/n923760-rgb/smart-merchant/pull/17) starts capture before login and proves accounts/journals for both authorized branches, retaining real forged B3 403, scope reset, cashier and tenant/cache assertions. No application, financial, auth, dependencies or CI behavior changes.
+
+Correction candidate: 17fc050b68a0e1bbe295229d2eff84a24e860b73; tree 05add842c83cee28d0409384be78aabb9cf30176; checkout 5aec4b1d6f562a7ece7d3c131d8f8745173dafb0. Foundation 37129241430 (all nine jobs), Governance 37129241513 and Accounting Web 37129241502 PASS. It merged into main at 5831c8f3a035dfbff9374e086376447e6013c524 with the same tree. This refreshed documentation candidate includes the correction and requires its own exact-source full checks before reviewed merge. The earlier receipt records the implementation baseline, not the newest main source. Latest documentation qualification/merge evidence belongs to PR 16.

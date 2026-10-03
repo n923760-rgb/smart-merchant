@@ -1,5 +1,11 @@
 # Account-switch browser regression
 
+Accounting branch observation starts before restricted-user login, including
+reads dispatched by automatic accounting landing. Each accounts/journals pair
+for both authorized branches is required; all observed lists must retain a valid
+branch ID and forged-branch denial remains real backend 403. This avoids a late
+capture boundary silently omitting cached initial reads.
+
 ## Real-backend foundation qualification
 
 `real-backend.mjs` connects Chromium to a production Next.js build, real FastAPI,

@@ -4,7 +4,7 @@
   "authority": "Owner 2026-10-03 explicitly authorizes continued work and reviewed merges with full authority.",
   "repository": "n923760-rgb/smart-merchant",
   "official_branch": "main",
-  "expected_official_head": "f7e31d719ad0527d2a305270e944a251738ba976",
+  "expected_official_head": "5831c8f3a035dfbff9374e086376447e6013c524",
   "scope": "Update canonical roadmap, README and one attributable integration receipt after reviewed merges 15/11/12/13/14.",
   "out_of_scope": "Application behavior, dependencies, migrations, runtime configuration, financial commands, production or release.",
   "task": "Reconcile stale unmerged/audit-blocked wording with verified merge source/tree/checks; retain historical evidence and a concrete general-accounting next slice.",
@@ -51,5 +51,13 @@
     "ENGINEERING/REPORTS/GENERAL_ACCOUNTING_INTEGRATION.md",
     "ENGINEERING/MASTER_ROADMAP.md",
     "README.md"
-  ]
+  ],
+  "existing_pr": 16,
+  "expected_pr_head": "0f924666f389022221b45b80ee7b20d06d766a06",
+  "expected_pr_base": "5831c8f3a035dfbff9374e086376447e6013c524",
+  "integration_refresh": {
+    "integrated_pr": 17,
+    "merge": "5831c8f3a035dfbff9374e086376447e6013c524",
+    "original_doc_head": "0f924666f389022221b45b80ee7b20d06d766a06"
+  }
 }

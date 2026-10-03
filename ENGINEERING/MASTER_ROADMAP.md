@@ -8,7 +8,7 @@ Owner directed merging previous/current prompts and applying changes, then expli
 
 SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. PR #11 (real-backend qualification) and #12 (form success) were unmerged at diagnosis and are now integrated with #13/#14 and security #15.
 
-Integrated application source: main f7e31d719ad0527d2a305270e944a251738ba976, tree 376ac0a14172b62039a7bbb2840fe4e8f7f8f90d; reverify each later task. Original diagnosis: 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
+Integrated application source: main 5831c8f3a035dfbff9374e086376447e6013c524, tree 05add842c83cee28d0409384be78aabb9cf30176; reverify each later task. Original diagnosis: 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
 
 ### Current delivery order
 
@@ -148,3 +148,9 @@ retaining qualified tree ec914dafea35487d323d00a5d2178d3a86754917. Foundation
 37127389477 (all nine jobs, including actual PostgreSQL/BFF Chromium) and
 Governance 37127389403 pass on d0a24c720f4f0bd280505a59056b4f21d020cac0.
 Successors subsequently qualified and integrated; see the current receipt.
+
+## Qualified post-merge observation correction — 2026-10-03
+
+Original main Accounting Web 37128381976 and documentation candidate 37128773307 failed the late scopedReads count despite pre-merge candidate success. SM-E2E-010 captures before automatic accounting landing, waits for account/journal content and proves every authorized resource/branch pair, retaining every unscoped/foreign denial assertion. No application behavior changes. The [observation report](REPORTS/ACCOUNTING_SCOPE_OBSERVATION.md) retains the failed-source diagnosis.
+
+PR #17 merged at 5831c8f3a035dfbff9374e086376447e6013c524, retaining qualified tree 05add842c83cee28d0409384be78aabb9cf30176. Foundation 37129241430 (all nine jobs), Governance 37129241513 and Accounting Web 37129241502 PASS on 17fc050b68a0e1bbe295229d2eff84a24e860b73. Initial documentation PR 16 was kept unmerged after its failure; this refreshed source carries the actual correction and requires its own full current checks. Historical failures are not suppressed. The next confirmed journal-composer/document/report sequence is unchanged.
