@@ -1,0 +1,8 @@
+{
+  "name": "@smart-merchant/next-root-glob",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bounded directory-glob adapter for the Next 16.3.8 ESLint plugin only",
+  "main": "index.cjs",
+  "dependencies": { "tinyglobby": "0.2.17" }
+}

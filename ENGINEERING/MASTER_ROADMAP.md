@@ -74,6 +74,19 @@ Tables/KDS/reservations/NFC/customer display/forecasting are future surfaces per
 Complete SM-AUDIT-006 tenant/permission/snapshot/rollback regressions, Foundation/Governance CI and reviewed owner-authorized merge. Next qualify browser flow against the real disposable backend; cross-tab rendered-cache invalidation remains a separate issue. Then begin bounded POS terminal/cashier context and shift-ledger work under the decided product rules and unresolved policy gates.
 Keep each independent problem in one branch/PR and update this same roadmap with attributable results.
 
+## Current dependency recovery — 2026-10-03
+
+SM-SEC-007 diagnoses main 80de2647186d999e98e2ff77eff1e1dd1c7810d0 and open PRs #11–14.
+Owner again expressly authorizes continuation and merges. A bounded, version-scoped
+Next lint directory adapter removes braces/micromatch without downgrading Next,
+dropping its rules or weakening the complete audit gate. Local clean installation,
+lint/types/62 tests/build and zero-vulnerability audit pass; current exact-source CI
+and reviewed integration remain required. See [report](REPORTS/NEXT_LINT_GLOB_REPAIR.md)
+and [ADR 0011](../docs/adr/0011-next-lint-directory-glob.md).
+After repair qualifies, refresh the pending foundation/form/accounting branches
+against live main, resolve any overlaps and require new exact-source checks before
+each merge. General-accounting scope remains the latest owner product direction.
+
 ## Reports and evidence
 
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
