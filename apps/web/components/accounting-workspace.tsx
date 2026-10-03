@@ -201,6 +201,7 @@ function AccountingWorkspace({
           <label className="accounting-scope">
             {copy.scope}
             <select
+              aria-label={copy.scope}
               value={scope.id}
               onChange={(event) => setScope(event.target.value)}
             >
