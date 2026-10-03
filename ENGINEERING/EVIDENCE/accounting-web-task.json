@@ -1,0 +1,43 @@
+{
+  "title": "SM-ACC-002: scoped read-only general accounting web workspace",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 says continue after approving the general-accounting direction. Persistent reviewed-merge authority applies only after successful required checks.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "80de2647186d999e98e2ff77eff1e1dd1c7810d0",
+  "dependency_pr": 13,
+  "task_base_branch": "feat/general-accounting-foundation",
+  "expected_task_base": "00c18bd36616f16fb365408d880df2e9056acc24",
+  "scope": "Read-only Arabic/English web accounting page: authorized organization/branch scopes, paginated chart accounts/journals and journal details, without terminal/shift dependencies.",
+  "out_of_scope": "Ledger mutations/composer/reversal UI, account hierarchy, periods, reports, invoicing, fiscal integration, dependency replacement/audit exceptions, existing PRs 11/12/13 changes and production.",
+  "task": "Build on unmerged accounting PR 13 in a separate dependent branch. Preserve exact decimal strings, segregate query keys by organization/scope and add real FastAPI/PostgreSQL/Next browser qualification in its own workflow.",
+  "validation": "Money/scope/route unit regressions; lint, typing, unit tests and production build; real disposable backend/BFF browser tests for no-device accounting, branch permissions, pagination, errors and account switch isolation; exact-source Foundation/Governance qualification and complete same-session review.",
+  "stop_conditions": "Unexpected source overlap/mismatch, financial or tenant regression, new required test failure, secret exposure or scope expansion. Existing braces audit failure and unmerged PR 13 prohibit merge, not publication of this explicitly dependent reviewable work.",
+  "success_criteria": "Authorized accountant sees accounts and journals without a terminal/shift; branch grants never issue unscoped reads; cashier sees no accounting navigation; money is not converted to floating point; errors do not appear as empty success; no financial writes.",
+  "requested_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci", "merge"],
+  "authorized_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci", "merge"],
+  "protected_actions": ["merge", "production_deploy", "signing", "release", "force_push", "destructive_database_migration"],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Persistent owner reviewed-merge authorization; continuation confirmed 2026-10-03. This dependent PR cannot merge before PR 13 integrates and all current required checks are green."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/ACCOUNTING_WEB_WORKSPACE.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/accounting-web-task.json",
+    "ENGINEERING/REPORTS/ACCOUNTING_WEB_WORKSPACE.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "README.md",
+    "apps/web/lib/accounting.ts",
+    "apps/web/lib/accounting.test.ts",
+    "apps/web/components/shell.tsx",
+    "apps/web/components/accounting-workspace.tsx",
+    "apps/web/app/(dashboard)/accounting/page.tsx",
+    "apps/web/app/(dashboard)/overview/page.tsx",
+    "apps/web/app/style.css",
+    "apps/web/e2e/accounting-workspace.mjs",
+    "apps/web/e2e/README.md",
+    ".github/workflows/accounting-web.yml"
+  ]
+}

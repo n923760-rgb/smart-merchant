@@ -98,3 +98,11 @@ Keep each independent problem in one branch/PR and update this same roadmap with
 [Historical baseline](REPORTS/MASTER_ENGINEERING_BASELINE_REPORT.md), [governance adoption](REPORTS/GOVERNANCE_ADOPTION.md), [account isolation](REPORTS/WEB_SESSION_CACHE_ISOLATION.md), [evidence index](EVIDENCE/README.md), [expired-access logout](REPORTS/EXPIRED_ACCESS_LOGOUT.md), [concurrent web renewal](REPORTS/WEB_SESSION_RENEWAL.md), [BFF transport bounds](REPORTS/BFF_TRANSPORT_BOUNDS.md), [owner session renewal](REPORTS/OWNER_SESSION_RENEWAL.md), [tenant mutation audit](REPORTS/TENANT_MUTATION_AUDIT.md).
 
 [General accounting foundation report](REPORTS/GENERAL_ACCOUNTING_FOUNDATION.md) and [task](EVIDENCE/general-accounting-task.json).
+
+## General accounting web round — 2026-10-03
+
+SM-ACC-002 adds read-only account/journal/detail views, accounting-only landing, independent organization/branch read scopes, exact decimal-string presentation and real disposable ledger/BFF browser qualification. Its branch depends explicitly on unmerged accounting PR #13 at 00c18bd36616f16fb365408d880df2e9056acc24; diagnosis main remains 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Existing PRs #11/#12 are not modified.
+
+The pre-existing web dependency audit remains BLOCKED (braces 3.0.3; no patched stable release observed). No forced downgrade, fork substitution or weakened security gate is adopted. Neither the base nor the dependent workspace may merge until current required checks pass. Source-specific outcomes live in the PR qualification, [workspace report](REPORTS/ACCOUNTING_WEB_WORKSPACE.md) and [task](EVIDENCE/accounting-web-task.json).
+
+Read-only UI is not full accounting: journal composer/unknown-result reconciliation, hierarchies/period policy, documents/AR/AP and reconciled reports remain subsequent bounded tasks. No device, fiscal or production acceptance is implied.
