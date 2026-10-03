@@ -1,0 +1,55 @@
+{
+  "title": "SM-DOC-009: reconcile reviewed general-accounting integration evidence",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-03 explicitly authorizes continued work and reviewed merges with full authority.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "f7e31d719ad0527d2a305270e944a251738ba976",
+  "scope": "Update canonical roadmap, README and one attributable integration receipt after reviewed merges 15/11/12/13/14.",
+  "out_of_scope": "Application behavior, dependencies, migrations, runtime configuration, financial commands, production or release.",
+  "task": "Reconcile stale unmerged/audit-blocked wording with verified merge source/tree/checks; retain historical evidence and a concrete general-accounting next slice.",
+  "validation": "Task/adoption validators, complete documentation diff and links/source review; existing exact-source CI remains required before reviewed merge.",
+  "stop_conditions": "Unexpected live main or task overlap, inaccurate source/check claims, failed required checks, secret exposure or scope expansion.",
+  "success_criteria": "One canonical roadmap states the integrated general-accounting capabilities, exact receipts and next composer/document/report sequence without sector or production-readiness claims.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "production_deploy",
+    "signing",
+    "release",
+    "force_push",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Current owner: continue and merge with full authority, 2026-10-03. Exact current successful checks required."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/GENERAL_ACCOUNTING_INTEGRATION.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/general-accounting-integration-task.json",
+    "ENGINEERING/REPORTS/GENERAL_ACCOUNTING_INTEGRATION.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "README.md"
+  ]
+}
