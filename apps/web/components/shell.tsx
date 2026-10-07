@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
 import { api, Me } from '@/lib/api';
 import { sessionFetch, SessionError } from '@/lib/session';
 import { AuthorizationContext, canAccess } from '@/lib/permissions';
-import { accountingLanding, accountingReads } from '@/lib/accounting';
+import { accountingLanding, accountingPermissions } from '@/lib/accounting';
 
 type NavigationLink = [string, string, string, readonly string[]];
-const links: NavigationLink[] = [ ['/overview', 'الرئيسية', 'Overview', ['organization.read']], ['/accounting', 'المحاسبة', 'Accounting', accountingReads], ['/branches', 'الفروع', 'Branches', ['branches.read']], ['/users', 'المستخدمون', 'Users', ['users.read']], ['/roles', 'الأدوار', 'Roles', ['roles.read']], ['/devices', 'الأجهزة', 'Devices', ['terminals.read']] ];
+const links: NavigationLink[] = [ ['/overview', 'الرئيسية', 'Overview', ['organization.read']], ['/accounting', 'المحاسبة', 'Accounting', accountingPermissions], ['/branches', 'الفروع', 'Branches', ['branches.read']], ['/users', 'المستخدمون', 'Users', ['users.read']], ['/roles', 'الأدوار', 'Roles', ['roles.read']], ['/devices', 'الأجهزة', 'Devices', ['terminals.read']] ];
 const visible = (context: AuthorizationContext, codes: readonly string[]) => codes.some(code => canAccess(context, code));
 export function Shell({ children }: { children: React.ReactNode }) {
   const router = useRouter(); const pathname = usePathname(); const [org, setOrg] = useState(''); const [orgError, setOrgError] = useState(false);

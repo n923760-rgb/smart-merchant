@@ -1,6 +1,16 @@
 # Smart Merchant — Master Engineering Roadmap
 
-The sole canonical roadmap. Observed 2026-10-03. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
+The sole canonical roadmap. Observed 2026-10-07. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
+
+## Current bounded task — 2026-10-07
+
+Owner reviewed the general-platform recommendations and instructed continued work. SM-ACC-003 implements explicitly confirmed web journal posting and read-authorized request lookup, with exact monetary preview and user/organization/branch-scoped pending command recovery. Diagnosis main: 282a0b3c26f15b198562ff98942e10828b85c71f; no open PR conflict at task start. All eleven checks on that baseline passed. Current-source qualification belongs to this task's PR and result packet, not that historical baseline.
+
+The [composer report](REPORTS/CONFIRMED_JOURNAL_COMPOSER.md), [task packet](EVIDENCE/journal-composer-task.json) and [ADR 0012](../docs/adr/0012-confirmed-journal-command.md) define this outcome. One local writer, distinct same-session review; local Git/Python 3.12/Node 24 are available. Docker/PostgreSQL/Redis/Flutter local runners are unavailable; required disposable integration/browser/mobile build checks use GitHub Actions. Historical no-shell environment records remain attributable to their earlier sessions.
+
+Next after qualification: account hierarchy, period-close policies and opening balances; then the complete service invoice → partial/full receipt → receivable → deterministic journal → reconciled report journey. Reversal controls remain a separate bounded task. Online manual posting does not qualify offline accounting, fiscal invoices, documents, reporting or production.
+
+The review backlog adds simple onboarding, treasury/bank reconciliation, validated migration/import/export, document attachments, tasks/approvals, external accountant access, quotes/recurring invoices and subscription/support operations. Implement each with its dependencies and acceptance evidence; unresolved fiscal/pilot/provider/pricing choices are not selected by this continuation. Core daily actions remain invoice/expense/receipt/payment; POS and inventory remain optional.
 
 ## Security prerequisite — 2026-10-07
 
@@ -12,7 +22,7 @@ Owner directed merging previous/current prompts and applying changes, then expli
 
 SM-ACC-001 is the bounded first implementation: chart accounts, balanced atomic posted journals, durable request IDs and explicit reversal, with organization/branch RBAC and database immutability. First monetary qualification is SAR. Invoice/AR/AP/period/reporting/fiscal/physical-device acceptance is NOT RUN. PR #11 (real-backend qualification) and #12 (form success) were unmerged at diagnosis and are now integrated with #13/#14 and security #15.
 
-Integrated application source: main 5831c8f3a035dfbff9374e086376447e6013c524, tree 05add842c83cee28d0409384be78aabb9cf30176; reverify each later task. Original diagnosis: 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
+Historical integrated application source: main 5831c8f3a035dfbff9374e086376447e6013c524, tree 05add842c83cee28d0409384be78aabb9cf30176; reverify each later task. Original diagnosis: 80de2647186d999e98e2ff77eff1e1dd1c7810d0. Local CLI/Python/Node are available in this session; Docker/Flutter/local service runners are not verified. Historical no-shell contracts remain records of their observed sessions.
 
 ### Current delivery order
 
