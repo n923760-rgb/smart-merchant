@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { api, type Page } from "@/lib/api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { api, type Page, type Me } from "@/lib/api";
+import { JournalComposer } from "./journal-composer";
 import type { AuthorizationContext } from "@/lib/permissions";
 import {
   accountingAmount,
@@ -15,8 +16,8 @@ import {
 const ar = {
   title: "المحاسبة",
   intro: "دليل الحسابات والقيود المرحلة — دون الحاجة إلى كاشير أو وردية.",
-  readOnly:
-    "هذه الشاشة للعرض فقط. إنشاء القيود وعكسها والفترات والتقارير مراحل تالية.",
+  workflow:
+    "أنشئ قيدًا بعد المعاينة والتأكيد بحسب صلاحياتك. عكس القيود والفترات والتقارير مراحل تالية.",
   scope: "نطاق العرض",
   organization: "كل المنشأة",
   branch: "فرع",
@@ -56,8 +57,8 @@ const en: Copy = {
   title: "Accounting",
   intro:
     "Chart accounts and posted journals — no POS terminal or shift required.",
-  readOnly:
-    "Read-only workspace. Journal creation/reversal, periods and reports are subsequent steps.",
+  workflow:
+    "Authorized users can preview and confirm a journal. Reversal controls, periods and reports follow separately.",
   scope: "Viewing scope",
   organization: "Entire organization",
   branch: "Branch",
@@ -153,35 +154,48 @@ export function AccountingPage({ english }: { english: boolean }) {
     queryFn: () => api<AuthorizationContext>("auth/context"),
     retry: false,
   });
-  if (authorization.isError)
+  const user = useQuery({
+    queryKey: ["me"],
+    queryFn: () => api<Me>("auth/me"),
+    retry: false,
+  });
+  if (authorization.isError || user.isError)
     return (
       <section role="alert">
         {english
           ? "Accounting permissions unavailable."
           : "تعذّر تحميل صلاحيات المحاسبة."}{" "}
-        <button onClick={() => void authorization.refetch()}>
+        <button
+          onClick={() => {
+            void authorization.refetch();
+            void user.refetch();
+          }}
+        >
           {english ? en.retry : ar.retry}
         </button>
       </section>
     );
-  if (!authorization.data)
+  if (!authorization.data || !user.data)
     return (
       <section aria-busy="true">{english ? en.loading : ar.loading}</section>
     );
   return (
     <AccountingWorkspace
-      key={authorization.data.organization.id}
+      key={user.data.id + ":" + authorization.data.organization.id}
       authorization={authorization.data}
+      userId={user.data.id}
       english={english}
     />
   );
 }
 
 function AccountingWorkspace({
+  userId,
   authorization,
   english,
 }: {
   authorization: AuthorizationContext;
+  userId: string;
   english: boolean;
 }) {
   const scopes = accountingScopes(authorization);
@@ -194,7 +208,7 @@ function AccountingWorkspace({
       <section>
         <h1>{copy.title}</h1>
         <p>{copy.intro}</p>
-        <p className="accounting-note">{copy.readOnly}</p>
+        <p className="accounting-note">{copy.workflow}</p>
         {!scope ? (
           <p role="alert">{copy.noAccess}</p>
         ) : (
@@ -220,6 +234,7 @@ function AccountingWorkspace({
         <AccountingRecords
           key={`${authorization.organization.id}:${scope.id}`}
           authorization={authorization}
+          userId={userId}
           branchId={scope.branchId}
           copy={copy}
           english={english}
@@ -230,16 +245,19 @@ function AccountingWorkspace({
 }
 
 function AccountingRecords({
+  userId,
   authorization,
   branchId,
   copy,
   english,
 }: {
   authorization: AuthorizationContext;
+  userId: string;
   branchId: string | null;
   copy: Copy;
   english: boolean;
 }) {
+  const queryClient = useQueryClient();
   const [accountPage, setAccountPage] = useState(1);
   const [journalPage, setJournalPage] = useState(1);
   const [selected, setSelected] = useState<string | null>(null);
@@ -277,6 +295,18 @@ function AccountingRecords({
   });
   return (
     <>
+      <JournalComposer
+        authorization={authorization}
+        userId={userId}
+        branchId={branchId}
+        english={english}
+        onPosted={(entry) => {
+          if (readJournals) setSelected(entry.id);
+          void queryClient.invalidateQueries({
+            queryKey: ["accounting", org, branchId, "journals"],
+          });
+        }}
+      />
       <section aria-label={copy.accounts}>
         <h2>{copy.accounts}</h2>
         {!readAccounts ? (

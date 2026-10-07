@@ -5,6 +5,10 @@ export const accountingReads = [
   "accounting.journals.read",
 ] as const;
 export type AccountingRead = (typeof accountingReads)[number];
+export const accountingPermissions = [
+  ...accountingReads,
+  "accounting.journals.post",
+] as const;
 export type AccountingScope = { id: string; branchId: string | null };
 export type Account = {
   id: string;
@@ -49,15 +53,28 @@ export function canReadAccounting(
   );
 }
 
+export function canPostAccounting(
+  context: AuthorizationContext,
+  branchId: string | null,
+): boolean {
+  return (
+    context.permissions.includes("accounting.journals.post") ||
+    (branchId !== null &&
+      (context.branch_permissions[branchId] ?? []).includes(
+        "accounting.journals.post",
+      ))
+  );
+}
+
 export function accountingScopes(
   context: AuthorizationContext,
 ): AccountingScope[] {
   const scopes: AccountingScope[] = [];
-  if (accountingReads.some((code) => context.permissions.includes(code)))
+  if (accountingPermissions.some((code) => context.permissions.includes(code)))
     scopes.push({ id: "organization", branchId: null });
   for (const id of Object.keys(context.branch_permissions).sort()) {
     if (
-      accountingReads.some((code) =>
+      accountingPermissions.some((code) =>
         context.branch_permissions[id].includes(code),
       )
     )

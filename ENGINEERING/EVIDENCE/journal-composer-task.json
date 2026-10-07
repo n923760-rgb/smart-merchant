@@ -1,0 +1,69 @@
+{
+  "title": "SM-ACC-003: explicitly confirmed web journal posting and unknown-result reconciliation",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner continued this review and proposed next slice with \u062a\u0645\u0627\u0645 \u0643\u0645\u0644 on 2026-10-07; persistent explicit continue-and-merge/full-authority instructions remain in force.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "282a0b3c26f15b198562ff98942e10828b85c71f",
+  "scope": "One online journal composer: exact decimal preview, explicit confirmation, durable user/org/branch command identity, safe check/retry after unknown response, tenant/RBAC-safe request lookup, meaningful tests and source-attributable records.",
+  "out_of_scope": "Reversal UI, account management UI, periods/hierarchies/documents/reports, offline authorization, production deploy, protection administration, payments, schema/ledger changes, AI and unrelated fixes.",
+  "task": "Implement against live main without terminal/shift requirements. Freeze and persist each confirmed command before dispatch; never auto replay unknown writes. Reconcile via authenticated organization/branch request lookup or explicit same-command resend. Preserve backend posting/audit/immutability/session rules.",
+  "validation": "Local web lint/types/units/build and backend static checks; required exact-source Foundation/Governance/Accounting Web CI including disposable PostgreSQL and real production BFF/Chromium; complete same-session diff review. Physical devices and production remain NOT RUN.",
+  "stop_conditions": "Source/PR mismatch, secrets, unrelated mutation, failed required checks, tenant/money/session regression or unresolvable missing capability.",
+  "success_criteria": "Only authorized users can preview and explicitly post balanced journals; no binary float amounts; storage/locks failure prevents sending; reload retains exact pending command; uncertain response never creates a fresh ID or automatic retry; result validation and lookup do not disclose another tenant/branch; double click/tab reuse cannot create duplicate effects.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "signing",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "Persistent owner grant: \u0627\u0633\u062a\u0645\u0631\u0651 \u0648 \u0627\u062f\u0645\u062c \u0648 \u0644\u0643 \u0635\u0644\u0627\u062d\u064a\u0647 \u0643\u0627\u0645\u0644\u0647 (2026-10-03), continued on 2026-10-07. Merge only after exact-source required checks and distinct same-session review."
+    }
+  },
+  "report_path": "ENGINEERING/REPORTS/CONFIRMED_JOURNAL_COMPOSER.md",
+  "allowed_paths": [
+    "backend/app/domains/accounting/routes.py",
+    "backend/tests/test_accounting.py",
+    "apps/web/lib/accounting.ts",
+    "apps/web/lib/accounting.test.ts",
+    "apps/web/lib/journal-command.ts",
+    "apps/web/lib/journal-command.test.ts",
+    "apps/web/components/journal-composer.tsx",
+    "apps/web/components/accounting-workspace.tsx",
+    "apps/web/components/shell.tsx",
+    "apps/web/app/style.css",
+    "apps/web/e2e/accounting-workspace.mjs",
+    "apps/web/e2e/README.md",
+    "docs/adr/0012-confirmed-journal-command.md",
+    "ENGINEERING/EVIDENCE/journal-composer-task.json",
+    "ENGINEERING/REPORTS/CONFIRMED_JOURNAL_COMPOSER.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "README.md"
+  ],
+  "dependency": "SM-SEC-008 / PR #18 at b66d3091278c4d02858c6e0b0febcc0d61a0f314; locally integrated dependency tree. Composer PR initially targets the security branch and moves to main only after its qualified merge."
+}

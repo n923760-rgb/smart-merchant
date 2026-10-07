@@ -9,7 +9,7 @@ from app.api.routes import commit
 from app.api.schemas import page_of
 from app.core.audit import record
 from app.core.database import db_session
-from app.core.exceptions import ConflictError
+from app.core.exceptions import ConflictError, NotFoundError
 from app.core.permissions import Context, context
 from app.domains.accounting.models import Account, JournalEntry
 from app.domains.accounting.schemas import AccountIn, JournalIn, ReversalIn
@@ -112,6 +112,29 @@ def journals(
 @router.get("/journals/{entry_id}")
 def get_journal(entry_id: UUID, ctx: Context = Depends(context), db: Session = Depends(db_session)):
     return journal_dict(db, scoped_entry(db, ctx, entry_id, "accounting.journals.read"))
+
+
+@router.get("/journal-requests/{request_id}")
+def journal_request(
+    request_id: UUID,
+    branch_id: UUID | None = None,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    # Keep lookup under the existing ledger read grant; posting is not a read grant.
+    # Authorize the requested scope before even checking whether an ID exists.
+    authorize(db, ctx, "accounting.journals.read", branch_id)
+    entry = db.scalar(
+        select(JournalEntry).where(
+            JournalEntry.organization_id == ctx.organization.id,
+            JournalEntry.request_id == request_id,
+            JournalEntry.branch_id == branch_id,
+        )
+    )
+    if entry is None:
+        # Absence is an observation, not proof an in-flight write cannot commit.
+        raise NotFoundError()
+    return journal_dict(db, entry)
 
 
 @router.post("/journals/{entry_id}/reverse", status_code=201)

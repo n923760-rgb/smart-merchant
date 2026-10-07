@@ -449,3 +449,110 @@ def test_suspended_actor_or_membership_cannot_post(client, merchant, model):
     assert client.post(
         BASE + "/journals", headers=headers, json=journal_payload(ids)
     ).status_code in {401, 404}
+
+
+def test_request_lookup_is_read_only_and_matches_the_original(client, merchant):
+    headers = merchant["headers"]
+    payload = journal_payload(new_accounts(client, headers))
+    original = post(client, headers, payload)
+    endpoint = BASE + f"/journal-requests/{payload['request_id']}"
+    assert client.get(endpoint, headers=headers).json() == original
+    assert client.get(endpoint, headers=headers).json() == original
+    assert client.get(BASE + f"/journal-requests/{uuid4()}", headers=headers).status_code == 404
+    assert post(client, headers, payload) == original
+    with SessionLocal() as db:
+        assert (
+            db.scalar(
+                select(func.count())
+                .select_from(JournalEntry)
+                .where(JournalEntry.organization_id == UUID(merchant["org"]))
+            )
+            == 1
+        )
+        assert (
+            db.scalar(
+                select(func.count())
+                .select_from(AuditLog)
+                .where(
+                    AuditLog.organization_id == UUID(merchant["org"]),
+                    AuditLog.action == "JOURNAL_POSTED",
+                )
+            )
+            == 1
+        )
+
+
+def test_request_lookup_never_leaks_foreign_scope_or_grants_posting_read_access(client, merchant):
+    headers = merchant["headers"]
+    ids = new_accounts(client, headers)
+    b1, b2 = new_branch(client, headers, "LOOKUP1"), new_branch(client, headers, "LOOKUP2")
+    own = post(client, headers, journal_payload(ids, branch_id=b1))
+    other = post(client, headers, journal_payload(ids, branch_id=b2))
+    restricted = employee(client, merchant, branch_id=b1)
+    endpoint = BASE + f"/journal-requests/{own['request_id']}"
+    assert client.get(endpoint, headers=restricted, params={"branch_id": b1}).json() == own
+    assert client.get(endpoint, headers=restricted).status_code == 403
+    assert client.get(endpoint, headers=restricted, params={"branch_id": b2}).status_code == 403
+    other_endpoint = BASE + f"/journal-requests/{other['request_id']}"
+    assert (
+        client.get(other_endpoint, headers=restricted, params={"branch_id": b1}).status_code == 404
+    )
+    assert client.get(other_endpoint, headers=headers, params={"branch_id": b1}).status_code == 404
+    cashier = employee(client, merchant, role_code="CASHIER")
+    assert client.get(endpoint, headers=cashier, params={"branch_id": b1}).status_code == 403
+    # Even a journal poster needs the independently controlled read permission.
+    from sqlalchemy import delete
+
+    from app.core.models import Permission, Role, RolePermission
+
+    with SessionLocal() as db:
+        role_id = db.scalar(
+            select(Role.id).where(
+                Role.organization_id == UUID(merchant["org"]), Role.code == "ACCOUNTANT"
+            )
+        )
+        permission_id = db.scalar(
+            select(Permission.id).where(Permission.code == "accounting.journals.read")
+        )
+        db.execute(
+            delete(RolePermission).where(
+                RolePermission.role_id == role_id, RolePermission.permission_id == permission_id
+            )
+        )
+        db.commit()
+    assert client.get(endpoint, headers=restricted, params={"branch_id": b1}).status_code == 403
+    assert post(client, restricted, journal_payload(ids, branch_id=b1))["branch_id"] == b1
+
+
+def test_request_lookup_is_organization_scoped_and_requires_active_context(client, merchant):
+    headers = merchant["headers"]
+    entry = post(client, headers, journal_payload(new_accounts(client, headers)))
+    # A correctly authenticated second organization cannot resolve the first request UUID.
+    from app.core.config import get_settings
+
+    email = f"lookup-owner-{uuid4()}@example.com"
+    org = client.post(
+        "/api/v1/bootstrap",
+        headers={"X-Bootstrap-Key": get_settings().bootstrap_key},
+        json={
+            "owner_name": "Lookup",
+            "owner_email": email,
+            "owner_password": PASSWORD,
+            "organization_name": "Lookup tenant",
+        },
+    )
+    assert org.status_code == 201
+    login = client.post("/api/v1/auth/login", json={"email": email, "password": PASSWORD})
+    foreign = {
+        "Authorization": f"Bearer {login.json()['access_token']}",
+        "X-Organization-ID": org.json()["organization"]["id"],
+    }
+    endpoint = BASE + f"/journal-requests/{entry['request_id']}"
+    assert client.get(endpoint, headers=foreign).status_code == 404
+    with SessionLocal() as db:
+        member = db.scalar(
+            select(Membership).where(Membership.organization_id == UUID(merchant["org"]))
+        )
+        member.status = "SUSPENDED"
+        db.commit()
+    assert client.get(endpoint, headers=headers).status_code in {401, 404}

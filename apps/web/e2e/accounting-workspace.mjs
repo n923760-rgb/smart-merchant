@@ -322,7 +322,7 @@ try {
   });
   await page.setViewportSize({ width: 1280, height: 800 });
 
-  // Controlled read failure is the only intercepted response; financial fixtures above use the real API.
+  // Controlled read failure hides stale rows; the financial fixtures above use the real API.
   const accountRoute = "**/api/proxy/accounting/accounts?*";
   let failRead = true;
   await page.route(accountRoute, (route) =>
@@ -353,6 +353,212 @@ try {
     .click();
   await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   await page.unroute(accountRoute);
+
+  // New financial UI: real posting behind explicit review/confirmation.
+  const composer = () =>
+    page.getByRole("region", { name: "إنشاء قيد", exact: true });
+  const confirmedRequests = [];
+  async function previewJournal(description, amount = "123.45") {
+    await composer().locator('input[name="booking_date"]').fill("2026-10-07");
+    await composer()
+      .locator('input[name="journal_description"]')
+      .fill(description);
+    const previousAccounts = composer().getByRole("button", {
+      name: "الحسابات السابقة",
+      exact: true,
+    });
+    if (await previousAccounts.isEnabled()) await previousAccounts.click();
+    await composer()
+      .locator('select[name="account_0"] option[value="' + alpha.cash.id + '"]')
+      .waitFor({ state: "attached" });
+    await composer()
+      .locator('select[name="account_0"]')
+      .selectOption(alpha.cash.id);
+    await composer()
+      .getByRole("button", { name: "الحسابات التالية", exact: true })
+      .click();
+    await composer()
+      .locator(
+        'select[name="account_1"] option[value="' + alpha.revenue.id + '"]',
+      )
+      .waitFor({ state: "attached" });
+    await composer()
+      .locator('select[name="account_1"]')
+      .selectOption(alpha.revenue.id);
+    await composer().locator('input[name="debit_0"]').fill(amount);
+    await composer().locator('input[name="credit_1"]').fill(amount);
+    await composer()
+      .getByRole("button", { name: "معاينة القيد", exact: true })
+      .click();
+    await composer()
+      .getByRole("region", { name: "مراجعة القيد قبل الترحيل", exact: true })
+      .waitFor();
+    assert.equal(
+      await composer()
+        .getByRole("button", { name: "تأكيد وترحيل القيد", exact: true })
+        .isDisabled(),
+      true,
+    );
+  }
+  async function confirmJournal() {
+    await composer().getByRole("checkbox").check();
+    // Two synchronous clicks must produce exactly one financial command.
+    await composer()
+      .getByRole("button", { name: "تأكيد وترحيل القيد", exact: true })
+      .evaluate((button) => {
+        button.click();
+        button.click();
+      });
+  }
+  const postingRoute = "**/api/proxy/accounting/journals";
+  let dropAfterCommit = true;
+  let rejectBeforeDispatch = false;
+  await page.route(postingRoute, async (route) => {
+    if (route.request().method() !== "POST") return route.continue();
+    const payload = route.request().postDataJSON();
+    confirmedRequests.push(payload);
+    if (rejectBeforeDispatch) {
+      rejectBeforeDispatch = false;
+      return route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: '{"message":"Fixture unavailable before dispatch"}',
+      });
+    }
+    const result = await route.fetch();
+    assert.equal(
+      result.status(),
+      201,
+      "Confirmed fixture posts to the actual BFF and ledger",
+    );
+    if (dropAfterCommit) {
+      dropAfterCommit = false;
+      return route.fulfill({
+        status: 504,
+        contentType: "application/json",
+        body: '{"message":"Fixture lost successful response"}',
+      });
+    }
+    return route.fulfill({ response: result });
+  });
+  const beforePreview = accountingRequests.filter(
+    (r) => r.method === "POST",
+  ).length;
+  await previewJournal("Confirmed exact money", "9007199254740993.01");
+  assert.equal(
+    accountingRequests.filter((r) => r.method === "POST").length,
+    beforePreview,
+    "Reviewing a balanced preview never dispatches a journal",
+  );
+  assert.ok(
+    (await composer().innerText()).includes("9,007,199,254,740,993.01"),
+  );
+  await confirmJournal();
+  await composer()
+    .getByText(/نتيجة هذه العملية غير مؤكدة/)
+    .waitFor();
+  assert.equal(
+    confirmedRequests.length,
+    1,
+    "Double-click and unknown response do not auto-replay",
+  );
+  const lost = confirmedRequests[0];
+  await page.reload();
+  await composer().getByText(lost.request_id, { exact: true }).waitFor();
+  assert.equal(
+    await composer().locator('input[name="journal_description"]').count(),
+    0,
+    "A restored confirmed command cannot be edited or replaced",
+  );
+  assert.equal(
+    confirmedRequests.length,
+    1,
+    "Reload does not replay a financial write",
+  );
+  await composer()
+    .getByRole("button", { name: "التحقق من النتيجة", exact: true })
+    .click();
+  await composer()
+    .getByRole("status")
+    .filter({ hasText: "تم ترحيل القيد" })
+    .waitFor();
+  const actual = (await backend("accounting/journals?page_size=100", alpha))
+    .items;
+  assert.equal(
+    actual.filter((j) => j.request_id === lost.request_id).length,
+    1,
+  );
+  assert.equal(confirmedRequests.length, 1, "Reconciliation is read-only");
+
+  // An absent request must remain frozen; explicit resend reuses the same body/UUID.
+  rejectBeforeDispatch = true;
+  await previewJournal("Confirmed retry identity");
+  await confirmJournal();
+  await composer()
+    .getByText(/نتيجة هذه العملية غير مؤكدة/)
+    .waitFor();
+  const unsent = confirmedRequests[1];
+  await composer()
+    .getByRole("button", { name: "التحقق من النتيجة", exact: true })
+    .click();
+  await composer()
+    .getByRole("status")
+    .filter({ hasText: "لم يظهر القيد" })
+    .waitFor();
+  await composer().getByText(unsent.request_id, { exact: true }).waitFor();
+  await composer().getByRole("checkbox").check();
+  await composer()
+    .getByRole("button", {
+      name: "تأكيد إعادة إرسال العملية نفسها",
+      exact: true,
+    })
+    .click();
+  await composer()
+    .getByRole("status")
+    .filter({ hasText: "تم ترحيل القيد" })
+    .waitFor();
+  assert.deepEqual(confirmedRequests[2], unsent);
+  assert.equal(
+    (await backend("accounting/journals?page_size=100", alpha)).items.filter(
+      (j) => j.request_id === unsent.request_id,
+    ).length,
+    1,
+  );
+  await page.unroute(postingRoute);
+  // Invalid amounts must be rejected before preview or any network side effect.
+  await composer()
+    .locator('input[name="journal_description"]')
+    .fill("Unbalanced UI fixture");
+  await composer()
+    .getByRole("button", { name: "الحسابات السابقة", exact: true })
+    .click();
+  await composer()
+    .locator('select[name="account_0"] option[value="' + alpha.cash.id + '"]')
+    .waitFor({ state: "attached" });
+  await composer()
+    .locator('select[name="account_0"]')
+    .selectOption(alpha.cash.id);
+  await composer()
+    .getByRole("button", { name: "الحسابات التالية", exact: true })
+    .click();
+  await composer()
+    .locator(
+      'select[name="account_1"] option[value="' + alpha.revenue.id + '"]',
+    )
+    .waitFor({ state: "attached" });
+  await composer()
+    .locator('select[name="account_1"]')
+    .selectOption(alpha.revenue.id);
+  await composer().locator('input[name="debit_0"]').fill("1.01");
+  await composer().locator('input[name="credit_1"]').fill("1.00");
+  await composer()
+    .getByRole("button", { name: "معاينة القيد", exact: true })
+    .click();
+  await composer()
+    .getByRole("alert")
+    .filter({ hasText: "تحقق من التاريخ" })
+    .waitFor();
+  assert.equal(confirmedRequests.length, 3);
   await signOut();
 
   // Automatic accounting landing can dispatch reads before signIn returns.
@@ -498,13 +704,14 @@ try {
     .getByRole("region", { name: "Chart accounts", exact: true })
     .getByText("Beta Cash", { exact: true })
     .waitFor();
-  assert.ok(
-    accountingRequests.every((request) => request.method === "GET"),
-    "Accounting UI performs no financial writes",
+  assert.equal(
+    accountingRequests.filter((request) => request.method === "POST").length,
+    3,
+    "Only the explicitly confirmed financial fixture attempts write",
   );
   assert.deepEqual(failures, [], "No browser runtime errors");
   console.log(
-    "PASS: real ledger/BFF browser reads, exact money, no-terminal accountant, branch/tenant denial, pagination, explicit read error/retry, RTL/mobile/English and account cache isolation",
+    "PASS: real ledger/BFF reads and confirmed posting, lost-response/reload/lookup, exact-identity resend, double click, invalid preview, exact money, no-terminal accountant, scope denials, pagination, RTL/mobile/English and account isolation",
   );
 } finally {
   delayed.resolve();

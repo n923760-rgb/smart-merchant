@@ -5,6 +5,7 @@ import {
   accountingListPath,
   accountingScopes,
   canReadAccounting,
+  canPostAccounting,
 } from "./accounting";
 import type { AuthorizationContext } from "./permissions";
 
@@ -18,6 +19,18 @@ const context = (
 });
 
 describe("accounting authorization and scope", () => {
+  it("does not infer posting from reads and keeps branch posting scoped", () => {
+    expect(canPostAccounting(context(["accounting.journals.read"]), null)).toBe(
+      false,
+    );
+    const ctx = context([], { B: ["accounting.journals.post"] });
+    expect(canPostAccounting(ctx, "B")).toBe(true);
+    expect(canPostAccounting(ctx, "C")).toBe(false);
+    expect(canPostAccounting(ctx, null)).toBe(false);
+    expect(canReadAccounting(ctx, "accounting.journals.read", "B")).toBe(false);
+    expect(accountingLanding(ctx, "/overview")).toBe("/accounting");
+    expect(accountingScopes(ctx)).toEqual([{ id: "B", branchId: "B" }]);
+  });
   it("allows accounting without a POS grant, terminal or shift", () => {
     const ctx = context([
       "accounting.accounts.read",
