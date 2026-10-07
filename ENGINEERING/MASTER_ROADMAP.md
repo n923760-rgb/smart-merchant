@@ -2,6 +2,10 @@
 
 The sole canonical roadmap. Observed 2026-10-03. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
 
+## Security prerequisite — 2026-10-07
+
+SM-SEC-008 patches newly reported sharp/source-map-js high-severity advisories in a separate lockfile change. Diagnosis: main 282a0b3c26f15b198562ff98942e10828b85c71f. Fixed resolutions sharp 0.35.5 (matching platform/libvips packages) and source-map-js 1.2.2; no other package records or direct ranges change. Local audit: PASS, zero vulnerabilities. Exact-source required checks and reviewed merge belong to this task's PR. Confirmed composer remains a separate subsequent outcome. See [report](REPORTS/WEB_TRANSITIVE_PATCHES.md) and [task](EVIDENCE/web-transitive-patches-task.json).
+
 ## Current owner scope — 2026-10-03
 
 Owner directed merging previous/current prompts and applying changes, then explicitly replaced the proposed food-truck-first scope with a general accounting application for all business categories. The [Unified Master Prompt v2](../docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) is the consolidated product reference. Accounting/invoicing/customers/suppliers are the common core; POS, stock and recipes are optional modules. Preserve organization/branch architecture and POS-001–150; an accountant or service-business invoice must not depend on a POS terminal or shift. This latest direction overrides the older POS-first implementation order below without erasing historical evidence.
