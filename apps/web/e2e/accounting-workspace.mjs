@@ -228,7 +228,7 @@ try {
     await page.waitForURL((url) =>
       ["/overview", "/accounting"].includes(url.pathname),
     );
-    await page.locator('a[href="/accounting"]').waitFor();
+    await page.locator('nav a[href="/accounting"]').waitFor();
   }
   async function signOut() {
     await page
@@ -249,7 +249,7 @@ try {
     });
 
   await signIn(accountant);
-  await page.locator('a[href="/accounting"]').click();
+  await page.locator('nav a[href="/accounting"]').click();
   await page.getByRole("heading", { name: "المحاسبة", exact: true }).waitFor();
   await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   assert.equal(await page.locator("html").getAttribute("dir"), "rtl");
@@ -565,7 +565,7 @@ try {
   // Observe the entire account transition, including already-cached first scope.
   const scopeStart = accountingRequests.length;
   await signIn(restricted);
-  await page.locator('a[href="/accounting"]').click();
+  await page.locator('nav a[href="/accounting"]').click();
   await page.getByLabel("نطاق العرض", { exact: true }).selectOption(b1);
   await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   await journals().getByText(branchOne.description, { exact: true }).waitFor();
@@ -657,7 +657,7 @@ try {
     .click();
   await page.waitForURL(`${baseURL}/overview`);
   await page.locator("nav").waitFor({ state: "attached" });
-  assert.equal(await page.locator('a[href="/accounting"]').count(), 0);
+  assert.equal(await page.locator('nav a[href="/accounting"]').count(), 0);
   const cashierStart = accountingRequests.length;
   await page.goto(`${baseURL}/accounting`);
   await page.getByRole("alert").waitFor();
@@ -668,7 +668,7 @@ try {
 
   // Warm the accounting caches once more, then prove the next organization cannot see them.
   await signIn(accountant);
-  await page.locator('a[href="/accounting"]').click();
+  await page.locator('nav a[href="/accounting"]').click();
   await accounts().getByText("Alpha Cash", { exact: true }).waitFor();
   await signOut();
   await signIn(beta);
@@ -678,7 +678,7 @@ try {
     await delayed.promise;
     await route.continue();
   });
-  await page.locator('a[href="/accounting"]').click();
+  await page.locator('nav a[href="/accounting"]').click();
   await bounded(waiting.promise);
   assert.doesNotMatch(
     await page.locator("main").innerText(),
