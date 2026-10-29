@@ -12,12 +12,15 @@ from app.core.audit import record
 from app.core.database import db_session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.core.permissions import Context, context
-from app.domains.accounting.models import Account, AccountingPeriod, JournalEntry
-from app.domains.accounting.schemas import AccountIn, AccountingPeriodIn, JournalIn, ReversalIn
+from app.domains.accounting.models import Account, AccountingPeriod, JournalEntry, OpeningBalanceBatch
+from app.domains.accounting.schemas import (
+    AccountIn, AccountingPeriodIn, JournalIn, OpeningBalanceIn, ReversalIn,
+)
 from app.domains.accounting.service import (
     authorize,
     journal_dict,
     lock_organization,
+    post_initial_opening,
     post_journal,
     reverse_journal,
     scoped_entry,
@@ -205,6 +208,54 @@ def close_period(
     )
     commit(db)
     return period_dict(period)
+
+
+
+
+def opening_dict(db: Session, batch: OpeningBalanceBatch, entry: JournalEntry) -> dict:
+    return {
+        "id": str(batch.id),
+        "organization_id": str(batch.organization_id),
+        "journal_id": str(batch.journal_id),
+        "booking_date": batch.booking_date.isoformat(),
+        "created_by": str(batch.created_by),
+        "journal": journal_dict(db, entry),
+    }
+
+
+@router.get("/opening-balance")
+def get_opening_balance(
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    ctx.require("accounting.opening.read")
+    batch = db.scalar(
+        select(OpeningBalanceBatch).where(
+            OpeningBalanceBatch.organization_id == ctx.organization.id
+        )
+    )
+    if batch is None:
+        raise NotFoundError()
+    entry = db.scalar(
+        select(JournalEntry).where(
+            JournalEntry.id == batch.journal_id,
+            JournalEntry.organization_id == ctx.organization.id,
+        )
+    )
+    if entry is None:
+        raise NotFoundError()
+    return opening_dict(db, batch, entry)
+
+
+@router.post("/opening-balance", status_code=201)
+def create_opening_balance(
+    payload: OpeningBalanceIn,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    batch, entry = post_initial_opening(db, ctx, payload)
+    commit(db)
+    return opening_dict(db, batch, entry)
 
 
 @router.post("/journals", status_code=201)
