@@ -44,7 +44,9 @@ jobs:
           python -m pip_audit --strict --no-deps -r /tmp/merchant-dependencies.txt
       - run: alembic downgrade base && alembic upgrade head
   web:
-    runs-on: ubuntu-latest
+    # Playwright 1.55.1 does not support the rolling ubuntu-26.04 hosted runner.
+    # Pin this browser job to the supported and reproducible Ubuntu 24.04 image.
+    runs-on: ubuntu-24.04
     defaults:
       run: { working-directory: apps/web }
     steps:
@@ -67,7 +69,9 @@ jobs:
           SM_TEST_BASE_URL=http://127.0.0.1:3000 node "$sm_browser_tools/session-renewal.mjs"
       - run: npm audit --audit-level=high
   real-backend-browser:
-    runs-on: ubuntu-latest
+    # Playwright 1.55.1 does not support the rolling ubuntu-26.04 hosted runner.
+    # Pin this browser job to the supported and reproducible Ubuntu 24.04 image.
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     services:
       postgres:
