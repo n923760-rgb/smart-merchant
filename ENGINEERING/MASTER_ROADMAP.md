@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-004A — account hierarchy (implementation candidate, 2026-10-29)
+
+**Boundary:** This first slice of [SM-ACC-004 / issue #25](https://github.com/n923760-rgb/smart-merchant/issues/25) adds same-type account summary groups and posting leaves while preserving legacy flat posting. [ADR 0013](../docs/adr/0013-account-hierarchy.md) defines immutable structural fields and PostgreSQL-level group-posting exclusion. Proposed code, migration, tests and [task packet](EVIDENCE/SM-ACC-004A-task.json) are candidate-only until exact-source CI/review and successful merge; no merchant or production qualification is claimed.
+
+**Next:** SM-ACC-004B should define and implement organization accounting periods, closing/reopening authorization and posting/reversal races with SQL-level enforcement. SM-ACC-004C should handle opening balances as traceable, exact-money and idempotent journals after period policy. Only then begin full service-invoice/partial settlement/AR/AP/report flows without a POS dependency. Do not implement all in one task.
+
 ## Verified CI security remediation — 2026-10-29
 
 - On earlier V6 PR #20 checks, Playwright 1.55.1 was unable to install Chromium on the rolling Ubuntu 26.04 runner. PR #24 pinned three browser jobs to Ubuntu 24.04.
