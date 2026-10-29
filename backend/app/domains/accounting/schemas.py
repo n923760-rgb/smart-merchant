@@ -14,6 +14,8 @@ class AccountIn(Input):
     code: str = Field(pattern=r"^[A-Z0-9_.-]{1,40}$")
     name: str = Field(min_length=1, max_length=180)
     account_type: Literal["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"]
+    parent_id: UUID | None = None
+    is_postable: bool = True
 
 
 class LineIn(Input):
