@@ -119,6 +119,10 @@ def write_entry(
     ).all()
     if len(accounts) != len(ids):
         raise NotFoundError()
+    # A summary account is never a posting target, including reversal commands.
+    # All historic accounts were migrated as postable roots, so valid reversals remain available.
+    if any(not account.is_postable for account in accounts):
+        raise ConflictError()
     if reversal_of is None and any(not account.is_active for account in accounts):
         raise ConflictError()
     if ctx.organization.currency != "SAR":
