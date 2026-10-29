@@ -105,6 +105,15 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
     // its backend mutation committed and query invalidation refreshed the list.
     await page.waitForFunction(key => document.querySelector(`input[name="${key}"]`)?.value === '', key);
     assert.equal(await mutationError.count(), 0, 'No false/stale success error');
+    // Chromium may discard the POST response body while React repaints the page.
+    // Instead verify the committed record through the real authorized backend/BFF.
+    // This checks durable mutation, not just an optimistic UI notification.
+    const records = (await bff(page, `${resource}?page_size=100`)).items;
+    const created = records.find(row => resource === 'users'
+      ? row.email === fields.email
+      : row.name === fields.name && row.branch_id === fields.branch_id);
+    assert.ok(created, `Committed ${resource} record is queryable`);
+    return created;
   } else {
     await mutationError.waitFor();
     for (const [name, value] of Object.entries(fields)) {
@@ -113,7 +122,7 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
       assert.ok(retained === value, `Rejected ${resource} retains ${name} input`);
     }
   }
-  return result.json();
+  return null; // Expected rejection has no created resource.
 }
 
 await ready();
