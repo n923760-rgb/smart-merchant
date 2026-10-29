@@ -319,6 +319,7 @@ def post_initial_opening(
         created_by=ctx.user.id,
     )
     db.add(batch)
+    db.flush()  # Assign the durable batch UUID before writing its audit event.
     db.add(
         AuditLog(
             organization_id=ctx.organization.id,
