@@ -32,6 +32,8 @@ def account_dict(account: Account) -> dict:
         "name": account.name,
         "account_type": account.account_type,
         "is_active": account.is_active,
+        "parent_id": str(account.parent_id) if account.parent_id else None,
+        "is_postable": account.is_postable,
     }
 
 
@@ -40,6 +42,23 @@ def create_account(
     payload: AccountIn, ctx: Context = Depends(context), db: Session = Depends(db_session)
 ):
     ctx.require("accounting.accounts.manage")
+    if payload.parent_id is not None:
+        parent = db.scalar(
+            select(Account)
+            .where(
+                Account.id == payload.parent_id,
+                Account.organization_id == ctx.organization.id,
+            )
+            .with_for_update(read=True)
+        )
+        if parent is None:
+            raise NotFoundError()
+        if (
+            parent.is_postable
+            or not parent.is_active
+            or parent.account_type != payload.account_type
+        ):
+            raise ConflictError()
     account = Account(organization_id=ctx.organization.id, **payload.model_dump())
     db.add(account)
     # Use the existing commit conflict boundary for duplicate account codes.
