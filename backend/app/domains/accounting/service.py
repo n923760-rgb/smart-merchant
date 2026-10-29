@@ -9,7 +9,13 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.core.idempotency import request_digest
 from app.core.models import AuditLog, Organization
 from app.core.permissions import Context, scoped_branch
-from app.domains.accounting.models import (\n    Account, AccountingPeriod, JournalEntry, JournalLine, OpeningBalanceBatch,\n)
+from app.domains.accounting.models import (
+    Account,
+    AccountingPeriod,
+    JournalEntry,
+    JournalLine,
+    OpeningBalanceBatch,
+)
 from app.domains.accounting.schemas import JournalIn, OpeningBalanceIn, ReversalIn
 
 
