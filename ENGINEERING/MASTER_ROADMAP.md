@@ -1,5 +1,20 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## Verified CI security remediation — 2026-10-29
+
+- On earlier V6 PR #20 checks, Playwright 1.55.1 was unable to install Chromium on the rolling Ubuntu 26.04 runner. PR #24 pinned three browser jobs to Ubuntu 24.04.
+- The same qualified fix refreshed the web dependency lockfile (Next.js 16.4.3, Vite 8.3.5, Zod 4.6.7, Vitest 5.0.5) without a forced major upgrade. PR #24 merged into main at `7c0b4d385caaf260c070aff6fc269ab86b6e8101` after Foundation, Accounting Web and Governance CI passed. Security issue #23 is closed; superseded partial CI PR #21 closed.
+- Incremental merchant home PR #22 remains a distinct reviewed source change. It shows authorized organization/branch/audit data without fabricated sales; real commerce dashboards are deferred.
+- Production, payment-provider, fiscal, pilot and physical-device acceptance remain separate gates; rerun exact-source CI for all further changes.
+
+## Product scope expansion — 2026-10-29 (V6, documentation; not release qualification)
+
+Owner approved **Hybrid Commerce OS**: a general-accounting core plus optional native POS and external POS, online storefront connectors, multi-channel orders/inventory, a role-adaptive owner command center and modular merchant tools. This does **not** make online integrations, physical sales, financial documents, AI or fiscal providers implemented. See [V6 product master](../docs/product/SMART_MERCHANT_HYBRID_COMMERCE_MASTER_V6.md) and [current-source gap review](REPORTS/HYBRID_COMMERCE_V6_GAP_REVIEW.md).
+
+**Reconciled order — preserve previously decided accounting-first delivery:** (0) review/qualify exact main and merge documentation only after checks; (1) account hierarchy, closing periods and opening balances; (2) customers/suppliers, service invoices, partial/full settlement, AR/AP and ledger-reconciled reports **without POS/stock requirement**; (3) optional catalog, inventory and fully accepted native POS per POS-001–150 / POS-148; (4) a first read-only, official online adapter with source mapping, idempotent ingest, conflict review and freshness/provenance; then external POS/more channels, workflows, merchant tools and bounded AI; (5) merchant pilots and appropriate fiscal/hardware/provider/security/restore qualification.
+
+**Control gates:** no bulk rewrite or premature adapters, no blanket two-way stock mirroring, no mock/CI-only claim of physical or commercial readiness. Each bounded task uses the governance packet/review process, exact-source CI evidence and this *single* roadmap. V2 remains the reference for general accounting/financial invariants; V6 extends product scope and UI only. The first code task remains financial-core dependent work, **not** a dashboard mock or connector implementation. Prices, providers and production fiscal/merchant pilot policies remain unresolved until tested/approved.
+
 The sole canonical roadmap. Observed 2026-10-07. Source integrated; product and full governance qualification incomplete. Reverify every live HEAD before each task.
 
 ## Current bounded task — 2026-10-07
