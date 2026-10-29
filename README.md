@@ -1,5 +1,16 @@
 # Smart Merchant Assistant — General Accounting & Business Platform
 
+## Current approved direction — Hybrid Commerce OS (2026-10-29)
+
+The owner approved a **hybrid merchant operating system** for online, physical, services and hybrid merchants, extending (not replacing) the existing general-accounting-first architecture. Native POS and supported external POS connectors are both future optional modules; no mandatory terminal/shift/stock for the accountant or service business. New integrations, inventory, orders and owner metrics are **not implemented** merely by this product decision.
+
+- [Hybrid Commerce Product Master V6](docs/product/SMART_MERCHANT_HYBRID_COMMERCE_MASTER_V6.md) — approved product scope and acceptance principles.
+- [Repository-wide Hybrid V6 audit](ENGINEERING/REPORTS/HYBRID_COMMERCE_REPOSITORY_AUDIT_2026-10-29.md) — evidence-based module/CI gaps.
+- [V6 gap review](ENGINEERING/REPORTS/HYBRID_COMMERCE_V6_GAP_REVIEW.md) — implementation dependencies.
+- [Sole engineering roadmap](ENGINEERING/MASTER_ROADMAP.md) — only authoritative implementation order.
+
+Existing [V2 general-accounting requirements](docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md), ADRs and POS-001–150 remain binding where they define stricter domain invariants. Never equate green CI with physical, fiscal, payment-provider or production readiness.
+
 Sector-neutral multi-tenant accounting and business platform. The shared core is accounting, invoicing, customers and suppliers; POS, inventory and recipes are optional modules. The [Unified Master Prompt v2](docs/product/SMART_MERCHANT_MASTER_PROMPT_V2.md) merges earlier scope with the owner's 2026-10-03 direction: no mandatory restaurant, food-truck or other business category.
 
 Implemented foundation: identity, organizations, branches, RBAC, terminals, audit, web shell and POS/owner Flutter shells. The first accounting slice adds chart accounts and balanced immutable journal posting/reversal with durable request replay, tenant/branch RBAC and database enforcement. It requires no POS terminal or shift; initial monetary qualification is SAR. The online web composer adds exact preview, explicit posting confirmation and same-command recovery after unknown results. Invoicing, AR/AP, fiscal integration, accounting periods/reports, catalog, POS sales, inventory, analytics and AI remain unimplemented. No full accounting or production-readiness claim is made.
