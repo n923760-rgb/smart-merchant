@@ -10,7 +10,6 @@ from sqlalchemy.exc import DBAPIError
 
 from app.core.config import get_settings
 from app.core.database import SessionLocal
-from app.core.models import User
 from app.domains.accounting.models import Account, JournalEntry, JournalLine
 
 BASE = "/api/v1/accounting"
