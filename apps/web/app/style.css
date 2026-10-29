@@ -2,3 +2,32 @@
 .accounting-note{padding:1rem;border-inline-start:3px solid #2563eb;background:#eff6ff;line-height:1.7}.accounting-scope{display:grid;gap:.5rem;max-width:38rem}.accounting-scope select{width:100%;min-width:0}.accounting-table{overflow:auto}.accounting-money{white-space:nowrap;font-variant-numeric:tabular-nums}.accounting-pagination,.accounting-heading{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1rem}.accounting-heading{justify-content:space-between}.accounting-metadata{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.6rem 1rem}.accounting-metadata dd{margin:0;overflow-wrap:anywhere}.accounting-workspace h1{margin-top:0}.accounting-table tfoot{font-weight:600;background:#f8fafc}@media(max-width:700px){.accounting-metadata{grid-template-columns:1fr}.accounting-scope{max-width:100%}.accounting-table table{display:table;min-width:32rem}}
 
 .journal-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.journal-composer label{display:grid;gap:.4rem}.journal-composer input,.journal-composer select{width:100%;min-width:0}.journal-composer fieldset{border:0;padding:0;margin:1rem 0}.journal-line{display:grid;grid-template-columns:minmax(12rem,2fr) repeat(2,minmax(6rem,1fr)) minmax(10rem,2fr) auto;gap:.6rem;padding:1rem 0;border-bottom:1px solid #e5e8ef;align-items:end}.journal-composer .journal-acknowledgement{display:flex;align-items:center;gap:.6rem;margin-top:1rem;line-height:1.7}.journal-acknowledgement input{width:auto}.journal-composer [role=status]{overflow-wrap:anywhere;color:#174a3d}.journal-composer select option{overflow-wrap:anywhere}@media(max-width:1100px){.journal-line{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.journal-fields,.journal-line{grid-template-columns:1fr}.journal-composer button{max-width:100%;white-space:normal}.journal-composer .accounting-table td{overflow-wrap:anywhere}}
+
+
+/* Merchant home: honest, permission-scoped foundation for the hybrid command center. */
+.merchant-home{display:grid;gap:1.4rem;max-width:1160px;margin-inline:auto}
+.merchant-home h1,.merchant-home h2{margin:0 0 .7rem}
+.merchant-home h1{font-size:clamp(1.45rem,3vw,2rem)}
+.merchant-home h2{font-size:1.1rem}
+.merchant-home p{line-height:1.75}
+.merchant-home section{margin:0}
+.merchant-home-intro{background:linear-gradient(135deg,#eff6ff,#fff 75%);border:1px solid #dbeafe}
+.merchant-home-eyebrow{color:#1d4ed8;font-weight:700;margin:0 0 .4rem}
+.merchant-home-indicators{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.2rem}
+.merchant-home-indicators span{background:#fff;border:1px solid #cbd5e1;border-radius:999px;padding:.45rem .8rem;font-size:.85rem}
+.merchant-home-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.8rem}
+.merchant-home-action{display:grid;gap:.4rem;text-decoration:none;color:inherit;padding:1rem;border:1px solid #e2e8f0;border-radius:12px;background:#fff;min-height:120px}
+.merchant-home-action:hover,.merchant-home-action:focus-visible{border-color:#2563eb;outline-offset:3px}
+.merchant-home-action span{font-size:.85rem;line-height:1.5;color:#475569}
+.merchant-home-action span:last-child{justify-self:end;color:#1d4ed8}
+.merchant-home-columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:1rem}
+.merchant-home-heading{display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.merchant-home-heading a{font-size:.9rem}
+.merchant-home-list{list-style:none;margin:0;padding:0}
+.merchant-home-list li{display:flex;align-items:flex-start;justify-content:space-between;gap:.9rem;padding:.8rem 0;border-bottom:1px solid #e2e8f0}
+.merchant-home-list li span,.merchant-home-list li time{overflow-wrap:anywhere}
+.merchant-home-list small,.merchant-home-list time{font-size:.8rem;color:#64748b}
+.merchant-home-list small{display:block}
+.merchant-home-footnote{font-size:.78rem;color:#64748b;margin-bottom:0}
+.merchant-home-notice{border:1px dashed #cbd5e1;background:#f8fafc}
+@media(max-width:700px){.merchant-home{gap:1rem}.merchant-home-intro{padding:1.2rem}.merchant-home-grid{grid-template-columns:1fr}.merchant-home-columns{grid-template-columns:1fr}.merchant-home-action{min-height:auto}}
