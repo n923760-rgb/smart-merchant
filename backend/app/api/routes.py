@@ -77,6 +77,8 @@ PERMISSIONS = (
     "accounting.journals.reverse",
     "accounting.periods.read",
     "accounting.periods.manage",
+    "accounting.opening.read",
+    "accounting.opening.manage",
 )
 ROLES = ("OWNER", "ADMIN", "MANAGER", "ACCOUNTANT", "SUPERVISOR", "CASHIER", "INVENTORY_MANAGER")
 
@@ -174,7 +176,7 @@ def bootstrap(
         granted = (
             PERMISSIONS
             if code == "OWNER"
-            else tuple(p for p in PERMISSIONS if p.startswith("accounting.") and p != "accounting.periods.manage")
+            else tuple(p for p in PERMISSIONS if p.startswith("accounting.") and p not in {"accounting.periods.manage", "accounting.opening.manage"})
             if code == "ACCOUNTANT"
             else ("organization.read", "branches.read", "terminals.read")
             if code in {"MANAGER", "SUPERVISOR"}
