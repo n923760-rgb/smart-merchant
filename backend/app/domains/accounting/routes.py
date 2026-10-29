@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -11,11 +12,12 @@ from app.core.audit import record
 from app.core.database import db_session
 from app.core.exceptions import ConflictError, NotFoundError
 from app.core.permissions import Context, context
-from app.domains.accounting.models import Account, JournalEntry
-from app.domains.accounting.schemas import AccountIn, JournalIn, ReversalIn
+from app.domains.accounting.models import Account, AccountingPeriod, JournalEntry
+from app.domains.accounting.schemas import AccountIn, AccountingPeriodIn, JournalIn, ReversalIn
 from app.domains.accounting.service import (
     authorize,
     journal_dict,
+    lock_organization,
     post_journal,
     reverse_journal,
     scoped_entry,
@@ -97,6 +99,112 @@ def accounts(
         .limit(page_size)
     ).all()
     return page_of(rows, page, page_size, account_dict)
+
+
+
+def period_dict(period: AccountingPeriod) -> dict:
+    return {
+        "id": str(period.id),
+        "organization_id": str(period.organization_id),
+        "start_date": period.start_date.isoformat(),
+        "end_date": period.end_date.isoformat(),
+        "status": period.status,
+        "closed_at": period.closed_at.isoformat() if period.closed_at else None,
+        "closed_by": str(period.closed_by) if period.closed_by else None,
+    }
+
+
+@router.get("/periods")
+def periods(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    ctx.require("accounting.periods.read")
+    rows = db.scalars(
+        select(AccountingPeriod)
+        .where(AccountingPeriod.organization_id == ctx.organization.id)
+        .order_by(AccountingPeriod.start_date, AccountingPeriod.id)
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    ).all()
+    return page_of(rows, page, page_size, period_dict)
+
+
+@router.post("/periods", status_code=201)
+def create_period(
+    payload: AccountingPeriodIn,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    ctx.require("accounting.periods.manage")
+    lock_organization(db, ctx)
+    overlapping = db.scalar(
+        select(AccountingPeriod.id).where(
+            AccountingPeriod.organization_id == ctx.organization.id,
+            AccountingPeriod.start_date <= payload.end_date,
+            AccountingPeriod.end_date >= payload.start_date,
+        )
+    )
+    if overlapping is not None:
+        raise ConflictError()
+    period = AccountingPeriod(
+        organization_id=ctx.organization.id,
+        start_date=payload.start_date,
+        end_date=payload.end_date,
+        status="OPEN",
+    )
+    db.add(period)
+    db.flush()
+    record(
+        db,
+        "ACCOUNTING_PERIOD_CREATED",
+        "accounting_period",
+        period.id,
+        ctx.organization.id,
+        ctx.user.id,
+        after={"start_date": period.start_date.isoformat(), "end_date": period.end_date.isoformat()},
+    )
+    commit(db)
+    return period_dict(period)
+
+
+@router.post("/periods/{period_id}/close")
+def close_period(
+    period_id: UUID,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    ctx.require("accounting.periods.manage")
+    lock_organization(db, ctx)
+    period = db.scalar(
+        select(AccountingPeriod)
+        .where(
+            AccountingPeriod.id == period_id,
+            AccountingPeriod.organization_id == ctx.organization.id,
+        )
+        .with_for_update()
+    )
+    if period is None:
+        raise NotFoundError()
+    if period.status != "OPEN":
+        raise ConflictError()
+    period.status = "CLOSED"
+    period.closed_at = datetime.now(timezone.utc)
+    period.closed_by = ctx.user.id
+    record(
+        db,
+        "ACCOUNTING_PERIOD_CLOSED",
+        "accounting_period",
+        period.id,
+        ctx.organization.id,
+        ctx.user.id,
+        before={"status": "OPEN"},
+        after={"status": "CLOSED", "closed_at": period.closed_at.isoformat()},
+    )
+    commit(db)
+    return period_dict(period)
 
 
 @router.post("/journals", status_code=201)
