@@ -1,0 +1,54 @@
+{
+  "title": "SM-ACC-004C1: one-time idempotent organization opening balance cutover",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-29 requested continuation of accounting-first Hybrid V6; specific initial cutover is a narrowly scoped design candidate subject to CI and review.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "79c4592df139d5249d6622597d1ad0bdf06c5635",
+  "scope": "One initial opening journal and immutable org-scoped batch with date cutoff and exact balance, replay, tenant permissions, SQL protection and tests; preserve normal ledger and optional POS.",
+  "out_of_scope": "annual rollover, opening balance corrections, automatic offset/equity, complete financial reporting, invoice/AR/AP, external commerce, ZATCA and production deployment",
+  "task": "Implement ADR 0015: organization-scoped, exactly-once opening journal with posted-journal batch, cutoff and audit. Protect in DB and APIs; test rollback, same-key replay and cross-tenant isolation.",
+  "validation": "Governance packet validation and exact-head Foundation+Accounting Web+Governance CI with migrations, disposable Postgres, idempotency and browser; no production or live merchant data.",
+  "stop_conditions": "Change of main, unsafe accounting assumptions, cross-tenant leaks, direct-SQL financial bypass, failed migration/tests, non-atomic journal/metadata creation.",
+  "success_criteria": "Only one opening per org, balanced leaf journal, correct cutover, idempotent replay, SQL bypass denial, global owner grant enforced, accountant read, full CI and review pass.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_004C1_OPENING_BALANCES.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/SM-ACC-004C1-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_004C1_OPENING_BALANCES.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "docs/adr/0015-opening-balance-cutover.md",
+    "backend/app/api/routes.py",
+    "backend/app/domains/accounting/models.py",
+    "backend/app/domains/accounting/routes.py",
+    "backend/app/domains/accounting/schemas.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/migrations/versions/0005_opening_balance.py",
+    "backend/tests/test_opening_balances.py"
+  ]
+}
