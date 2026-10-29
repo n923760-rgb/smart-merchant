@@ -97,6 +97,9 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
   await form.getByRole('button', { name: button, exact: true }).click();
   const result = await response;
   assert.equal(result.status(), expected, `Rendered ${resource} create status`);
+  // Capture the response body before React clears/re-renders the form.
+  // Waiting for UI confirmation first can evict the Playwright network resource.
+  const responseBody = await result.json();
   // Next.js also uses role=alert in its screen-reader route announcer shadow DOM.
   // Only this page's explicit mutation error is relevant to form outcome.
   const mutationError = page.locator('section > p[role="alert"]');
@@ -113,7 +116,7 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
       assert.ok(retained === value, `Rejected ${resource} retains ${name} input`);
     }
   }
-  return result.json();
+  return responseBody;
 }
 
 await ready();
