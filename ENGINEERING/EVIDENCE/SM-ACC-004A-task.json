@@ -1,0 +1,53 @@
+{
+  "title": "SM-ACC-004A: immutable, tenant-scoped account hierarchy with summary-posting exclusion",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Current owner instruction 2026-10-29: ممتاز نكمل؛ previous owner continuation and qualified merge permissions in governance project profile. This is one bounded slice of issue #25.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "930f5c6e4831a63ca33deb744af8f62cfbd10ea8",
+  "scope": "Add optional parent account and postability to existing account chart without breaking legacy flat posting; same-type group parents, immutability of structural attributes, SQL and service protection against summary posting; tests and ADR.",
+  "out_of_scope": "Accounting periods, closing, opening balances, invoices, POS, external integrations, payments, UI redesign, fiscal or production changes.",
+  "task": "Create bounded account-group support: existing accounts default postable root; new nonpostable group can have same-type children; validate tenancy, parent state and structural immutability; enforce exclusion from journals even against direct database writes. Preserve reversal and journal replay.",
+  "validation": "GitHub governance packet validation; exact-source Foundation CI including Alembic PostgreSQL upgrade/check/downgrade/upgrade and backend tests; Accounting Web CI and Governance CI; isolated diff/same-session review. Local Postgres and device tests NOT RUN.",
+  "stop_conditions": "Source mismatch, unauthorized mutation, unsupported Alembic migration, failed exact-source CI, account/journal financial regression, data loss or unclear business policy.",
+  "success_criteria": "Legacy flat accounts post unchanged, summary grouping works, type/tenant/leaf parent violations refused, group journal lines cannot be persisted, posted journals and replay/reversal remain immutable, role checks unchanged, all CI pass.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_004A_ACCOUNT_HIERARCHY.md",
+  "allowed_paths": [
+    "backend/app/domains/accounting/models.py",
+    "backend/app/domains/accounting/schemas.py",
+    "backend/app/domains/accounting/routes.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/migrations/versions/0003_account_hierarchy.py",
+    "backend/tests/test_account_hierarchy.py",
+    "docs/adr/0013-account-hierarchy.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-004A-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_004A_ACCOUNT_HIERARCHY.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ]
+}
