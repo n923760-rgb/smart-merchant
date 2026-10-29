@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from uuid import UUID
 
@@ -9,7 +9,7 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.core.idempotency import request_digest
 from app.core.models import AuditLog, Organization
 from app.core.permissions import Context, scoped_branch
-from app.domains.accounting.models import Account, JournalEntry, JournalLine
+from app.domains.accounting.models import Account, AccountingPeriod, JournalEntry, JournalLine
 from app.domains.accounting.schemas import JournalIn, ReversalIn
 
 
@@ -124,6 +124,17 @@ def write_entry(
     if any(not account.is_postable for account in accounts):
         raise ConflictError()
     if reversal_of is None and any(not account.is_active for account in accounts):
+        raise ConflictError()
+    # Only new journal effects are subject to the closing barrier; existing
+    # same-request replays return their historical result without another write.
+    if db.scalar(
+        select(AccountingPeriod.id).where(
+            AccountingPeriod.organization_id == ctx.organization.id,
+            AccountingPeriod.start_date <= payload.booking_date,
+            AccountingPeriod.end_date >= payload.booking_date,
+            AccountingPeriod.status == "CLOSED",
+        )
+    ) is not None:
         raise ConflictError()
     if ctx.organization.currency != "SAR":
         # The initial ledger qualifies SAR (two-decimal amounts), not every currency.
