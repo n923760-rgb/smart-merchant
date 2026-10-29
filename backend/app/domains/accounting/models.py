@@ -3,6 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     Date,
     DateTime,
@@ -26,6 +27,12 @@ class Account(IdMixin, Base):
     __table_args__ = (
         UniqueConstraint("organization_id", "code", name="uq_accounts_org_code"),
         UniqueConstraint("id", "organization_id", name="uq_accounts_id_org"),
+        ForeignKeyConstraint(
+            ["parent_id", "organization_id"], ["accounts.id", "accounts.organization_id"],
+            name="fk_accounts_parent_org",
+        ),
+        CheckConstraint("parent_id IS NULL OR parent_id <> id", name="ck_accounts_not_self_parent"),
+        Index("ix_accounts_org_parent", "organization_id", "parent_id"),
         CheckConstraint(
             "account_type IN ('ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE')",
             name="ck_accounts_type",
@@ -35,6 +42,10 @@ class Account(IdMixin, Base):
     code: Mapped[str] = mapped_column(String(40))
     name: Mapped[str] = mapped_column(String(180))
     account_type: Mapped[str] = mapped_column(String(20))
+    parent_id: Mapped[UUID | None] = mapped_column(Uuid, nullable=True)
+    is_postable: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True, server_default=text("true")
+    )
     is_active: Mapped[bool] = mapped_column(default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
