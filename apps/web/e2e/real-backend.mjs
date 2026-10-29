@@ -97,9 +97,6 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
   await form.getByRole('button', { name: button, exact: true }).click();
   const result = await response;
   assert.equal(result.status(), expected, `Rendered ${resource} create status`);
-  // Capture the response body before React clears/re-renders the form.
-  // Waiting for UI confirmation first can evict the Playwright network resource.
-  const responseBody = await result.json();
   // Next.js also uses role=alert in its screen-reader route announcer shadow DOM.
   // Only this page's explicit mutation error is relevant to form outcome.
   const mutationError = page.locator('section > p[role="alert"]');
@@ -108,6 +105,15 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
     // its backend mutation committed and query invalidation refreshed the list.
     await page.waitForFunction(key => document.querySelector(`input[name="${key}"]`)?.value === '', key);
     assert.equal(await mutationError.count(), 0, 'No false/stale success error');
+    // Chromium may discard the POST response body while React repaints the page.
+    // Instead verify the committed record through the real authorized backend/BFF.
+    // This checks durable mutation, not just an optimistic UI notification.
+    const records = (await bff(page, `${resource}?page_size=100`)).items;
+    const created = records.find(row => resource === 'users'
+      ? row.email === fields.email
+      : row.name === fields.name && row.branch_id === fields.branch_id);
+    assert.ok(created, `Committed ${resource} record is queryable`);
+    return created;
   } else {
     await mutationError.waitFor();
     for (const [name, value] of Object.entries(fields)) {
@@ -116,7 +122,7 @@ async function submitCreate(page, resource, fields, button, expected = 201) {
       assert.ok(retained === value, `Rejected ${resource} retains ${name} input`);
     }
   }
-  return responseBody;
+  return null; // Expected rejection has no created resource.
 }
 
 await ready();
