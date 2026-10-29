@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-004B1 — organization period close barrier (candidate, 2026-10-29)
+
+Follow-up to merged account hierarchy #26 at `a316e492eb6348cfdfefe19e155beea64f737cdf`. First bounded [period-control ADR 0014](../docs/adr/0014-accounting-period-close.md): optional nonoverlapping organization periods with owner-only one-way closing and a PostgreSQL protected posting/reversal barrier. Existing service merchants without configured periods continue unaffected, with no POS dependency. See [task packet](EVIDENCE/SM-ACC-004B1-task.json) and [evidence report](REPORTS/SM_ACC_004B1_PERIOD_CLOSE.md). Candidate only until exact-source CI and merge.
+
+**Remaining SM-ACC-004B:** an explicit calendar activation policy for exhaustive periods and controlled reopening/adjustment, subject to separate authority and tests. **SM-ACC-004C:** exact-money opening balances after period policy, then service invoice → partial/full receipt → AR/AP → reconciled reports, independent of terminal/stock/shift. No fiscal/provider or production acceptance yet.
+
 ## SM-ACC-004A — account hierarchy (implementation candidate, 2026-10-29)
 
 **Boundary:** This first slice of [SM-ACC-004 / issue #25](https://github.com/n923760-rgb/smart-merchant/issues/25) adds same-type account summary groups and posting leaves while preserving legacy flat posting. [ADR 0013](../docs/adr/0013-account-hierarchy.md) defines immutable structural fields and PostgreSQL-level group-posting exclusion. Proposed code, migration, tests and [task packet](EVIDENCE/SM-ACC-004A-task.json) are candidate-only until exact-source CI/review and successful merge; no merchant or production qualification is claimed.

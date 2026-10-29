@@ -18,6 +18,18 @@ class AccountIn(Input):
     is_postable: bool = True
 
 
+
+class AccountingPeriodIn(Input):
+    start_date: date
+    end_date: date
+
+    @model_validator(mode="after")
+    def positive_range(self):
+        if self.end_date < self.start_date:
+            raise ValueError("The period end must not precede the start.")
+        return self
+
+
 class LineIn(Input):
     account_id: UUID
     debit: Decimal = Field(default=Decimal("0"), ge=0, max_digits=18, decimal_places=2)

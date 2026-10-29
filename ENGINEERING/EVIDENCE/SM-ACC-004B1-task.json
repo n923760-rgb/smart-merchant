@@ -1,0 +1,54 @@
+{
+  "title": "SM-ACC-004B1: tenant-safe organization period close barrier",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner 2026-10-29 confirmed continued scoped development and existing qualified merge authority per governance; issue #25 accounting-first sequencing.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "a316e492eb6348cfdfefe19e155beea64f737cdf",
+  "scope": "Optional, organization-wide nonoverlapping date ranges with one-way close and server+PostgreSQL journal posting barrier; owner global management and accountant read, existing ledger and service no-POS behavior preserved.",
+  "out_of_scope": "Full required accounting calendar, reopening, opening balances, billing, AR/AP, POS, store integrations, AI, production schema changes, financial auto-posting.",
+  "task": "Implement ADR 0014 as bounded additive schema/API/SQL guard, account for concurrency against journal posting, add disposable PostgreSQL negative tenant/race tests. No production deploy.",
+  "validation": "Exact-source Foundation CI (ruff, mypy, migrations upgrade/check/downgrade/upgrade, pytest on disposable PostgreSQL), Governance CI, Accounting Web CI with actual BFF/browser; full diff reviewer and packet validation; physical/pilot/production NOT RUN.",
+  "stop_conditions": "Main/source mismatch or overlapping live PR, permission leakage, destructive migration, broken historic journal replay or reversal, failed CI, uncertainty of SQL locking semantics, external secrets or data.",
+  "success_criteria": "Owner can create non-overlapping periods and close them, accountant can read but not modify, branch grants cannot manage calendar, API/SQL journal posting into closed period is denied atomically even concurrent with closing; replay preserves original, legacy no-period journal flow remains.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_004B1_PERIOD_CLOSE.md",
+  "allowed_paths": [
+    "docs/adr/0014-accounting-period-close.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-004B1-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_004B1_PERIOD_CLOSE.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "backend/app/api/routes.py",
+    "backend/app/domains/accounting/models.py",
+    "backend/app/domains/accounting/routes.py",
+    "backend/app/domains/accounting/schemas.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/migrations/versions/0004_accounting_periods.py",
+    "backend/tests/test_accounting_periods.py"
+  ]
+}

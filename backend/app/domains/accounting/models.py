@@ -52,6 +52,31 @@ class Account(IdMixin, Base):
     )
 
 
+
+class AccountingPeriod(IdMixin, Base):
+    __tablename__ = "accounting_periods"
+    __table_args__ = (
+        UniqueConstraint("id", "organization_id", name="uq_period_id_org"),
+        CheckConstraint("start_date <= end_date", name="ck_period_dates"),
+        CheckConstraint("status IN ('OPEN', 'CLOSED')", name="ck_period_status"),
+        CheckConstraint(
+            "(status = 'OPEN' AND closed_at IS NULL AND closed_by IS NULL) "
+            "OR (status = 'CLOSED' AND closed_at IS NOT NULL AND closed_by IS NOT NULL)",
+            name="ck_period_closure_state",
+        ),
+        Index("ix_periods_org_start", "organization_id", "start_date", "end_date"),
+    )
+    organization_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("organizations.id"))
+    start_date: Mapped[date] = mapped_column(Date)
+    end_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(12), nullable=False, default="OPEN")
+    closed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    closed_by: Mapped[UUID | None] = mapped_column(Uuid, ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
+
+
 class JournalEntry(IdMixin, Base):
     __tablename__ = "journal_entries"
     __table_args__ = (
