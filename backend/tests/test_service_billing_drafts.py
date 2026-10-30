@@ -1,5 +1,6 @@
 """Internal draft must never be mistaken for an issued tax invoice."""
 
+from concurrent.futures import ThreadPoolExecutor
 from uuid import UUID, uuid4
 
 import pytest
@@ -217,3 +218,30 @@ def test_other_organization_cannot_read_customer_draft(client, merchant):
     assert client.get(BASE + "/" + created.json()["id"], headers=other).status_code == 404
     assert client.get(BASE, headers=other).json()["items"] == []
     assert client.post(BASE, headers=other, json=draft_payload()).status_code == 201
+
+
+def test_concurrent_same_request_is_single_immutable_document(client, merchant):
+    headers = merchant["headers"]
+    data = draft_payload()
+
+    def attempt():
+        return client.post(BASE, headers=headers, json=data)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        calls = [pool.submit(attempt) for _ in range(2)]
+        responses = [call.result() for call in calls]
+    assert [response.status_code for response in responses] == [201, 201]
+    assert responses[0].json() == responses[1].json()
+    with SessionLocal() as db:
+        drafts = db.scalar(
+            select(func.count()).select_from(ServiceDraft).where(
+                ServiceDraft.organization_id == UUID(merchant["org"])
+            )
+        )
+        lines = db.scalar(
+            select(func.count()).select_from(ServiceDraftLine).where(
+                ServiceDraftLine.organization_id == UUID(merchant["org"])
+            )
+        )
+        assert drafts == 1
+        assert lines == 2
