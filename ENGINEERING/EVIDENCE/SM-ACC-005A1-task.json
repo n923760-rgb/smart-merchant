@@ -4,7 +4,7 @@
   "authority": "Owner requested continuation on 2026-10-30, accounting-first Hybrid V6. Narrow bounded invoice draft task under issue #31.",
   "repository": "n923760-rgb/smart-merchant",
   "official_branch": "main",
-  "expected_official_head": "79c4592df139d5249d6622597d1ad0bdf06c5635",
+  "expected_official_head": "160dfb9fc1624a53d7e77f58bbc05715f399d45e",
   "scope": "Nonfiscal organization draft: customer snapshot, 1-100 service lines, deterministic precise quantity × price, exact total, immutable idempotency, tenant/RBAC, SQL guarantees and tests.",
   "out_of_scope": "Real tax invoice, issued number, VAT categorization, receivables, payment, journals, POS, warehouse, external provider, production migration, customer master merging.",
   "task": "Implement ADR 0016 in an additive billing module and migration; preserve existing accounting APIs, tests and UX.",

@@ -65,6 +65,19 @@ class JournalIn(Input):
         return self
 
 
+class OpeningBalanceIn(Input):
+    request_id: UUID
+    booking_date: date
+    description: str = Field(min_length=1, max_length=500)
+    lines: list[LineIn] = Field(min_length=2, max_length=100)
+
+    @model_validator(mode="after")
+    def balanced(self):
+        if sum(line.debit for line in self.lines) != sum(line.credit for line in self.lines):
+            raise ValueError("Opening debits and credits must balance exactly.")
+        return self
+
+
 class ReversalIn(Input):
     request_id: UUID
     booking_date: date

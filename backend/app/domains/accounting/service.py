@@ -9,8 +9,14 @@ from app.core.exceptions import ConflictError, NotFoundError
 from app.core.idempotency import request_digest
 from app.core.models import AuditLog, Organization
 from app.core.permissions import Context, scoped_branch
-from app.domains.accounting.models import Account, AccountingPeriod, JournalEntry, JournalLine
-from app.domains.accounting.schemas import JournalIn, ReversalIn
+from app.domains.accounting.models import (
+    Account,
+    AccountingPeriod,
+    JournalEntry,
+    JournalLine,
+    OpeningBalanceBatch,
+)
+from app.domains.accounting.schemas import JournalIn, OpeningBalanceIn, ReversalIn
 
 
 def authorize(
@@ -136,6 +142,13 @@ def write_entry(
         )
     ) is not None:
         raise ConflictError()
+    cutoff = db.scalar(
+        select(OpeningBalanceBatch.booking_date).where(
+            OpeningBalanceBatch.organization_id == ctx.organization.id,
+        )
+    )
+    if cutoff is not None and payload.booking_date <= cutoff:
+        raise ConflictError()
     if ctx.organization.currency != "SAR":
         # The initial ledger qualifies SAR (two-decimal amounts), not every currency.
         raise ConflictError()
@@ -206,6 +219,13 @@ def reverse_journal(db: Session, ctx: Context, entry_id: UUID, payload: Reversal
     replay = existing_request(db, ctx, payload.request_id, digest)
     if replay:
         return replay
+    if db.scalar(
+        select(OpeningBalanceBatch.id).where(
+            OpeningBalanceBatch.organization_id == ctx.organization.id,
+            OpeningBalanceBatch.journal_id == entry_id,
+        )
+    ) is not None:
+        raise ConflictError()
     if original.reversal_of_id is not None or db.scalar(
         select(JournalEntry.id).where(
             JournalEntry.organization_id == ctx.organization.id,
@@ -236,3 +256,84 @@ def reverse_journal(db: Session, ctx: Context, entry_id: UUID, payload: Reversal
         }
     )
     return write_entry(db, ctx, reversal, digest, reversal_of=original)
+
+
+def post_initial_opening(
+    db: Session, ctx: Context, payload: OpeningBalanceIn
+) -> tuple[OpeningBalanceBatch, JournalEntry]:
+    # Initial cutover is a global owner action; ordinary branch posting rights
+    # must not authorize an organization's opening balances.
+    ctx.require("accounting.opening.manage")
+    ctx.require("accounting.journals.post")
+    lock_organization(db, ctx)
+
+    entry_payload = JournalIn.model_validate(
+        {
+            "request_id": payload.request_id,
+            "booking_date": payload.booking_date,
+            "branch_id": None,
+            "description": payload.description,
+            "lines": [line.model_dump(mode="json") for line in payload.lines],
+        }
+    )
+    digest = request_digest({
+        "operation": "INITIAL_OPENING_BALANCE",
+        "journal_digest": journal_digest(entry_payload),
+    })
+    old = existing_request(db, ctx, payload.request_id, digest)
+    if old is not None:
+        previous = db.scalar(
+            select(OpeningBalanceBatch).where(
+                OpeningBalanceBatch.organization_id == ctx.organization.id,
+                OpeningBalanceBatch.journal_id == old.id,
+            )
+        )
+        if previous is None:
+            raise ConflictError()
+        return previous, old
+
+    if db.scalar(
+        select(OpeningBalanceBatch.id).where(
+            OpeningBalanceBatch.organization_id == ctx.organization.id
+        )
+    ) is not None:
+        raise ConflictError()
+
+    # A cutover can be initialized after later-dated ordinary journals, but it
+    # may never overwrite or reclassify transactions on or before its date.
+    if db.scalar(
+        select(JournalEntry.id).where(
+            JournalEntry.organization_id == ctx.organization.id,
+            JournalEntry.status == "POSTED",
+            JournalEntry.booking_date <= payload.booking_date,
+        )
+    ) is not None:
+        raise ConflictError()
+
+    entry = write_entry(db, ctx, entry_payload, digest)
+    db.flush()
+    batch = OpeningBalanceBatch(
+        organization_id=ctx.organization.id,
+        journal_id=entry.id,
+        booking_date=payload.booking_date,
+        created_by=ctx.user.id,
+    )
+    db.add(batch)
+    db.flush()  # Assign the durable batch UUID before writing its audit event.
+    db.add(
+        AuditLog(
+            organization_id=ctx.organization.id,
+            branch_id=None,
+            user_id=ctx.user.id,
+            action="INITIAL_OPENING_BALANCE_POSTED",
+            entity_type="opening_balance",
+            entity_id=batch.id,
+            after_data={
+                "journal_id": str(entry.id),
+                "booking_date": payload.booking_date.isoformat(),
+                "request_id": str(payload.request_id),
+            },
+        )
+    )
+    db.flush()
+    return batch, entry
