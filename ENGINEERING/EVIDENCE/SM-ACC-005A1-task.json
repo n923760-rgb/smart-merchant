@@ -1,0 +1,57 @@
+{
+  "title": "SM-ACC-005A1: immutable service billing draft and exact-money pre-tax math",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner requested continuation on 2026-10-30, accounting-first Hybrid V6. Narrow bounded invoice draft task under issue #31.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "160dfb9fc1624a53d7e77f58bbc05715f399d45e",
+  "scope": "Nonfiscal organization draft: customer snapshot, 1-100 service lines, deterministic precise quantity × price, exact total, immutable idempotency, tenant/RBAC, SQL guarantees and tests.",
+  "out_of_scope": "Real tax invoice, issued number, VAT categorization, receivables, payment, journals, POS, warehouse, external provider, production migration, customer master merging.",
+  "task": "Implement ADR 0016 in an additive billing module and migration; preserve existing accounting APIs, tests and UX.",
+  "validation": "Task packet, Foundation (incl disposable PostgreSQL and upgrade/downgrade) + Accounting Web + Governance exact SHA; replay/permission/direct SQL/no-financial-effect tests; no production data.",
+  "stop_conditions": "Failed CI, fiscal mislabeling, wrong rounding, cross-tenant data, force upgrade, source change, breaking POS/accounting.",
+  "success_criteria": "One-per-request immutable internal draft, exact pre-tax money, no journal or tax qualification, tenant-safe read/list and API create, migration tests pass.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005A1_DRAFT_SERVICE_BILLING.md",
+  "allowed_paths": [
+    "docs/adr/0016-service-billing-drafts.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005A1-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005A1_DRAFT_SERVICE_BILLING.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "backend/app/api/routes.py",
+    "backend/app/main.py",
+    "backend/app/domains/billing/__init__.py",
+    "backend/app/domains/billing/models.py",
+    "backend/app/domains/billing/schemas.py",
+    "backend/app/domains/billing/service.py",
+    "backend/app/domains/billing/routes.py",
+    "backend/migrations/versions/0006_service_drafts.py",
+    "backend/tests/test_service_billing_drafts.py",
+    "backend/migrations/env.py"
+  ]
+}

@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005A1 — internal service draft contract (candidate, 2026-10-30)
+
+After the accepted opening cutover PR #30 (`160dfb9fc1624a53d7e77f58bbc05715f399d45e`), the next bounded phase is an independently usable **internal service-billing draft** that does not require POS, stock, a cashier shift, or any external marketplace. [ADR 0016](../docs/adr/0016-service-billing-drafts.md) defines exactly-once immutable snapshots, customer display details, decimal string quantities/prices, deterministic **pre-tax** totals, permission-scoped read/create and durable SQL verification. See [task packet](EVIDENCE/SM-ACC-005A1-task.json) and [candidate report](REPORTS/SM_ACC_005A1_DRAFT_SERVICE_BILLING.md).
+
+**Do not treat a service draft as an issued Saudi tax invoice:** tax status is NOT_EVALUATED and there is no official invoice number, VAT, ZATCA submission, AR, payment or ledger posting. Later bounded phases: UX for preparing drafts; qualified issuance/tax rules and AR journal; full/partial collection and reconciled reporting. Native POS/external providers depend on those shared financial contracts. CI success is not fiscal or production acceptance.
+
 ## SM-ACC-004C1 — initial opening-balance journal (candidate, 2026-10-29)
 
 The optional organization periods/close barrier SM-ACC-004B1 was merged in PR #29 (`79c4592df139d5249d6622597d1ad0bdf06c5635`). This first [opening balance cutover ADR 0015](../docs/adr/0015-opening-balance-cutover.md) creates an exactly-once, balanced and immutable **organization-wide** opening journal and unique metadata record, using current ledger, request ID and period controls. It explicitly blocks ordinary backdating on/before the opening date while allowing later financial activity. Read the [task packet](EVIDENCE/SM-ACC-004C1-task.json) and [candidate evidence report](REPORTS/SM_ACC_004C1_OPENING_BALANCES.md). No merchant or production acceptance is implied; this remains a candidate until exact-source CI and review.
