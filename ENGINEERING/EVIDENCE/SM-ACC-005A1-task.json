@@ -51,6 +51,7 @@
     "backend/app/domains/billing/service.py",
     "backend/app/domains/billing/routes.py",
     "backend/migrations/versions/0006_service_drafts.py",
-    "backend/tests/test_service_billing_drafts.py"
+    "backend/tests/test_service_billing_drafts.py",
+    "backend/migrations/env.py"
   ]
 }
