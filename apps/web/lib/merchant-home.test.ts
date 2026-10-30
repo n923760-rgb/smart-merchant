@@ -45,6 +45,15 @@ describe("merchant home permission-scoped actions", () => {
     ).toEqual(["/accounting", "/branches", "/users", "/devices"]);
   });
 
+  it("shows service drafts only for organization-level billing access", () => {
+    expect(
+      merchantHomeActions(context(["billing.drafts.read"])).map((item) => item.href),
+    ).toEqual(["/service-drafts"]);
+    expect(
+      merchantHomeActions(context([], { abha: ["billing.drafts.read"] })),
+    ).toEqual([]);
+  });
+
   it("labels known admin activity and preserves unknown event type", () => {
     expect(merchantActivityLabel("BRANCH_CREATED")).toBe("إضافة فرع");
     expect(merchantActivityLabel("SOMETHING_NEW")).toBe("SOMETHING NEW");
