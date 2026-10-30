@@ -32,7 +32,7 @@ function scaled(value: string, decimals: number): bigint | null {
   if (typeof value !== "string" || !(decimals === 3 ? QTY : PRICE).test(value))
     return null;
   const [whole, fraction = ""] = value.split(".");
-  return BigInt(whole) * 10n ** BigInt(decimals)
+  return BigInt(whole) * BigInt(10) ** BigInt(decimals)
     + BigInt((fraction.padEnd(decimals, "0")) || "0");
 }
 
@@ -42,17 +42,17 @@ export function draftLineCents(
 ): bigint | null {
   const mills = scaled(quantity, 3);
   const cents = scaled(unitPrice, 2);
-  if (mills === null || cents === null || mills <= 0n) return null;
+  if (mills === null || cents === null || mills <= BigInt(0)) return null;
   // HALF_UP for nonnegative SAR amounts: multiply exact integer units,
   // then round the fractional cent up at half.
-  return (mills * cents + 500n) / 1000n;
+  return (mills * cents + BigInt(500)) / BigInt(1000);
 }
 
 export function draftTotalCents(
   lines: readonly Pick<DraftInputLine, "quantity" | "unit_price">[],
 ): bigint | null {
   if (lines.length === 0 || lines.length > 100) return null;
-  let total = 0n;
+  let total = BigInt(0);
   for (const line of lines) {
     const cents = draftLineCents(line.quantity, line.unit_price);
     if (cents === null) return null;
@@ -62,9 +62,9 @@ export function draftTotalCents(
 }
 
 export function formatDraftCents(value: bigint | null): string {
-  if (value === null || value < 0n) return "—";
-  const integer = value / 100n;
-  const decimal = (value % 100n).toString().padStart(2, "0");
+  if (value === null || value < BigInt(0)) return "—";
+  const integer = value / BigInt(100);
+  const decimal = (value % BigInt(100)).toString().padStart(2, "0");
   return `${integer.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}.${decimal}`;
 }
 
