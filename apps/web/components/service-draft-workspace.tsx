@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api, type Page } from "@/lib/api";
 import { type AuthorizationContext } from "@/lib/permissions";
@@ -35,6 +35,10 @@ export function ServiceDraftWorkspace() {
   const [error, setError] = useState("");
   const [saved, setSaved] = useState<ServiceDraft | null>(null);
   const [selected, setSelected] = useState<ServiceDraft | null>(null);
+  // The request identity is captured synchronously, before React can repaint
+  // or a rapid second tap can generate another request for the same draft.
+  const operationRef = useRef<DraftSubmission | null>(null);
+  const inFlightRef = useRef(false);
 
   const context = useQuery({
     queryKey: ["service-drafts", "context"],
@@ -60,6 +64,8 @@ export function ServiceDraftWorkspace() {
   }
 
   function reset() {
+    operationRef.current = null;
+    inFlightRef.current = false;
     setSaved(null);
     setSelected(null);
     setPending(null);
@@ -72,8 +78,8 @@ export function ServiceDraftWorkspace() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (saving || !canCreate || saved) return;
-    let submission = pending;
+    if (inFlightRef.current || saving || !canCreate || saved) return;
+    let submission = operationRef.current ?? pending;
     if (!submission) {
       if (!customerName.trim() || !validServiceDraftLines(lines) || preview === null) {
         setError("أكمل اسم العميل، والخدمات، والكميات والأسعار بصيغة صحيحة.");
@@ -89,8 +95,10 @@ export function ServiceDraftWorkspace() {
           unit_price: line.unit_price,
         })),
       };
+      operationRef.current = submission;
       setPending(submission);
     }
+    inFlightRef.current = true;
     setSaving(true);
     setError("");
     try {
@@ -103,6 +111,7 @@ export function ServiceDraftWorkspace() {
       }
       setSaved(result);
       setSelected(result);
+      operationRef.current = null;
       setPending(null);
       await drafts.refetch();
     } catch (cause) {
@@ -110,6 +119,7 @@ export function ServiceDraftWorkspace() {
       // Retain identical request ID and body. On ambiguous network outcomes,
       // retry the exact command rather than risk creating a duplicate draft.
     } finally {
+      inFlightRef.current = false;
       setSaving(false);
     }
   }
