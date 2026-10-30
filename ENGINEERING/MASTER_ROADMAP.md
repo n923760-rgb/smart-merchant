@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005A2 — accessible service-draft web preparation (candidate, 2026-10-30)
+
+On merged, tested internal draft API [PR #32](https://github.com/n923760-rgb/smart-merchant/pull/32) at `b46d4e9940bef3de37348ef3e055ecc858e80ddd`, add a real RTL/mobile-first owner/accountant screen for `billing/service-drafts`. This bounded UX supports customer and service lines, exact-integer before-tax previews matching backend round-half-up, creation with permanent request identity across ambiguous retries, read-only saved drafts, visible nonfiscal language and per-organization permission checks. [Issue #33](https://github.com/n923760-rgb/smart-merchant/issues/33), [task packet](EVIDENCE/SM-ACC-005A2-task.json) and [result report](REPORTS/SM_ACC_005A2_WEB_DRAFTS.md) hold evidence. Candidate only until exact-head CI and separate product review.
+
+**Later:** complete the qualified tax/legal invoice issuing engine, posted customer receivables, collection and reconciliation. Do not label drafts ZATCA invoices, generate fiscal QR, treat them as posted revenue, or make POS required for service accounting.
+
 ## SM-ACC-005A1 — internal service draft contract (candidate, 2026-10-30)
 
 After the accepted opening cutover PR #30 (`160dfb9fc1624a53d7e77f58bbc05715f399d45e`), the next bounded phase is an independently usable **internal service-billing draft** that does not require POS, stock, a cashier shift, or any external marketplace. [ADR 0016](../docs/adr/0016-service-billing-drafts.md) defines exactly-once immutable snapshots, customer display details, decimal string quantities/prices, deterministic **pre-tax** totals, permission-scoped read/create and durable SQL verification. See [task packet](EVIDENCE/SM-ACC-005A1-task.json) and [candidate report](REPORTS/SM_ACC_005A1_DRAFT_SERVICE_BILLING.md).
