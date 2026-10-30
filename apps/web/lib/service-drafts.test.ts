@@ -8,12 +8,12 @@ import {
 
 describe("nonfiscal draft money preview", () => {
   it("matches backend HALF_UP for exact fractional cents", () => {
-    expect(draftLineCents("1.500", "9.99")).toBe(1499n);
+    expect(draftLineCents("1.500", "9.99")).toBe(BigInt(1499));
     expect(draftTotalCents([
       { quantity: "1.500", unit_price: "9.99" },
       { quantity: "2.000", unit_price: "10.00" },
-    ])).toBe(3499n);
-    expect(formatDraftCents(3499n)).toBe("34.99");
+    ])).toBe(BigInt(3499));
+    expect(formatDraftCents(BigInt(3499))).toBe("34.99");
   });
 
   it("avoids IEEE-754 arithmetic for large valid values", () => {
