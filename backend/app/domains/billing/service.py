@@ -1,6 +1,6 @@
 """Strictly internal service drafts: no tax issuance or ledger effects."""
 
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from uuid import UUID
 
 from sqlalchemy import select
