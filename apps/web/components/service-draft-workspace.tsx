@@ -27,7 +27,9 @@ function makeLine(): DraftInputLine {
 export function ServiceDraftWorkspace() {
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
-  const [lines, setLines] = useState<DraftInputLine[]>([]);
+  const [lines, setLines] = useState<DraftInputLine[]>([
+    { id: "first", service_name: "", quantity: "1.000", unit_price: "0.00" },
+  ]);
   const [pending, setPending] = useState<DraftSubmission | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
