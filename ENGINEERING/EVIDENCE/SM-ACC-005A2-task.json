@@ -1,0 +1,54 @@
+{
+  "title": "SM-ACC-005A2: Arabic mobile-first nonfiscal service draft workspace",
+  "task_type": "IMPLEMENTATION",
+  "authority": "User 2026-10-30 requested continued delivery of Smart Merchant V6; implementation of approved issue #33 after invoice-draft backend PR #32 qualified and merged.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "b46d4e9940bef3de37348ef3e055ecc858e80ddd",
+  "scope": "Add a real Arabic RTL service-draft preparation page, exact integer-money preview, role-gated nav and owner home link, saved drafts list and permission-negative E2E. No tax issuance.",
+  "out_of_scope": "Issuing legally fiscal documents, tax calculations, AR, payment, POS integration, editable drafts, data export, production deployment.",
+  "task": "Create a mobile-first web workflow against existing nonfiscal service-draft API. Preserve client request ID/payload on ambiguous outcomes, never invent numbers, scope access to real org global permissions. Add unit & real-browser E2E and separate UX acceptance.",
+  "validation": "Exact-head Foundation/Accounting Web/Governance CI, unit money math, real Chromium+FastAPI+PostgreSQL rendered form, role/tenant negative; no production data.",
+  "stop_conditions": "Mislabeling draft as tax invoice, code/CI failure, unauthorized access, cache leak, float money arithmetic, replay duplicate, undefined source data.",
+  "success_criteria": "A permitted owner can save and inspect a service draft via real UI/BFF; exact pre-tax totals match backend; read-only visible to accountant; cashier/foreign organization denied; responsive RTL; all CI pass.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005A2_WEB_DRAFTS.md",
+  "allowed_paths": [
+    "ENGINEERING/EVIDENCE/SM-ACC-005A2-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005A2_WEB_DRAFTS.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    "apps/web/app/(dashboard)/service-drafts/page.tsx",
+    "apps/web/components/service-draft-workspace.tsx",
+    "apps/web/components/shell.tsx",
+    "apps/web/lib/service-drafts.ts",
+    "apps/web/lib/service-drafts.test.ts",
+    "apps/web/lib/merchant-home.ts",
+    "apps/web/lib/merchant-home.test.ts",
+    "apps/web/app/style.css",
+    "apps/web/e2e/real-backend.mjs"
+  ]
+}
