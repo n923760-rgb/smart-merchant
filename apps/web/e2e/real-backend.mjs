@@ -160,12 +160,16 @@ try {
     r => new URL(r.url()).pathname === '/api/proxy/billing/service-drafts'
       && r.request().method() === 'POST',
   );
-  await draftForm.getByRole('button', { name: 'حفظ مسودة داخلية' }).click();
+  // Two synchronous click events before a React repaint must still send one
+  // durable request identity (the in-flight ref blocks a second command).
+  await draftForm.getByRole('button', { name: 'حفظ مسودة داخلية' })
+    .evaluate(button => { button.click(); button.click(); });
   assert.equal((await draftPosted).status(), 201);
   await owner.page.getByRole('status').filter({ hasText: 'تم حفظ المسودة.' }).waitFor();
   const drafts = (await bff(owner.page, 'billing/service-drafts?page_size=20')).items;
   const savedDraft = drafts.find(row => row.customer_name === 'E2E Draft Customer');
   assert.ok(savedDraft, 'Internal draft persisted');
+  assert.equal(drafts.filter(row => row.customer_name === 'E2E Draft Customer').length, 1);
   assert.equal(savedDraft.amount_before_tax, '34.99');
   assert.equal(savedDraft.tax_status, 'NOT_EVALUATED');
   assert.equal(savedDraft.document_kind, 'INTERNAL_SERVICE_DRAFT');
