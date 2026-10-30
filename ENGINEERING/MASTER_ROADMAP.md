@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-004C1 — initial opening-balance journal (candidate, 2026-10-29)
+
+The optional organization periods/close barrier SM-ACC-004B1 was merged in PR #29 (`79c4592df139d5249d6622597d1ad0bdf06c5635`). This first [opening balance cutover ADR 0015](../docs/adr/0015-opening-balance-cutover.md) creates an exactly-once, balanced and immutable **organization-wide** opening journal and unique metadata record, using current ledger, request ID and period controls. It explicitly blocks ordinary backdating on/before the opening date while allowing later financial activity. Read the [task packet](EVIDENCE/SM-ACC-004C1-task.json) and [candidate evidence report](REPORTS/SM_ACC_004C1_OPENING_BALANCES.md). No merchant or production acceptance is implied; this remains a candidate until exact-source CI and review.
+
+**Next after acceptance:** design and implement the complete service invoice → partial/full receipt → receivable/payable subledger → immutable journal → ledger-reconciled reporting path. Fiscal year rollover, opening corrections, mandatory full-calendar activation, fiscal/ZATCA and commercial release are separately controlled future scope. Accounting-only merchants continue independently of native POS or inventory.
+
 ## SM-ACC-004B1 — organization period close barrier (candidate, 2026-10-29)
 
 Follow-up to merged account hierarchy #26 at `a316e492eb6348cfdfefe19e155beea64f737cdf`. First bounded [period-control ADR 0014](../docs/adr/0014-accounting-period-close.md): optional nonoverlapping organization periods with owner-only one-way closing and a PostgreSQL protected posting/reversal barrier. Existing service merchants without configured periods continue unaffected, with no POS dependency. See [task packet](EVIDENCE/SM-ACC-004B1-task.json) and [evidence report](REPORTS/SM_ACC_004B1_PERIOD_CLOSE.md). Candidate only until exact-source CI and merge.

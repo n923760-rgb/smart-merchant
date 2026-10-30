@@ -137,3 +137,26 @@ class JournalLine(IdMixin, Base):
     debit: Mapped[Decimal] = mapped_column(Numeric(18, 2))
     credit: Mapped[Decimal] = mapped_column(Numeric(18, 2))
     description: Mapped[str | None] = mapped_column(String(500))
+
+
+class OpeningBalanceBatch(IdMixin, Base):
+    __tablename__ = "opening_balance_batches"
+    __table_args__ = (
+        UniqueConstraint("organization_id", name="uq_opening_batches_org"),
+        UniqueConstraint("journal_id", name="uq_opening_batches_journal"),
+        ForeignKeyConstraint(
+            ["journal_id", "organization_id"],
+            ["journal_entries.id", "journal_entries.organization_id"],
+            name="fk_opening_batches_journal_org",
+        ),
+    )
+    organization_id: Mapped[UUID] = mapped_column(
+        Uuid, ForeignKey("organizations.id"), nullable=False
+    )
+    journal_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    booking_date: Mapped[date] = mapped_column(Date, nullable=False)
+    created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
+
