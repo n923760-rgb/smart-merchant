@@ -18,7 +18,7 @@ describe("nonfiscal draft money preview", () => {
 
   it("avoids IEEE-754 arithmetic for large valid values", () => {
     expect(formatDraftCents(draftLineCents("100.000", "900719925474.09")))
-      .toBe("900,719,925,474,090.00");
+      .toBe("90,071,992,547,409.00");
   });
 
   it("rejects invalid fractional precision and negative or empty numbers", () => {
