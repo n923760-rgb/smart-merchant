@@ -18,6 +18,17 @@ export function merchantHomeActions(context: AuthorizationContext): MerchantActi
       description: "دليل الحسابات والقيود حسب صلاحيتك",
     });
   }
+  if (
+    context.permissions.includes("billing.drafts.read") ||
+    context.permissions.includes("billing.drafts.create")
+  ) {
+    actions.push({
+      id: "service-drafts",
+      href: "/service-drafts",
+      title: "مسودات الخدمات",
+      description: "تجهيز مسودات داخلية للعملاء دون إصدار فاتورة ضريبية",
+    });
+  }
   if (canAccess(context, "branches.read")) {
     actions.push({
       id: "branches",
