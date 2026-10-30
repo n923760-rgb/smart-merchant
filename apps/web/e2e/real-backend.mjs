@@ -144,6 +144,37 @@ try {
   const permissions = await bff(owner.page, 'permissions');
   assert.ok(permissions.items.some(p => p.code === 'roles.manage'));
 
+  // Real rendered service draft -> BFF -> protected PostgreSQL. Not a tax invoice.
+  await owner.page.getByRole('link', { name: 'Service drafts', exact: true }).click();
+  const draftForm = owner.page.locator('.service-drafts-form');
+  await draftForm.getByRole('textbox', { name: 'اسم العميل' }).fill('E2E Draft Customer');
+  await draftForm.getByRole('textbox', { name: 'الخدمة 1' }).fill('Consulting');
+  await draftForm.getByRole('textbox', { name: 'الكمية' }).fill('1.500');
+  await draftForm.getByRole('textbox', { name: 'سعر الوحدة (ر.س)' }).fill('9.99');
+  await draftForm.getByRole('button', { name: 'إضافة خدمة', exact: true }).click();
+  await draftForm.getByRole('textbox', { name: 'الخدمة 2' }).fill('Setup');
+  await draftForm.getByRole('textbox', { name: 'الكمية' }).nth(1).fill('2.000');
+  await draftForm.getByRole('textbox', { name: 'سعر الوحدة (ر.س)' }).nth(1).fill('10.00');
+  await draftForm.getByText('34.99 ر.س').waitFor();
+  const draftPosted = owner.page.waitForResponse(
+    r => new URL(r.url()).pathname === '/api/proxy/billing/service-drafts'
+      && r.request().method() === 'POST',
+  );
+  // Two synchronous click events before a React repaint must still send one
+  // durable request identity (the in-flight ref blocks a second command).
+  await draftForm.getByRole('button', { name: 'حفظ مسودة داخلية' })
+    .evaluate(button => { button.click(); button.click(); });
+  assert.equal((await draftPosted).status(), 201);
+  await owner.page.getByRole('status').filter({ hasText: 'تم حفظ المسودة.' }).waitFor();
+  const drafts = (await bff(owner.page, 'billing/service-drafts?page_size=20')).items;
+  const savedDraft = drafts.find(row => row.customer_name === 'E2E Draft Customer');
+  assert.ok(savedDraft, 'Internal draft persisted');
+  assert.equal(drafts.filter(row => row.customer_name === 'E2E Draft Customer').length, 1);
+  assert.equal(savedDraft.amount_before_tax, '34.99');
+  assert.equal(savedDraft.tax_status, 'NOT_EVALUATED');
+  assert.equal(savedDraft.document_kind, 'INTERNAL_SERVICE_DRAFT');
+  assert.deepEqual((await bff(owner.page, 'accounting/journals')).items, []);
+
   // Real rendered branch form -> production BFF -> migrated PostgreSQL.
   await owner.page.getByRole('link', { name: 'Branches', exact: true }).click();
   await owner.page.locator('input[name="name"]').fill('E2E Abha');
@@ -234,10 +265,14 @@ try {
 
   const minimal = await signIn(browser, cashier.email, 'E2E Cashier', true);
   assert.equal(await minimal.page.getByRole('link', { name: 'Branches', exact: true }).count(), 0);
+  assert.equal(await minimal.page.getByRole('link', { name: 'Service drafts', exact: true }).count(), 0);
+  await bff(minimal.page, 'billing/service-drafts', 'GET', undefined, 403);
   await bff(minimal.page, 'branches', 'POST', { name: 'Forbidden', code: 'DENIED' }, 403);
 
   const foreign = await signIn(browser, betaEmail, 'E2E Beta Owner');
   assert.deepEqual((await bff(foreign.page, 'branches')).items, []);
+  assert.deepEqual((await bff(foreign.page, 'billing/service-drafts')).items, []);
+  await bff(foreign.page, 'billing/service-drafts/' + savedDraft.id, 'GET', undefined, 404);
   assert.equal((await bff(foreign.page, `branches/${branch.id}`, 'GET', undefined, 404)).code, 'NOT_FOUND');
   await bff(foreign.page, `branches/${branch.id}`, 'PATCH', { name: 'Intrusion' }, 404);
   await bff(foreign.page, `users/${manager.id}`, 'GET', undefined, 404);
