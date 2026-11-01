@@ -1,9 +1,8 @@
 # SM-ACC-005B1A — Customer identity prerequisite
 
-Resumed 2026-11-01: owner explicitly authorized uploading this branch and opening
-its PR ("كمل لديك الصلاحيه مني"). The prior automatic-approval block below is
-historical. Git CLI upload now lacks credentials; use the connected GitHub API
-for equivalent reviewed tree/commit/branch upload. Exact remote CI is pending.
+Resumed 2026-11-01 with explicit owner upload/PR authority. [PR #36](https://github.com/n923760-rgb/smart-merchant/pull/36) is open. Remote implementation source `f9d08d3a862d1e26674e338731d56e6577290944` has exactly the reviewed local tree `67ff55315a91c0c44bfe89b26e6104afe40e46be`. Backend qualification is PASS: **119 tests**, including all 26 new customer cases, Alembic upgrade/check/downgrade/upgrade and dependency audit. [Backend evidence](https://github.com/n923760-rgb/smart-merchant/actions/runs/41288866090/job/124795724833). Governance, secret scan and Compose smoke also passed. Remaining browser/mobile checks are in progress at this checkpoint. Final current-head qualification is recorded on the PR; this documentation-only successor must not inherit an old exact-head claim.
+
+The initial upload block in the historical section below was resolved by the owner's explicit authorization. Git CLI subsequently lacked credentials, so the connected GitHub API uploaded the equivalent reviewed tree.
 
 Repository: `n923760-rgb/smart-merchant`. Actor: Codex, single source writer and
 separate same-session review phase, not independent review.
@@ -24,7 +23,7 @@ and [ADR 0017](../../docs/adr/0017-customer-identity.md).
 - PostgreSQL integration regressions covering tenant/RBAC/replay/concurrency,
   direct SQL mutation/duplicates, input restrictions and transaction rollback.
 
-## Validation and execution environment
+## Historical local validation (2026-10-31)
 
 Current session has Git, Python 3.12 and an isolated checkout/venv. Historical
 no-shell environment records describe earlier sessions. Local PostgreSQL/Redis,
