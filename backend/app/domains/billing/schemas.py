@@ -1,5 +1,6 @@
 """Validated decimal-only inputs for internal service drafts, not tax invoices."""
 
+from datetime import date
 from decimal import Decimal
 from uuid import UUID
 
@@ -26,3 +27,11 @@ class ServiceDraftIn(Input):
     customer_name: str = Field(min_length=1, max_length=180)
     customer_email: EmailStr | None = None
     lines: list[ServiceDraftLineIn] = Field(min_length=1, max_length=100)
+
+
+class ServiceObligationPreviewIn(Input):
+    draft_id: UUID
+    customer_id: UUID
+    receivable_account_id: UUID
+    revenue_account_id: UUID
+    booking_date: date

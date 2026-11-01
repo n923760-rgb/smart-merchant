@@ -1,0 +1,21 @@
+{
+  "title": "SM-ACC-005B1B: nonposting customer service-obligation preview",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner explicitly authorized upload/PR on 2026-11-01 and then instructed continued development: تمام نكمل.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "b866fee7edc42e9add3bb4733200ad25642cb281",
+  "dependency": {"pr": 36, "branch": "feat/customer-identity-sm-acc-005b1a", "head": "e1a2c547ea2fa427deb3fcea027c1612efe9dd64", "tree": "4902f0b51baa643784cf6687031013a2799bfd9f"},
+  "scope": "Read-only customer/draft/account/date qualification preview, exact pre-tax allocations, explicit blocking reasons; stacked PR based on #36.",
+  "out_of_scope": "Merge, persistence, financial approval, actual AR/journal posting, fiscal invoice/tax computation, production migration/deployment, UI and provider integration.",
+  "task": "Implement ADR 0018 preview without mutating customer, source draft, journal, opening balances or audit. Tax and final amount due remain unknown, can_post remains false.",
+  "validation": "Tenant/global-RBAC/mapping/cutover/period/amount and no-side-effect PostgreSQL tests; lint/type and exact-source Foundation/Accounting Web/Governance checks.",
+  "stop_conditions": "Dependency/main mismatch or conflicting PR; any financial side effect, fiscal claim, wrong totals, PII audit leakage or failed required CI.",
+  "success_criteria": "Authorized callers can explicitly select same-tenant customer/draft/active leaf ASSET and REVENUE accounts, inspect precise allocations and blockers, with no approval or ledger effect.",
+  "requested_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci"],
+  "authorized_actions": ["read", "modify", "create_branch", "commit", "push", "open_pr", "run_ci"],
+  "protected_actions": ["merge", "force_push", "production_deploy", "release", "destructive_database_migration"],
+  "protected_action_authorizations": {},
+  "allowed_paths": ["backend/app/domains/billing/schemas.py", "backend/app/domains/billing/routes.py", "backend/app/domains/billing/obligation_preview.py", "backend/tests/test_service_obligation_preview.py", "docs/adr/0018-service-obligation-preview.md", "ENGINEERING/EVIDENCE/SM-ACC-005B1B-task.json", "ENGINEERING/REPORTS/SM_ACC_005B1B_OBLIGATION_PREVIEW.md", "ENGINEERING/MASTER_ROADMAP.md"],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005B1B_OBLIGATION_PREVIEW.md"
+}

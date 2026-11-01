@@ -11,10 +11,21 @@ from app.api.schemas import page_of
 from app.core.database import db_session
 from app.core.permissions import Context, context
 from app.domains.billing.models import ServiceDraft
-from app.domains.billing.schemas import ServiceDraftIn
+from app.domains.billing.obligation_preview import preview_obligation
+from app.domains.billing.schemas import ServiceDraftIn, ServiceObligationPreviewIn
 from app.domains.billing.service import create_draft, draft_dict, get_draft
 
 router = APIRouter(prefix="/api/v1/billing", tags=["billing"])
+
+
+@router.post("/service-obligation-previews")
+def service_obligation_preview(
+    payload: ServiceObligationPreviewIn,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    # POST carries a structured lookup, not a mutation. No commit or write audit.
+    return preview_obligation(db, ctx, payload)
 
 
 @router.post("/service-drafts", status_code=201)
