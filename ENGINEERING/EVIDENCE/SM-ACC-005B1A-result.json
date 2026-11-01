@@ -1,0 +1,108 @@
+{
+  "task_id": "SM-ACC-005B1A",
+  "task_type": "IMPLEMENTATION",
+  "task_packet_ref": "ENGINEERING/EVIDENCE/SM-ACC-005B1A-task.json",
+  "executor": "Codex /root; one writer; same-session review",
+  "execution_environment": "Local isolated Git/Python checkout plus connected GitHub API; qualified disposable PostgreSQL/Redis integration runs in GitHub Actions. Prior upload block resolved by explicit owner authorization on 2026-11-01.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "verified_remote_official_head": "b866fee7edc42e9add3bb4733200ad25642cb281",
+  "exact_tested_head": "f9d08d3a862d1e26674e338731d56e6577290944",
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "actions_actually_performed": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "validation": [
+    {
+      "check": "Local Ruff and Mypy",
+      "status": "PASS",
+      "evidence": [
+        "ruff check backend/app backend/tests: All checks passed; mypy backend/app: no issues in 38 files"
+      ]
+    },
+    {
+      "check": "Database-free unit regression",
+      "status": "PASS",
+      "evidence": [
+        "pytest tests/test_accounting_units.py tests/test_units.py -q: 15 passed"
+      ]
+    },
+    {
+      "check": "New customer test discovery",
+      "status": "PASS",
+      "evidence": [
+        "pytest --collect-only -q backend/tests/test_customers.py: 26 tests collected; not an execution pass"
+      ]
+    },
+    {
+      "check": "Local governance and diff",
+      "status": "PASS",
+      "evidence": [
+        "check-adoption.py: PASS profile/packet contracts and negative fixtures; validate-task-packet.py: VALID; git diff --check clean"
+      ]
+    },
+    {
+      "check": "PostgreSQL backend and migrations",
+      "status": "PASS",
+      "evidence": [
+        "https://github.com/n923760-rgb/smart-merchant/actions/runs/41288866090/job/124795724833",
+        "119 tests passed, including all 26 customer tests; Alembic upgrade/check/downgrade/upgrade, lint/type and dependency audit passed on f9d08d3a862d1e26674e338731d56e6577290944"
+      ]
+    },
+    {
+      "check": "Branch upload and PR creation",
+      "status": "PASS",
+      "evidence": [
+        "https://github.com/n923760-rgb/smart-merchant/pull/36",
+        "API-uploaded tree 67ff55315a91c0c44bfe89b26e6104afe40e46be matches local reviewed tree exactly. Owner explicitly authorized upload/PR."
+      ]
+    },
+    {
+      "check": "Governance CI",
+      "status": "PASS",
+      "evidence": [
+        "https://github.com/n923760-rgb/smart-merchant/actions/runs/41288866056"
+      ]
+    },
+    {
+      "check": "Full Foundation and Accounting Web completion",
+      "status": "NOT RUN",
+      "reason": "Backend, security and Compose passed; remaining browser/mobile checks still running at this evidence checkpoint. New documentation-only source must also be checked; final exact-head results belong to PR #36.",
+      "evidence": [
+        "https://github.com/n923760-rgb/smart-merchant/pull/36"
+      ]
+    }
+  ],
+  "facts": [
+    "Customer identity API/model/migration and 26 new PostgreSQL integration tests uploaded in PR #36.",
+    "All 119 backend tests passed on the exact remote implementation source.",
+    "No merge, production migration or deployment performed.",
+    "Financial APIs and service drafts retain prior behavior."
+  ],
+  "inferences": [
+    "Canonical customer IDs provide a prerequisite for explicit later receivable linkage; they do not establish real-world identity verification."
+  ],
+  "assumptions": [
+    "Further customer/obligation lifecycle work remains bounded by issue #35 and exact-source qualification."
+  ],
+  "residual_risks": [
+    "Full browser/mobile qualification still pending at checkpoint; verify PR #36 current-head checks.",
+    "Profile correction/retention/erasure and UI are not implemented.",
+    "No fiscal, merchant or production qualification."
+  ],
+  "recommended_next_action": "Complete current-head Foundation/Accounting Web/Governance checks and same-session review; mark PR #36 ready only after all succeed. Continue explicit obligation policy as a separate bounded task."
+}

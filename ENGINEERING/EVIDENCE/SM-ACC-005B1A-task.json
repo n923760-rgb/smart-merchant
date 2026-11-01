@@ -1,0 +1,57 @@
+{
+  "title": "SM-ACC-005B1A: durable tenant-scoped customer identity",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner requested continuation on 2026-10-31 and explicitly authorized branch upload and PR creation on 2026-11-01: كمل لديك الصلاحيه مني. Accounting-first Hybrid Commerce V6, issue #35.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "b866fee7edc42e9add3bb4733200ad25642cb281",
+  "scope": "First customer-identity dependency of issue #35: immutable operator-created customer IDs, exact request recovery, bounded reads, global owner/accountant grants, SQL integrity and tests.",
+  "out_of_scope": "Identity verification/KYC, fuzzy merging, provider aliases, UI, editing/erasure policy, draft conversion, receivable/journal posting, tax/fiscal issuance, collection, deployment and production migration.",
+  "task": "Add an organization-scoped customer registry. Preserve drafts and ledger byte-for-byte in behavior. Do not treat unassessed draft totals as final receivables.",
+  "validation": "Local available lint/type/unit checks; exact-source Foundation, Accounting Web and Governance CI with PostgreSQL migration upgrade/check/downgrade/upgrade, replay/concurrency, tenant/RBAC, immutability and audit rollback tests.",
+  "stop_conditions": "Source mismatch, conflicting PR, failed required checks, unauthorized scope, secret exposure, customer PII in audit or financial side effects.",
+  "success_criteria": "Permanent customer identity under tenant and permission checks, stable request replay/lookup, explicit operator-created classification and no automatic contact-based merge or ledger effects.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005B1A_CUSTOMER_IDENTITY.md",
+  "allowed_paths": [
+    "backend/app/domains/customers/",
+    "backend/app/main.py",
+    "backend/app/api/routes.py",
+    "backend/migrations/env.py",
+    "backend/migrations/versions/0007_customers.py",
+    "backend/tests/test_customers.py",
+    "docs/adr/0017-customer-identity.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005B1A-task.json",
+    "ENGINEERING/EVIDENCE/SM-ACC-005B1A-result.json",
+    "ENGINEERING/REPORTS/SM_ACC_005B1A_CUSTOMER_IDENTITY.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ],
+  "existing_pr": 36,
+  "expected_pr_head": "f9d08d3a862d1e26674e338731d56e6577290944",
+  "expected_pr_base": "main"
+}
