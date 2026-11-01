@@ -8,6 +8,7 @@ from app.core.database import Base
 from app.core import models  # noqa: F401
 from app.domains.accounting import models as accounting_models  # noqa: F401
 from app.domains.billing import models as billing_models  # noqa: F401
+from app.domains.customers import models as customer_models  # noqa: F401
 
 config = context.config
 config.set_main_option("sqlalchemy.url", get_settings().database_url.replace("%", "%%"))

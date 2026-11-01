@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005B1A — canonical customer identity (candidate, 2026-10-31)
+
+Verified live main is `b866fee7edc42e9add3bb4733200ad25642cb281`: draft API #32 and Arabic UI #34 are merged. [Issue #35](https://github.com/n923760-rgb/smart-merchant/issues/35) is an open issue, not an invoice PR. This first bounded dependency adds operator-created organization customer IDs, minimal immutable contacts, independent global read/create permissions, permanent request recovery and SQL-backed replay/immutability. It does not verify real-world customer identity or post unassessed draft totals as debt. [ADR 0017](../docs/adr/0017-customer-identity.md), [task](EVIDENCE/SM-ACC-005B1A-task.json) and [report](REPORTS/SM_ACC_005B1A_CUSTOMER_IDENTITY.md) define scope and evidence. Candidate until exact-head CI/review.
+
+**Next:** finish B1's explicit customer/source-document/approval/account/tax contract, then atomic reconciled AR posting. B2 fiscal issuance, B3 collection/corrections and B4 Arabic management UX remain separate outcomes. Customer profile correction/retention also requires a bounded design before merchant deployment. No production or financial/fiscal acceptance is claimed.
+
 ## SM-ACC-005A2 — accessible service-draft web preparation (candidate, 2026-10-30)
 
 On merged, tested internal draft API [PR #32](https://github.com/n923760-rgb/smart-merchant/pull/32) at `b46d4e9940bef3de37348ef3e055ecc858e80ddd`, add a real RTL/mobile-first owner/accountant screen for `billing/service-drafts`. This bounded UX supports customer and service lines, exact-integer before-tax previews matching backend round-half-up, creation with permanent request identity across ambiguous retries, read-only saved drafts, visible nonfiscal language and per-organization permission checks. [Issue #33](https://github.com/n923760-rgb/smart-merchant/issues/33), [task packet](EVIDENCE/SM-ACC-005A2-task.json) and [result report](REPORTS/SM_ACC_005A2_WEB_DRAFTS.md) hold evidence. Candidate only until exact-head CI and separate product review.
