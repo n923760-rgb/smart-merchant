@@ -1,5 +1,11 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005B1B — service-obligation qualification preview (candidate, 2026-11-01)
+
+Continue issue #35 on the qualified but still open customer PR #36 (`e1a2c547ea2fa427deb3fcea027c1612efe9dd64`). This separate stacked task adds a read-only explicit customer/source-draft/AR/revenue/date preview, exact pre-tax allocations and period/cutover/tax/approval blockers. Tax and final amount due stay unknown; the endpoint cannot approve, persist a relationship or post a journal. [ADR 0018](../docs/adr/0018-service-obligation-preview.md), [task](EVIDENCE/SM-ACC-005B1B-task.json) and [report](REPORTS/SM_ACC_005B1B_OBLIGATION_PREVIEW.md) define the qualification boundary. Candidate until exact-source CI/review; depends on #36 and must not merge independently.
+
+**Next:** qualify tax/financial approval, permanent source/request identity and atomic AR/subledger/journal linkage; add reversal and reconciliation protections before actual posting. B2 fiscal issuance, B3 collection and B4 UI remain incomplete. No production or legal invoice claim.
+
 ## SM-ACC-005B1A — canonical customer identity (candidate, 2026-10-31)
 
 Verified live main is `b866fee7edc42e9add3bb4733200ad25642cb281`: draft API #32 and Arabic UI #34 are merged. [Issue #35](https://github.com/n923760-rgb/smart-merchant/issues/35) is an open issue, not an invoice PR. This first bounded dependency adds operator-created organization customer IDs, minimal immutable contacts, independent global read/create permissions, permanent request recovery and SQL-backed replay/immutability. It does not verify real-world customer identity or post unassessed draft totals as debt. [ADR 0017](../docs/adr/0017-customer-identity.md), [task](EVIDENCE/SM-ACC-005B1A-task.json) and [report](REPORTS/SM_ACC_005B1A_CUSTOMER_IDENTITY.md) define scope and evidence. [PR #36](https://github.com/n923760-rgb/smart-merchant/pull/36) is uploaded; all 119 backend tests passed on `f9d08d3a862d1e26674e338731d56e6577290944`. Candidate until current-head full CI/review; this does not qualify production.
