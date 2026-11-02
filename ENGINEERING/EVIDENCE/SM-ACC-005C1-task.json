@@ -1,0 +1,56 @@
+{
+  "title": "SM-ACC-005C1: exact standard-rate VAT arithmetic",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner requested continued development and merger at the appropriate time on 2026-11-02: تمام نكمل و ادمج عند الوقت المناسب",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "25abfe00bbae4c89ce43b0b6a33fc92600b32a2a",
+  "scope": "Pure bounded single-category 15 percent VAT arithmetic over already-rounded SAR net lines; no runtime activation.",
+  "out_of_scope": "Taxpayer classification, rate selection, tax-inclusive prices, discounts, mixed categories, documents, XML/SDK, endpoints, financial posting or deployment.",
+  "task": "Implement ADR 0019 using integer halala and category-level rounding; preserve existing unqualified-tax blockers.",
+  "validation": "Deterministic arithmetic/precision/range regressions plus exact-source Foundation, Accounting Web and Governance CI.",
+  "stop_conditions": "Dependency/main mismatch or conflicting PR; any financial side effect, fiscal claim, wrong totals, PII audit leakage or failed required CI.",
+  "success_criteria": "Exact capped net/VAT/gross strings independent of decimal context, explicit standard-category caller responsibility, no application behavior changes.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-11-02: تمام نكمل و ادمج عند الوقت المناسب; only after exact-source checks and review."
+    }
+  },
+  "allowed_paths": [
+    "backend/app/domains/billing/tax_calculation.py",
+    "backend/tests/test_standard_vat.py",
+    "docs/adr/0019-standard-vat-arithmetic.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005C1-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005C1_STANDARD_VAT.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005C1_STANDARD_VAT.md"
+}

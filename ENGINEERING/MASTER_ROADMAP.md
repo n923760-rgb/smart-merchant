@@ -1,5 +1,9 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005C1 — standard-category VAT arithmetic (candidate, 2026-11-02)
+
+Live main `25abfe00bbae4c89ce43b0b6a33fc92600b32a2a` contains merged customer #36 and obligation-preview #37. Their candidate sections below are historical. This bounded follow-up implements exact integer-halal single-category 15% VAT calculations, category-level rounding and storage guards. No API or existing preview activates it; tax classification, assessment and posting remain incomplete. See [ADR 0019](../docs/adr/0019-standard-vat-arithmetic.md), [task](EVIDENCE/SM-ACC-005C1-task.json) and [report](REPORTS/SM_ACC_005C1_STANDARD_VAT.md). Merge only after exact-source checks/review under the owner's explicit 2026-11-02 authority; no production deployment.
+
 ## SM-ACC-005B1B — service-obligation qualification preview (candidate, 2026-11-01)
 
 Continue issue #35 on the qualified but still open customer PR #36 (`e1a2c547ea2fa427deb3fcea027c1612efe9dd64`). This separate stacked task adds a read-only explicit customer/source-draft/AR/revenue/date preview, exact pre-tax allocations and period/cutover/tax/approval blockers. Tax and final amount due stay unknown; the endpoint cannot approve, persist a relationship or post a journal. [ADR 0018](../docs/adr/0018-service-obligation-preview.md), [task](EVIDENCE/SM-ACC-005B1B-task.json) and [report](REPORTS/SM_ACC_005B1B_OBLIGATION_PREVIEW.md) define the qualification boundary. Candidate until exact-source CI/review; depends on #36 and must not merge independently.
