@@ -2,9 +2,10 @@
 
 from datetime import date
 from decimal import Decimal
+from typing import Literal
 from uuid import UUID
 
-from pydantic import EmailStr, Field, field_validator
+from pydantic import EmailStr, Field, field_validator, model_validator
 
 from app.domains.accounting.schemas import Input
 
@@ -35,3 +36,16 @@ class ServiceObligationPreviewIn(Input):
     receivable_account_id: UUID
     revenue_account_id: UUID
     booking_date: date
+
+
+class TaxProfileIn(Input):
+    request_id: UUID
+    effective_from: date
+    registration_status: Literal["UNKNOWN", "REGISTERED", "NOT_REGISTERED"]
+    vat_number: str | None = Field(default=None, pattern=r"^3[0-9]{13}3$")
+
+    @model_validator(mode="after")
+    def number_matches_status(self):
+        if (self.registration_status == "REGISTERED") != (self.vat_number is not None):
+            raise ValueError("Only REGISTERED declarations require a VAT number.")
+        return self

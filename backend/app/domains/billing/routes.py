@@ -1,5 +1,6 @@
 """Organization-scoped internal service draft endpoints (not tax invoices)."""
 
+from datetime import date
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -12,10 +13,23 @@ from app.core.database import db_session
 from app.core.permissions import Context, context
 from app.domains.billing.models import ServiceDraft
 from app.domains.billing.obligation_preview import preview_obligation
-from app.domains.billing.schemas import ServiceDraftIn, ServiceObligationPreviewIn
+from app.domains.billing.schemas import ServiceDraftIn, ServiceObligationPreviewIn, TaxProfileIn
 from app.domains.billing.service import create_draft, draft_dict, get_draft
+from app.domains.billing.tax_profile import create_profile, profile_dict, profile_on
 
 router = APIRouter(prefix="/api/v1/billing", tags=["billing"])
+
+
+@router.post("/tax-profiles", status_code=201)
+def declare_tax_profile(payload: TaxProfileIn, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    profile = create_profile(db, ctx, payload)
+    commit(db)
+    return profile_dict(profile)
+
+
+@router.get("/tax-profile")
+def read_tax_profile(effective_on: date, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    return {"effective_on": effective_on.isoformat(), "profile": profile_dict(profile_on(db, ctx, effective_on))}
 
 
 @router.post("/service-obligation-previews")

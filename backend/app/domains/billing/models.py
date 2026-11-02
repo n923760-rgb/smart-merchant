@@ -1,11 +1,12 @@
 """Internal (nonfiscal) service-billing draft persistence."""
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import (
     CheckConstraint,
+    Date,
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
@@ -20,6 +21,25 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import Uuid
 
 from app.core.database import Base, IdMixin
+
+
+class TaxProfile(IdMixin, Base):
+    __tablename__ = "tax_profiles"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "request_id", name="uq_tax_profile_request"),
+        UniqueConstraint("organization_id", "effective_from", name="uq_tax_profile_date"),
+        UniqueConstraint("id", "organization_id", name="uq_tax_profile_id_org"),
+        CheckConstraint("registration_status IN ('UNKNOWN', 'REGISTERED', 'NOT_REGISTERED')", name="ck_tax_profile_status"),
+        CheckConstraint("(registration_status = 'REGISTERED' AND vat_number IS NOT NULL AND vat_number ~ '^3[0-9]{13}3$') OR (registration_status <> 'REGISTERED' AND vat_number IS NULL)", name="ck_tax_profile_number"),
+    )
+    organization_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("organizations.id"))
+    request_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    effective_from: Mapped[date] = mapped_column(Date, nullable=False)
+    registration_status: Mapped[str] = mapped_column(String(20), nullable=False)
+    vat_number: Mapped[str | None] = mapped_column(String(15))
+    created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
 
 
 class ServiceDraft(IdMixin, Base):
