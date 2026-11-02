@@ -1,5 +1,9 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005C2 — dated tax-profile declaration (candidate, 2026-11-02)
+
+On merged standard-VAT #38/main `1ac1277eeaa0ebe3ffe54a45ffb17ea2d7591352`, add owner-only append-only dated tax-registration declarations and global accountant reads, stable request replay, SQL-backed date/status/immutability guards and as-of selection. These are OPERATOR_DECLARED, not official verification; absent configuration is unknown and fiscal issuance remains disabled. [ADR 0020](../docs/adr/0020-dated-tax-profiles.md), [task](EVIDENCE/SM-ACC-005C2-task.json) and [report](REPORTS/SM_ACC_005C2_TAX_PROFILE.md) define bounded scope. Require exact-source CI and review before owner-authorized merge. Next: category evidence and profile-pinned assessment before financial approval/AR posting. No production deployment.
+
 ## SM-ACC-005C1 — standard-category VAT arithmetic (candidate, 2026-11-02)
 
 Live main `25abfe00bbae4c89ce43b0b6a33fc92600b32a2a` contains merged customer #36 and obligation-preview #37. Their candidate sections below are historical. This bounded follow-up implements exact integer-halal single-category 15% VAT calculations, category-level rounding and storage guards. No API or existing preview activates it; tax classification, assessment and posting remain incomplete. See [ADR 0019](../docs/adr/0019-standard-vat-arithmetic.md), [task](EVIDENCE/SM-ACC-005C1-task.json) and [report](REPORTS/SM_ACC_005C1_STANDARD_VAT.md). Merge only after exact-source checks/review under the owner's explicit 2026-11-02 authority; no production deployment.

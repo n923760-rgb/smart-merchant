@@ -1,0 +1,61 @@
+{
+  "title": "SM-ACC-005C2: dated operator-declared organization tax profiles",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner requested continued development and merger at the appropriate time on 2026-11-02: تمام نكمل و ادمج عند الوقت المناسب",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "1ac1277eeaa0ebe3ffe54a45ffb17ea2d7591352",
+  "scope": "Immutable owner-declared dated tax registration snapshots; global owner writes/accountant reads, replay, tenant isolation and SQL guards.",
+  "out_of_scope": "Official registration verification, tax category selection, invoice assessment, AR posting, provider integration, UI or deployment.",
+  "task": "Add tax-profile declaration and as-of read; absent profile remains unknown. Never activate calculator or mutate prior documents.",
+  "validation": "PostgreSQL/API/SQL/concurrency/replay and full exact-source CI; migration upgrade/check/downgrade/upgrade.",
+  "stop_conditions": "Dependency/main mismatch or conflicting PR; any financial side effect, fiscal claim, wrong totals, PII audit leakage or failed required CI.",
+  "success_criteria": "Owner-only append-only future/today tax declarations with no backdating or ambiguous dates; read requires global grant; replay stable and audits omit VAT numbers.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-11-02: تمام نكمل و ادمج عند الوقت المناسب; only after exact-source checks and review."
+    }
+  },
+  "allowed_paths": [
+    "backend/app/domains/billing/models.py",
+    "backend/app/domains/billing/schemas.py",
+    "backend/app/domains/billing/routes.py",
+    "backend/app/domains/billing/tax_profile.py",
+    "backend/app/api/routes.py",
+    "backend/migrations/versions/0008_tax_profiles.py",
+    "backend/tests/test_tax_profiles.py",
+    "docs/adr/0020-dated-tax-profiles.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005C2-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005C2_TAX_PROFILE.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005C2_TAX_PROFILE.md"
+}
