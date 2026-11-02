@@ -141,7 +141,9 @@ try {
   const me = await bff(owner.page, 'auth/me');
   assert.equal(me.id, alpha.owner.id);
   assert.deepEqual(me.organizations, [alpha.organization.id]);
-  const permissions = await bff(owner.page, 'permissions');
+  // The catalogue now exceeds the default 20-row page; retain the real BFF
+  // permission assertion using the bounded 100-row catalogue request.
+  const permissions = await bff(owner.page, 'permissions?page_size=100');
   assert.ok(permissions.items.some(p => p.code === 'roles.manage'));
 
   // Real rendered service draft -> BFF -> protected PostgreSQL. Not a tax invoice.

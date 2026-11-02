@@ -15,3 +15,12 @@ requirement. Exact-source local/CI checks, review and eventual authorized merge 
 recorded in the live PR description. Local PostgreSQL/Redis/Flutter are unavailable;
 integration and migration checks use existing disposable GitHub Actions services.
 Production, merchant, fiscal/provider and physical-device acceptance remain NOT RUN.
+
+Initial remote head 76f9847edc654bfd98fa4d710137e0760baf592c passed all 208
+backend tests and migrations. Foundation run 41430934227 browser job
+125229030314 failed because the permission catalogue exceeded its default 20-row
+page and roles.manage moved off that page. The test now explicitly requests the
+bounded 100-row page; its permission assertion and application authorization remain
+unchanged. This directly related acceptance repair is included in the task scope.
+Require fresh exact-head checks after the repair; do not count the first failure
+as a successful browser qualification.
