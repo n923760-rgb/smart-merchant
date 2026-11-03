@@ -1,3 +1,4 @@
+from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import select
@@ -61,8 +62,8 @@ def create_assessment(db: Session, ctx: Context, payload: TaxAssessmentIn) -> Ta
     row = TaxAssessment(
         organization_id=ctx.organization.id, request_id=payload.request_id, request_hash=digest,
         draft_id=draft.id, profile_id=profile.id, assessment_date=payload.assessment_date,
-        classification_basis=payload.classification_basis, net_amount=totals.taxable_amount,
-        tax_amount=totals.tax_amount, gross_amount=totals.gross_amount, created_by=ctx.user.id,
+        classification_basis=payload.classification_basis, net_amount=Decimal(totals.taxable_amount),
+        tax_amount=Decimal(totals.tax_amount), gross_amount=Decimal(totals.gross_amount), created_by=ctx.user.id,
     )
     db.add(row)
     db.flush()
