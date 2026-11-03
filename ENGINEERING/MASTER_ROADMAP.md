@@ -1,5 +1,9 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005C3 — profile-pinned internal tax assessment (candidate, 2026-11-03)
+
+On merged #39/main `d13a5576ef4ed670b262258bef7296bce9a473bc`, add immutable internal tax assessments referencing the source draft and server-selected dated REGISTERED declaration. Operator explicitly chooses STANDARD_15 for all source lines and records classification evidence; exact category-rounded net/VAT/gross are persisted with durable replay, SQL consistency and tenant/global RBAC. Result remains OPERATOR_ASSESSED/NOT_APPROVED with no amount due, issuance or posting authority. [ADR 0021](../docs/adr/0021-pinned-tax-assessments.md), [task](EVIDENCE/SM-ACC-005C3-task.json) and [report](REPORTS/SM_ACC_005C3_TAX_ASSESSMENT.md) define this slice. Require all exact-head checks/review before owner-authorized merge. Next: qualified approval and atomic source/customer/AR/journal reconciliation with period/configuration rechecks. No deployment.
+
 ## SM-ACC-005C2 — dated tax-profile declaration (candidate, 2026-11-02)
 
 On merged standard-VAT #38/main `1ac1277eeaa0ebe3ffe54a45ffb17ea2d7591352`, add owner-only append-only dated tax-registration declarations and global accountant reads, stable request replay, SQL-backed date/status/immutability guards and as-of selection. These are OPERATOR_DECLARED, not official verification; absent configuration is unknown and fiscal issuance remains disabled. [ADR 0020](../docs/adr/0020-dated-tax-profiles.md), [task](EVIDENCE/SM-ACC-005C2-task.json) and [report](REPORTS/SM_ACC_005C2_TAX_PROFILE.md) define bounded scope. Require exact-source CI and review before owner-authorized merge. Next: category evidence and profile-pinned assessment before financial approval/AR posting. No production deployment.
