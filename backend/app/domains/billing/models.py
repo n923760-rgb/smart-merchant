@@ -42,6 +42,31 @@ class TaxProfile(IdMixin, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
 
 
+class TaxAssessment(IdMixin, Base):
+    __tablename__ = "tax_assessments"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "request_id", name="uq_tax_assessment_request"),
+        UniqueConstraint("id", "organization_id", name="uq_tax_assessment_id_org"),
+        ForeignKeyConstraint(["draft_id", "organization_id"], ["service_drafts.id", "service_drafts.organization_id"], name="fk_assessment_draft_org"),
+        ForeignKeyConstraint(["profile_id", "organization_id"], ["tax_profiles.id", "tax_profiles.organization_id"], name="fk_assessment_profile_org"),
+        CheckConstraint("net_amount > 0 AND tax_amount >= 0 AND gross_amount = net_amount + tax_amount", name="ck_assessment_totals"),
+        CheckConstraint("tax_amount = round(net_amount * 0.15, 2)", name="ck_assessment_standard_tax"),
+        CheckConstraint("length(trim(classification_basis)) > 0", name="ck_assessment_basis"),
+    )
+    organization_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("organizations.id"))
+    request_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    draft_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    profile_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    assessment_date: Mapped[date] = mapped_column(Date, nullable=False)
+    classification_basis: Mapped[str] = mapped_column(String(500), nullable=False)
+    net_amount: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    tax_amount: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    gross_amount: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+
+
 class ServiceDraft(IdMixin, Base):
     __tablename__ = "service_drafts"
     __table_args__ = (

@@ -1,0 +1,60 @@
+{
+  "title": "SM-ACC-005C3: immutable profile-pinned service tax assessment",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner continued development on 2026-11-03; standing explicit authorization to merge after appropriate qualification from 2026-11-02.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "d13a5576ef4ed670b262258bef7296bce9a473bc",
+  "scope": "Persist operator-assessed single-standard-category tax snapshots tied to immutable draft and dated organization profile, with exact calculation, replay, SQL consistency and scoped reads.",
+  "out_of_scope": "Official verification, category inference, zero/exempt/mixed categories, financial approval, AR/journal posting, fiscal issuance, UI or deployment.",
+  "task": "Use the qualified standard VAT calculator under explicit classification evidence; pin server-selected as-of profile and immutable source; retain no-issuance/no-posting status.",
+  "validation": "Exact-source PostgreSQL/API/SQL/concurrency/pinning/rounding tests, migration cycle and all Foundation/Accounting Web/Governance checks.",
+  "stop_conditions": "Dependency/main mismatch or conflicting PR; any financial side effect, fiscal claim, wrong totals, PII audit leakage or failed required CI.",
+  "success_criteria": "Correct as-of registration declaration and immutable net/VAT/gross with permanent request identity, tenant safety, audit atomicity and SQL guards.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-11-02: تمام نكمل و ادمج عند الوقت المناسب; only after exact-source checks and review."
+    }
+  },
+  "allowed_paths": [
+    "backend/app/domains/billing/models.py",
+    "backend/app/domains/billing/schemas.py",
+    "backend/app/domains/billing/routes.py",
+    "backend/app/domains/billing/tax_assessment.py",
+    "backend/migrations/versions/0009_tax_assessments.py",
+    "backend/tests/test_tax_assessments.py",
+    "docs/adr/0021-pinned-tax-assessments.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005C3-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005C3_TAX_ASSESSMENT.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005C3_TAX_ASSESSMENT.md"
+}

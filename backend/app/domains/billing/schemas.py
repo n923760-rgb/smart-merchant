@@ -49,3 +49,11 @@ class TaxProfileIn(Input):
         if (self.registration_status == "REGISTERED") != (self.vat_number is not None):
             raise ValueError("Only REGISTERED declarations require a VAT number.")
         return self
+
+
+class TaxAssessmentIn(Input):
+    request_id: UUID
+    draft_id: UUID
+    assessment_date: date
+    category: Literal["STANDARD_15"]
+    classification_basis: str = Field(min_length=1, max_length=500)

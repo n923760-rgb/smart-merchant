@@ -13,11 +13,29 @@ from app.core.database import db_session
 from app.core.permissions import Context, context
 from app.domains.billing.models import ServiceDraft
 from app.domains.billing.obligation_preview import preview_obligation
-from app.domains.billing.schemas import ServiceDraftIn, ServiceObligationPreviewIn, TaxProfileIn
+from app.domains.billing.schemas import (
+    ServiceDraftIn,
+    ServiceObligationPreviewIn,
+    TaxAssessmentIn,
+    TaxProfileIn,
+)
 from app.domains.billing.service import create_draft, draft_dict, get_draft
+from app.domains.billing.tax_assessment import assessment_dict, create_assessment, get_assessment
 from app.domains.billing.tax_profile import create_profile, profile_dict, profile_on
 
 router = APIRouter(prefix="/api/v1/billing", tags=["billing"])
+
+
+@router.post("/service-tax-assessments", status_code=201)
+def assess_service_tax(payload: TaxAssessmentIn, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    row = create_assessment(db, ctx, payload)
+    commit(db)
+    return assessment_dict(row)
+
+
+@router.get("/service-tax-assessments/{assessment_id}")
+def read_service_tax(assessment_id: UUID, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    return assessment_dict(get_assessment(db, ctx, assessment_id))
 
 
 @router.post("/tax-profiles", status_code=201)
