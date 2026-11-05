@@ -1,0 +1,62 @@
+{
+  "title": "SM-ACC-005D: atomic internal service charge and receivable",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner continued work on 2026-11-05 with standing explicit authorization to merge after exact-source qualification.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "d2c7f82a7f664ce89969db2477b08fe27e5c764a",
+  "scope": "One immutable approved internal service charge linking source assessment, customer, accounts and posted journal atomically; one effect per source; read/recovery and SQL reconciliation/reversal guards.",
+  "out_of_scope": "Fiscal invoices, official tax verification, mixed categories, collections, corrections, UI and deployment.",
+  "task": "Implement ADR 0022 internal charge with explicit operator approval and date/profile/account rechecks.",
+  "validation": "PostgreSQL/API/SQL replay, deduplication, concurrency, atomicity, RBAC and tenant tests; migration cycle and all current-head CI.",
+  "stop_conditions": "Source mismatch, conflicting PR, failed checks, inconsistent AR/journal or fiscal claims.",
+  "success_criteria": "One source becomes one immutable customer receivable and balanced journal, with permanent replay and no orphan reversal.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci",
+    "merge"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {
+    "merge": {
+      "source": "CURRENT_OWNER_INSTRUCTION",
+      "reference": "2026-11-02: \u062a\u0645\u0627\u0645 \u0646\u0643\u0645\u0644 \u0648 \u0627\u062f\u0645\u062c \u0639\u0646\u062f \u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0646\u0627\u0633\u0628; only after exact-source checks and review."
+    }
+  },
+  "allowed_paths": [
+    "backend/app/domains/billing/models.py",
+    "backend/app/domains/billing/schemas.py",
+    "backend/app/domains/billing/routes.py",
+    "backend/app/domains/billing/charges.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/app/api/routes.py",
+    "backend/migrations/versions/0010_service_charges.py",
+    "backend/tests/test_service_charges.py",
+    "docs/adr/0022-internal-service-charges.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005D-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005D_SERVICE_CHARGES.md",
+    "ENGINEERING/MASTER_ROADMAP.md"
+  ],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005D_SERVICE_CHARGES.md"
+}

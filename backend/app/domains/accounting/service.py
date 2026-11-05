@@ -226,6 +226,14 @@ def reverse_journal(db: Session, ctx: Context, entry_id: UUID, payload: Reversal
         )
     ) is not None:
         raise ConflictError()
+    # Charge corrections must update customer subledger and ledger together.
+    # Local import avoids making the core model module depend on billing.
+    from app.domains.billing.models import ServiceCharge
+
+    if db.scalar(select(ServiceCharge.id).where(
+        ServiceCharge.organization_id == ctx.organization.id, ServiceCharge.journal_id == entry_id,
+    )) is not None:
+        raise ConflictError()
     if original.reversal_of_id is not None or db.scalar(
         select(JournalEntry.id).where(
             JournalEntry.organization_id == ctx.organization.id,

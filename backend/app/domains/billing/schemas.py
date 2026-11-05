@@ -57,3 +57,15 @@ class TaxAssessmentIn(Input):
     assessment_date: date
     category: Literal["STANDARD_15"]
     classification_basis: str = Field(min_length=1, max_length=500)
+
+
+class ServiceChargeIn(Input):
+    request_id: UUID
+    assessment_id: UUID
+    customer_id: UUID
+    receivable_account_id: UUID
+    revenue_account_id: UUID
+    tax_account_id: UUID
+    booking_date: date
+    approval_basis: str = Field(min_length=1, max_length=500)
+    confirm: Literal[True]

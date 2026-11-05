@@ -1,5 +1,9 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## SM-ACC-005D — atomic internal service charges (candidate, 2026-11-05)
+
+On merged #40/main `d2c7f82a7f664ce89969db2477b08fe27e5c764a`, add explicit owner-approved internal service charges that atomically link immutable tax assessment/source, customer, AR/revenue/tax account mapping and balanced posted journal. Enforce one source effect across request IDs/reassessments, permanent request recovery, current profile/date/period/cutover rechecks and API/SQL reversal/reconciliation guards. [ADR 0022](../docs/adr/0022-internal-service-charges.md), [task](EVIDENCE/SM-ACC-005D-task.json), [report](REPORTS/SM_ACC_005D_SERVICE_CHARGES.md). Candidate until exact-head full CI and same-session review; owner-authorized merge afterwards. Next: controlled reconciled corrections, collections and customer balances/UI; fiscal invoice issuance remains separate. No deployment.
+
 ## SM-ACC-005C3 — profile-pinned internal tax assessment (candidate, 2026-11-03)
 
 On merged #39/main `d13a5576ef4ed670b262258bef7296bce9a473bc`, add immutable internal tax assessments referencing the source draft and server-selected dated REGISTERED declaration. Operator explicitly chooses STANDARD_15 for all source lines and records classification evidence; exact category-rounded net/VAT/gross are persisted with durable replay, SQL consistency and tenant/global RBAC. Result remains OPERATOR_ASSESSED/NOT_APPROVED with no amount due, issuance or posting authority. [ADR 0021](../docs/adr/0021-pinned-tax-assessments.md), [task](EVIDENCE/SM-ACC-005C3-task.json) and [report](REPORTS/SM_ACC_005C3_TAX_ASSESSMENT.md) define this slice. Require all exact-head checks/review before owner-authorized merge. Next: qualified approval and atomic source/customer/AR/journal reconciliation with period/configuration rechecks. No deployment.

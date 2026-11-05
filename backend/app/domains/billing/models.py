@@ -119,3 +119,33 @@ class ServiceDraftLine(IdMixin, Base):
     quantity: Mapped[Decimal] = mapped_column(Numeric(12, 3), nullable=False)
     unit_price: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
     line_total: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+
+
+class ServiceCharge(IdMixin, Base):
+    __tablename__ = "service_charges"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "request_id", name="uq_charge_request"),
+        UniqueConstraint("organization_id", "draft_id", name="uq_charge_source"),
+        UniqueConstraint("journal_id", name="uq_charge_journal"),
+        CheckConstraint("length(trim(approval_basis)) > 0", name="ck_charge_basis"),
+        *(ForeignKeyConstraint([field, "organization_id"], [f"{table}.id", f"{table}.organization_id"], name=f"fk_charge_{field}_org") for field, table in (
+            ("draft_id", "service_drafts"), ("assessment_id", "tax_assessments"),
+            ("customer_id", "customers"), ("journal_id", "journal_entries"),
+            ("receivable_account_id", "accounts"), ("revenue_account_id", "accounts"),
+            ("tax_account_id", "accounts"),
+        )),
+    )
+    organization_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("organizations.id"))
+    request_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    draft_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    assessment_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    customer_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    journal_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    receivable_account_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    revenue_account_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    tax_account_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    booking_date: Mapped[date] = mapped_column(Date, nullable=False)
+    approval_basis: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
