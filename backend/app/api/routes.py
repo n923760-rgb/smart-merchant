@@ -81,6 +81,8 @@ PERMISSIONS = (
     "billing.drafts.create",
     "billing.tax.read",
     "billing.tax.manage",
+    "billing.charges.read",
+    "billing.charges.approve",
     "customers.read",
     "customers.create",
     "accounting.opening.read",
@@ -182,7 +184,7 @@ def bootstrap(
         granted = (
             PERMISSIONS
             if code == "OWNER"
-            else tuple(p for p in PERMISSIONS if (p.startswith("accounting.") and p not in {"accounting.periods.manage", "accounting.opening.manage"}) or p.startswith("billing.drafts.") or p.startswith("customers.") or p == "billing.tax.read")
+            else tuple(p for p in PERMISSIONS if (p.startswith("accounting.") and p not in {"accounting.periods.manage", "accounting.opening.manage"}) or p.startswith("billing.drafts.") or p.startswith("customers.") or p in {"billing.tax.read", "billing.charges.read"})
             if code == "ACCOUNTANT"
             else ("organization.read", "branches.read", "terminals.read")
             if code in {"MANAGER", "SUPERVISOR"}

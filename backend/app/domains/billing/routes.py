@@ -11,9 +11,11 @@ from app.api.routes import commit
 from app.api.schemas import page_of
 from app.core.database import db_session
 from app.core.permissions import Context, context
+from app.domains.billing.charges import approve_charge, charge_dict, get_charge
 from app.domains.billing.models import ServiceDraft
 from app.domains.billing.obligation_preview import preview_obligation
 from app.domains.billing.schemas import (
+    ServiceChargeIn,
     ServiceDraftIn,
     ServiceObligationPreviewIn,
     TaxAssessmentIn,
@@ -99,3 +101,20 @@ def read_service_draft(
     db: Session = Depends(db_session),
 ):
     return draft_dict(db, get_draft(db, ctx, draft_id))
+
+
+@router.post("/service-charges", status_code=201)
+def post_service_charge(payload: ServiceChargeIn, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    row = approve_charge(db, ctx, payload)
+    commit(db)
+    return charge_dict(db, row)
+
+
+@router.get("/service-charges/{charge_id}")
+def read_service_charge(charge_id: UUID, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    return charge_dict(db, get_charge(db, ctx, charge_id=charge_id))
+
+
+@router.get("/service-charge-requests/{request_id}")
+def recover_service_charge(request_id: UUID, ctx: Context = Depends(context), db: Session = Depends(db_session)):
+    return charge_dict(db, get_charge(db, ctx, request_id=request_id))
