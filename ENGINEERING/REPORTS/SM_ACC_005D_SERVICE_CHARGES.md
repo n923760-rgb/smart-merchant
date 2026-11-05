@@ -17,3 +17,8 @@ PASS. Local PostgreSQL/Redis/Docker unavailable: actual integration, schema comp
 migration cycle, real browsers and mobile builds must qualify through current-head
 GitHub Actions. Historical 230-test baseline is not evidence for this source.
 Candidate until all exact-head checks pass and same-session source review completes.
+
+Initial head be2dbb32e986f4a67a1b2683e145b20c8504f60c FAILED migration parsing:
+PL/pgSQL parsed an unparenthesized SQL CASE in the reconciliation IF ambiguously.
+Parenthesize that scalar CASE expression; requalify all checks on repaired source.
+No integration was attempted on the failed head.

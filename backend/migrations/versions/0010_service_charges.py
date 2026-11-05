@@ -73,7 +73,7 @@ def upgrade():
                OR j.posted_by IS DISTINCT FROM NEW.created_by
                OR EXISTS (SELECT 1 FROM journal_entries WHERE organization_id = NEW.organization_id AND reversal_of_id = j.id)
                OR (SELECT count(*) FROM journal_lines WHERE entry_id = j.id AND organization_id = NEW.organization_id)
-                    <> CASE WHEN a.tax_amount > 0 THEN 3 ELSE 2 END
+                    <> (CASE WHEN a.tax_amount > 0 THEN 3 ELSE 2 END)
                OR NOT EXISTS (SELECT 1 FROM journal_lines WHERE entry_id = j.id AND organization_id = NEW.organization_id
                     AND account_id = NEW.receivable_account_id AND debit = a.gross_amount AND credit = 0)
                OR NOT EXISTS (SELECT 1 FROM journal_lines WHERE entry_id = j.id AND organization_id = NEW.organization_id
