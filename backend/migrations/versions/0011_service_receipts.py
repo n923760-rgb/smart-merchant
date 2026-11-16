@@ -12,6 +12,7 @@ PERMISSIONS = ("billing.receipts.read", "billing.receipts.record")
 
 
 def upgrade():
+    op.create_unique_constraint("uq_charge_id_org", "service_charges", ["id", "organization_id"])
     op.create_table(
         "service_receipts",
         sa.Column("id", sa.Uuid(), primary_key=True),
@@ -137,6 +138,7 @@ def downgrade():
     op.execute("DROP FUNCTION guard_service_receipt()")
     op.drop_index("ix_receipts_org_charge", table_name="service_receipts")
     op.drop_table("service_receipts")
+    op.drop_constraint("uq_charge_id_org", "service_charges", type_="unique")
     conn = op.get_bind()
     for code in PERMISSIONS:
         conn.execute(sa.text(
