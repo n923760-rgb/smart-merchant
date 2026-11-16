@@ -49,7 +49,8 @@
     "docs/adr/0023-internal-service-receipts.md",
     "ENGINEERING/EVIDENCE/SM-ACC-005E-task.json",
     "ENGINEERING/REPORTS/SM_ACC_005E_RECEIPTS.md",
-    "ENGINEERING/MASTER_ROADMAP.md"
+    "ENGINEERING/MASTER_ROADMAP.md",
+    ".github/workflows/ci.yml"
   ],
   "report_path": "ENGINEERING/REPORTS/SM_ACC_005E_RECEIPTS.md"
 }
