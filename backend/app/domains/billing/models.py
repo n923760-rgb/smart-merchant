@@ -149,3 +149,46 @@ class ServiceCharge(IdMixin, Base):
     approval_basis: Mapped[str] = mapped_column(String(500), nullable=False)
     created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP"))
+
+
+
+class ServiceReceipt(IdMixin, Base):
+    """Immutable operator-recorded settlement of an internal service charge."""
+
+    __tablename__ = "service_receipts"
+    __table_args__ = (
+        UniqueConstraint("id", "organization_id", name="uq_receipt_id_org"),
+        UniqueConstraint("organization_id", "request_id", name="uq_receipt_request"),
+        UniqueConstraint("journal_id", name="uq_receipt_journal"),
+        ForeignKeyConstraint(
+            ["charge_id", "organization_id"], ["service_charges.id", "service_charges.organization_id"],
+            name="fk_receipt_charge_org",
+        ),
+        ForeignKeyConstraint(
+            ["journal_id", "organization_id"], ["journal_entries.id", "journal_entries.organization_id"],
+            name="fk_receipt_journal_org",
+        ),
+        ForeignKeyConstraint(
+            ["settlement_account_id", "organization_id"], ["accounts.id", "accounts.organization_id"],
+            name="fk_receipt_settlement_account_org",
+        ),
+        CheckConstraint("amount > 0", name="ck_receipt_amount"),
+        CheckConstraint("payment_method IN ('CASH', 'BANK_TRANSFER')", name="ck_receipt_method"),
+        CheckConstraint("length(trim(recording_basis)) > 0", name="ck_receipt_basis"),
+        Index("ix_receipts_org_charge", "organization_id", "charge_id"),
+    )
+    organization_id: Mapped[UUID] = mapped_column(Uuid, ForeignKey("organizations.id"))
+    request_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    request_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    charge_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    journal_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    settlement_account_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    booking_date: Mapped[date] = mapped_column(Date, nullable=False)
+    payment_method: Mapped[str] = mapped_column(String(20), nullable=False)
+    operator_reference: Mapped[str | None] = mapped_column(String(120))
+    recording_basis: Mapped[str] = mapped_column(String(500), nullable=False)
+    created_by: Mapped[UUID] = mapped_column(Uuid, ForeignKey("users.id"))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=text("CURRENT_TIMESTAMP")
+    )
