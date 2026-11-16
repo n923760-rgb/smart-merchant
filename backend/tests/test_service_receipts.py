@@ -8,13 +8,14 @@ import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import DBAPIError
 
-from app.core.database import SessionLocal
-from app.core.models import AuditLog, Role, RolePermission, Permission
-from app.domains.accounting.models import Account, JournalEntry
-from app.domains.billing.models import ServiceReceipt
 from test_customers import foreign_headers, role_headers
-from test_service_charges import prepare as prepare_charge
 from test_service_charges import post as post_charge
+from test_service_charges import prepare as prepare_charge
+
+from app.core.database import SessionLocal
+from app.core.models import Permission, Role, RolePermission
+from app.domains.accounting.models import Account
+from app.domains.billing.models import ServiceReceipt
 
 BASE = "/api/v1/billing/service-receipts"
 
