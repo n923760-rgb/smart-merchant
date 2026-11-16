@@ -124,6 +124,7 @@ class ServiceDraftLine(IdMixin, Base):
 class ServiceCharge(IdMixin, Base):
     __tablename__ = "service_charges"
     __table_args__ = (
+        UniqueConstraint("id", "organization_id", name="uq_charge_id_org"),
         UniqueConstraint("organization_id", "request_id", name="uq_charge_request"),
         UniqueConstraint("organization_id", "draft_id", name="uq_charge_source"),
         UniqueConstraint("journal_id", name="uq_charge_journal"),
