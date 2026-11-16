@@ -7,7 +7,6 @@ from uuid import UUID, uuid4
 import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import DBAPIError
-
 from test_customers import foreign_headers, role_headers
 from test_service_charges import post as post_charge
 from test_service_charges import prepare as prepare_charge
