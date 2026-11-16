@@ -1,5 +1,12 @@
 # Smart Merchant — Master Engineering Roadmap
 
+## Current integrated checkpoint and next bounded task — 2026-11-16
+
+Verified official `main` at `f7fea13626c8cf8c3f37ebf72940abdf989aacd9`: PR #41 was merged on 2026-11-05; its reviewed final tree is `099600c6c5b35ae541be59e9bba6864018bc369d`. The prior SM-ACC-005D and SM-ACC-005C sections below are historical candidate records, **not live open PRs**. No open PRs were present at the beginning of SM-ACC-005E. The previous tested main had 276 backend tests and passed the exact-source Foundation, Accounting Web and Governance CI; that evidence does not qualify new receipt code or any production deployment.
+
+**Next SM-ACC-005E (implementation candidate):** recording partial/full **operator-declared internal service receipts** with a durable request identity and atomic balanced cash/bank-to-AR journal, ledger/subledger reconciliation, conservative payment-status read, tenant-grant enforcement, concurrency-safe cap and SQL persistence guards. Preserve no-POS dependency. This is not fiscal issuance, provider-confirmed payment, refund, correction or deployment. [Issue #42](https://github.com/n923760-rgb/smart-merchant/issues/42), [ADR 0023](../docs/adr/0023-internal-service-receipts.md), [task](EVIDENCE/SM-ACC-005E-task.json) and [candidate report](REPORTS/SM_ACC_005E_RECEIPTS.md) define its exact scope. All new checks and evidence must qualify the final PR head independently; no merge or deployment on a documentation-only candidate.
+
+
 ## SM-ACC-005D — atomic internal service charges (candidate, 2026-11-05)
 
 On merged #40/main `d2c7f82a7f664ce89969db2477b08fe27e5c764a`, add explicit owner-approved internal service charges that atomically link immutable tax assessment/source, customer, AR/revenue/tax account mapping and balanced posted journal. Enforce one source effect across request IDs/reassessments, permanent request recovery, current profile/date/period/cutover rechecks and API/SQL reversal/reconciliation guards. [ADR 0022](../docs/adr/0022-internal-service-charges.md), [task](EVIDENCE/SM-ACC-005D-task.json), [report](REPORTS/SM_ACC_005D_SERVICE_CHARGES.md). Candidate until exact-head full CI and same-session review; owner-authorized merge afterwards. Next: controlled reconciled corrections, collections and customer balances/UI; fiscal invoice issuance remains separate. No deployment.

@@ -69,3 +69,25 @@ class ServiceChargeIn(Input):
     booking_date: date
     approval_basis: str = Field(min_length=1, max_length=500)
     confirm: Literal[True]
+
+
+
+class ServiceReceiptIn(Input):
+    request_id: UUID
+    charge_id: UUID
+    settlement_account_id: UUID
+    amount: Decimal = Field(gt=0, max_digits=18, decimal_places=2)
+    booking_date: date
+    payment_method: Literal["CASH", "BANK_TRANSFER"]
+    operator_reference: str | None = Field(default=None, min_length=1, max_length=120)
+    recording_basis: str = Field(min_length=1, max_length=500)
+    confirm: Literal[True]
+
+    @field_validator("amount", mode="before")
+    @classmethod
+    def exact_sar_amount(cls, value):
+        import re
+
+        if not isinstance(value, str) or not re.fullmatch(r"(?:0|[1-9][0-9]*)\.[0-9]{2}", value):
+            raise ValueError("Amount must be a fixed 2-decimal SAR string.")
+        return value
