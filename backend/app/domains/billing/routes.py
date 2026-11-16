@@ -13,11 +13,13 @@ from app.core.database import db_session
 from app.core.permissions import Context, context
 from app.domains.billing.charges import approve_charge, charge_dict, get_charge
 from app.domains.billing.models import ServiceDraft
+from app.domains.billing.receipts import charge_balance, get_receipt, receipt_dict, record_receipt
 from app.domains.billing.obligation_preview import preview_obligation
 from app.domains.billing.schemas import (
     ServiceChargeIn,
     ServiceDraftIn,
     ServiceObligationPreviewIn,
+    ServiceReceiptIn,
     TaxAssessmentIn,
     TaxProfileIn,
 )
@@ -118,3 +120,42 @@ def read_service_charge(charge_id: UUID, ctx: Context = Depends(context), db: Se
 @router.get("/service-charge-requests/{request_id}")
 def recover_service_charge(request_id: UUID, ctx: Context = Depends(context), db: Session = Depends(db_session)):
     return charge_dict(db, get_charge(db, ctx, request_id=request_id))
+
+
+
+@router.post("/service-receipts", status_code=201)
+def post_service_receipt(
+    payload: ServiceReceiptIn,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    receipt = record_receipt(db, ctx, payload)
+    commit(db)
+    return receipt_dict(receipt)
+
+
+@router.get("/service-receipts/{receipt_id}")
+def read_service_receipt(
+    receipt_id: UUID,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    return receipt_dict(get_receipt(db, ctx, receipt_id=receipt_id))
+
+
+@router.get("/service-receipt-requests/{request_id}")
+def recover_service_receipt(
+    request_id: UUID,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    return receipt_dict(get_receipt(db, ctx, request_id=request_id))
+
+
+@router.get("/service-charges/{charge_id}/balance")
+def read_charge_balance(
+    charge_id: UUID,
+    ctx: Context = Depends(context),
+    db: Session = Depends(db_session),
+):
+    return charge_balance(db, ctx, charge_id)
