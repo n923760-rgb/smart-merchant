@@ -1,0 +1,56 @@
+{
+  "title": "SM-ACC-005E: atomic internal service receipts and AR settlement",
+  "task_type": "IMPLEMENTATION",
+  "authority": "Owner instruction 2026-11-16: تمام نكمل, continue the previously recommended next bounded receipts step; no merge or deployment requested at this stage.",
+  "repository": "n923760-rgb/smart-merchant",
+  "official_branch": "main",
+  "expected_official_head": "f7fea13626c8cf8c3f37ebf72940abdf989aacd9",
+  "scope": "Record bounded operator-declared partial/full SAR receipts against one immutable internal service charge, with request replay, atomic journal/subledger, receivable balance and SQL reconciliation.",
+  "out_of_scope": "ZATCA/fiscal issuance, third-party or bank verification, refunds, corrections, provider settlement, multi-currency, merchant UI, native POS, release or production deployment.",
+  "task": "Implement ADR 0023 and Issue #42 against exact source, independently of terminal/shift/stock.",
+  "validation": "PostgreSQL/API/SQL tests for decimal, partial/full, replay/overpay/concurrency, immutable SQL, tenant grants, audit rollback and migration cycle; Foundation, Accounting Web and Governance CI, full-diff review.",
+  "stop_conditions": "Official main mismatch; conflicting PR; any failed/unreviewed exact-head check; unreconciled customer AR or ledger; external payment or fiscal claims; attempted production deployment.",
+  "success_criteria": "Every receipt is a single durable operator-declared settlement of existing charge AR; total receipts cannot exceed gross and every receipt has one exact immutable balanced journal; no duplicate effects or cross-tenant access.",
+  "requested_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "authorized_actions": [
+    "read",
+    "modify",
+    "create_branch",
+    "commit",
+    "push",
+    "open_pr",
+    "run_ci"
+  ],
+  "protected_actions": [
+    "merge",
+    "force_push",
+    "production_deploy",
+    "release",
+    "destructive_database_migration"
+  ],
+  "protected_action_authorizations": {},
+  "allowed_paths": [
+    "backend/app/api/routes.py",
+    "backend/app/domains/accounting/service.py",
+    "backend/app/domains/billing/models.py",
+    "backend/app/domains/billing/schemas.py",
+    "backend/app/domains/billing/routes.py",
+    "backend/app/domains/billing/receipts.py",
+    "backend/migrations/versions/0011_service_receipts.py",
+    "backend/tests/test_service_receipts.py",
+    "docs/adr/0023-internal-service-receipts.md",
+    "ENGINEERING/EVIDENCE/SM-ACC-005E-task.json",
+    "ENGINEERING/REPORTS/SM_ACC_005E_RECEIPTS.md",
+    "ENGINEERING/MASTER_ROADMAP.md",
+    ".github/workflows/ci.yml"
+  ],
+  "report_path": "ENGINEERING/REPORTS/SM_ACC_005E_RECEIPTS.md"
+}
