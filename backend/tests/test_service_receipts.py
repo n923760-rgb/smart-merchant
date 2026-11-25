@@ -356,25 +356,26 @@ def test_receipt_journal_reversal_forbidden_at_api_and_sql(client, merchant):
     assert balance(client, h, charge)["outstanding_amount"] == "30.24"
 
 
-def test_opening_balance_cutover_blocks_receipt_without_changing_charge(client, merchant):
+def test_cutover_cannot_be_backdated_across_posted_charge(client, merchant):
     charge, body = prepare(client, merchant)
     h = merchant["headers"]
+    # A new opening cutover cannot lie on/beyond an already posted charge date.
     opening = client.post(
         "/api/v1/accounting/opening-balance", headers=h,
         json={
             "request_id": str(uuid4()), "booking_date": body["booking_date"],
-            "description": "Opening before any service receipt",
+            "description": "Invalid retroactive opening cutover",
             "lines": [
                 {"account_id": charge["receivable_account_id"], "debit": "1.00"},
                 {"account_id": charge["revenue_account_id"], "credit": "1.00"},
             ],
         },
     )
-    assert opening.status_code == 201, opening.text
-    before = _financial_counts(merchant["org"])
-    assert client.post(BASE, headers=h, json=body).status_code == 409
-    assert _financial_counts(merchant["org"]) == before
+    assert opening.status_code == 409, opening.text
     assert balance(client, h, charge)["outstanding_amount"] == "40.24"
+    recorded = post(client, h, body)
+    assert recorded["amount"] == "10.00"
+    assert balance(client, h, charge)["outstanding_amount"] == "30.24"
 
 
 def test_simultaneous_same_request_replays_one_receipt(client, merchant):
