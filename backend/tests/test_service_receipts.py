@@ -12,8 +12,9 @@ from test_service_charges import post as post_charge
 from test_service_charges import prepare as prepare_charge
 
 from app.core.database import SessionLocal
-from app.core.models import Permission, Role, RolePermission
-from app.domains.accounting.models import Account
+from app.core.models import AuditLog, Permission, Role, RolePermission
+from app.domains.accounting.models import Account, JournalEntry
+from app.domains.billing import receipts
 from app.domains.billing.models import ServiceReceipt
 
 BASE = "/api/v1/billing/service-receipts"
@@ -230,3 +231,164 @@ def test_simultaneous_overcollection_serializes(client, merchant):
             lambda data: client.post(BASE, headers=h, json=data).status_code, inputs))
     assert sorted(statuses) == [201, 409]
     assert balance(client, h, charge)["outstanding_amount"] == "10.24"
+
+
+
+def _financial_counts(organization_id):
+    """Count authoritative effects separately to prove rollback/no duplicates."""
+    with SessionLocal() as db:
+        return {
+            name: db.scalar(
+                select(func.count()).select_from(model).where(
+                    model.organization_id == UUID(organization_id)
+                )
+            )
+            for name, model in (
+                ("receipts", ServiceReceipt),
+                ("journals", JournalEntry),
+                ("audits", AuditLog),
+            )
+        }
+
+
+def test_receipt_audit_failure_rolls_back_journal_and_request(client, merchant, monkeypatch):
+    charge, body = prepare(client, merchant)
+    h = merchant["headers"]
+    before = _financial_counts(merchant["org"])
+
+    def broken_audit(*args, **kwargs):
+        raise RuntimeError("receipt audit failure injection")
+
+    with monkeypatch.context() as patch:
+        patch.setattr(receipts, "record", broken_audit)
+        with pytest.raises(RuntimeError, match="receipt audit failure injection"):
+            client.post(BASE, headers=h, json=body)
+
+    assert _financial_counts(merchant["org"]) == before
+    assert balance(client, h, charge)["outstanding_amount"] == "40.24"
+    assert client.get(
+        "/api/v1/billing/service-receipt-requests/" + body["request_id"], headers=h
+    ).status_code == 404
+    recorded = post(client, h, body)
+    assert recorded["request_id"] == body["request_id"]
+    assert _financial_counts(merchant["org"]) == {
+        "receipts": before["receipts"] + 1,
+        "journals": before["journals"] + 1,
+        "audits": before["audits"] + 2,
+    }
+
+
+def test_direct_sql_overcollection_is_rejected_before_journal_identity(client, merchant):
+    charge, body = prepare(client, merchant)
+    h = merchant["headers"]
+    saved = post(client, h, {**body, "amount": "40.24"})
+    before = _financial_counts(merchant["org"])
+    with SessionLocal() as db:
+        original = db.get(ServiceReceipt, UUID(saved["id"]))
+        db.add(ServiceReceipt(
+            organization_id=original.organization_id,
+            request_id=uuid4(), request_hash=original.request_hash,
+            charge_id=original.charge_id, journal_id=original.journal_id,
+            settlement_account_id=original.settlement_account_id,
+            amount=Decimal("0.01"), booking_date=original.booking_date,
+            payment_method=original.payment_method, recording_basis="Direct SQL overpay probe",
+            created_by=original.created_by,
+        ))
+        with pytest.raises(DBAPIError, match="receipt over-collects original receivable"):
+            db.flush()
+        db.rollback()
+    assert _financial_counts(merchant["org"]) == before
+    assert balance(client, h, charge)["outstanding_amount"] == "0.00"
+
+
+def test_direct_sql_receipt_cannot_use_another_charge_journal(client, merchant):
+    first_charge, first_body = prepare(client, merchant)
+    h = merchant["headers"]
+    first_receipt = post(client, h, first_body)
+    second_charge, _ = prepare(client, merchant)
+    before = _financial_counts(merchant["org"])
+    with SessionLocal() as db:
+        existing = db.get(ServiceReceipt, UUID(first_receipt["id"]))
+        db.add(ServiceReceipt(
+            organization_id=existing.organization_id,
+            request_id=existing.request_id, request_hash=existing.request_hash,
+            charge_id=UUID(second_charge["id"]), journal_id=existing.journal_id,
+            settlement_account_id=existing.settlement_account_id,
+            amount=existing.amount, booking_date=existing.booking_date,
+            payment_method=existing.payment_method, recording_basis="Wrong charge journal probe",
+            created_by=existing.created_by,
+        ))
+        with pytest.raises(DBAPIError, match="receipt journal does not reconcile"):
+            db.flush()
+        db.rollback()
+    assert _financial_counts(merchant["org"]) == before
+    assert balance(client, h, first_charge)["outstanding_amount"] == "30.24"
+    assert balance(client, h, second_charge)["outstanding_amount"] == "40.24"
+
+
+def test_receipt_journal_reversal_forbidden_at_api_and_sql(client, merchant):
+    charge, body = prepare(client, merchant)
+    h = merchant["headers"]
+    saved = post(client, h, body)
+    before = _financial_counts(merchant["org"])
+    reverse = client.post(
+        "/api/v1/accounting/journals/" + saved["journal_id"] + "/reverse",
+        headers=h,
+        json={"request_id": str(uuid4()), "booking_date": body["booking_date"],
+              "reason": "Cannot reverse receipt without subledger correction"},
+    )
+    assert reverse.status_code == 409, reverse.text
+    with SessionLocal() as db:
+        original = db.get(JournalEntry, UUID(saved["journal_id"]))
+        db.add(JournalEntry(
+            organization_id=original.organization_id,
+            branch_id=original.branch_id,
+            request_id=uuid4(), request_hash="0" * 64,
+            booking_date=original.booking_date, description="Forged SQL reversal",
+            currency=original.currency, status="POSTED",
+            reversal_of_id=original.id, posted_by=original.posted_by,
+            posted_at=original.posted_at,
+        ))
+        with pytest.raises(DBAPIError, match="receipt correction requires subledger reconciliation"):
+            db.flush()
+        db.rollback()
+    assert _financial_counts(merchant["org"]) == before
+    assert balance(client, h, charge)["outstanding_amount"] == "30.24"
+
+
+def test_opening_balance_cutover_blocks_receipt_without_changing_charge(client, merchant):
+    charge, body = prepare(client, merchant)
+    h = merchant["headers"]
+    opening = client.post(
+        "/api/v1/accounting/opening-balance", headers=h,
+        json={
+            "request_id": str(uuid4()), "booking_date": body["booking_date"],
+            "description": "Opening before any service receipt",
+            "lines": [
+                {"account_id": charge["receivable_account_id"], "debit": "1.00"},
+                {"account_id": charge["revenue_account_id"], "credit": "1.00"},
+            ],
+        },
+    )
+    assert opening.status_code == 201, opening.text
+    before = _financial_counts(merchant["org"])
+    assert client.post(BASE, headers=h, json=body).status_code == 409
+    assert _financial_counts(merchant["org"]) == before
+    assert balance(client, h, charge)["outstanding_amount"] == "40.24"
+
+
+def test_simultaneous_same_request_replays_one_receipt(client, merchant):
+    charge, body = prepare(client, merchant)
+    h = merchant["headers"]
+    before = _financial_counts(merchant["org"])
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures = [pool.submit(client.post, BASE, headers=h, json=body) for _ in range(2)]
+        results = [future.result() for future in futures]
+    assert [result.status_code for result in results] == [201, 201]
+    assert results[0].json() == results[1].json()
+    assert _financial_counts(merchant["org"]) == {
+        "receipts": before["receipts"] + 1,
+        "journals": before["journals"] + 1,
+        "audits": before["audits"] + 2,
+    }
+    assert balance(client, h, charge)["outstanding_amount"] == "30.24"
