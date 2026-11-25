@@ -301,29 +301,27 @@ def test_direct_sql_overcollection_is_rejected_before_journal_identity(client, m
     assert balance(client, h, charge)["outstanding_amount"] == "0.00"
 
 
-def test_direct_sql_receipt_cannot_use_another_charge_journal(client, merchant):
-    first_charge, first_body = prepare(client, merchant)
+def test_direct_sql_receipt_cannot_adopt_journal_with_different_amount(client, merchant):
+    charge, body = prepare(client, merchant)
     h = merchant["headers"]
-    first_receipt = post(client, h, first_body)
-    second_charge, _ = prepare(client, merchant)
+    saved = post(client, h, body)
     before = _financial_counts(merchant["org"])
     with SessionLocal() as db:
-        existing = db.get(ServiceReceipt, UUID(first_receipt["id"]))
+        original = db.get(ServiceReceipt, UUID(saved["id"]))
         db.add(ServiceReceipt(
-            organization_id=existing.organization_id,
-            request_id=existing.request_id, request_hash=existing.request_hash,
-            charge_id=UUID(second_charge["id"]), journal_id=existing.journal_id,
-            settlement_account_id=existing.settlement_account_id,
-            amount=existing.amount, booking_date=existing.booking_date,
-            payment_method=existing.payment_method, recording_basis="Wrong charge journal probe",
-            created_by=existing.created_by,
+            organization_id=original.organization_id,
+            request_id=original.request_id, request_hash=original.request_hash,
+            charge_id=original.charge_id, journal_id=original.journal_id,
+            settlement_account_id=original.settlement_account_id,
+            amount=Decimal("9.99"), booking_date=original.booking_date,
+            payment_method=original.payment_method, recording_basis="Wrong journal amount probe",
+            created_by=original.created_by,
         ))
         with pytest.raises(DBAPIError, match="receipt journal does not reconcile"):
             db.flush()
         db.rollback()
     assert _financial_counts(merchant["org"]) == before
-    assert balance(client, h, first_charge)["outstanding_amount"] == "30.24"
-    assert balance(client, h, second_charge)["outstanding_amount"] == "40.24"
+    assert balance(client, h, charge)["outstanding_amount"] == "30.24"
 
 
 def test_receipt_journal_reversal_forbidden_at_api_and_sql(client, merchant):
